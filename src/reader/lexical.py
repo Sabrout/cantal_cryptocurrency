@@ -4,26 +4,22 @@ import re
 class LexicalParser():
 
     def __init__(self, read):
-        self.read = read
-        self.sentence = ""
+        self.sentence = self.read()
         self.text = ""
 
+    def get_text(self):
+        return self.text
+
     def match(self, pattern=0):
-        if isinstance(pattern, int):
-            return len(self.sentence) == pattern
-        elif (isinstance(pattern, str)):
-            m = re.match(r"^"+pattern, self.sentence)
-            if m is None:
-                return None
-            self.text = m.group(0)
-            return self.text
-        return None
+        m = re.match(r"^"+pattern, self.sentence)
+        if m is None:
+            return None
+        self.text = m.group(0)
+        return self.text
 
     def shift(self):
-        self.sentence = ""
-
-    def read(self, number_bits=1, encoding=True):
-        self.sentence += self.read(number_bits, encoding)
+        length = len(self.text)
+        self.sentence = self.sentence[length:]
 
     def lexeme(self):
         raise NotImplementedError
@@ -42,12 +38,13 @@ class ProtocolLexicalParser(LexicalParser):
 
     END = 8
 
-    NUMBER = 9
-    BINARY_NUMBER = 10
-    HASH = 11
-    PUBLIC_KEY = 12
+    IP = 9
+    HASH = 10
+    PUBLIC_KEY = 11
+    DIGIT = 12
 
-    def lexeme(self, number_bits=1, encoding=True):
+    def lexeme(self):
+
         if self.match("LIST"):
             return self.LIST
         if self.match("MEMBER"):
@@ -66,14 +63,18 @@ class ProtocolLexicalParser(LexicalParser):
         if self.match("ERROR"):
             return self.ERROR
 
-        if self.match(4):
-            return self.NUMBER
-        if self.match(1):
-            return self.OUTPUT_NUMBER
-        if self.match(32):
+
+        if self.match("[0-9]{3}\.[0-9]{3}\.[0-9]{3}\.[0-9]{3}"):
+            return self.IP
+        if self.match("[0-9a-z]{65}"):
             return self.HASH
-        if self.match(33):
+        if self.match("[0-9a-z]{67}"):
             return self.PUBLIC_KEY
+        if self.match("[0-9a-z]{64}"):
+            return self.SIGNATURE
+
+        if self.match("0|[1-9][0-9]*"):
+            return self.DIGIT
 
         if self.match("\r\n"):
             return self.END
@@ -81,9 +82,3 @@ class ProtocolLexicalParser(LexicalParser):
         if self.match("\s+"):
             self.shift()
             return self.lexeme()
-
-        if (number_bits == 1 and encoding):
-            self.read()
-            return self.lexeme()
-
-        return None
