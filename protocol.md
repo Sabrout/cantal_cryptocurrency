@@ -130,7 +130,7 @@ _SIGNATURE_: 71 Bytes
 | `_SIGNATURE_` | The signature is an encryption of the current transaction's hash  |
 __NB__: All lists are indexed in the same way.
 
-The transaction hash is computed with the SHA256 function in hashing the string `HASH_1|OUTPUT_NUMBER_1|...|HASH_N|OUTPUT_NUMBER_N|WALLET_1|...|WALLET_N|WALLET_OUTPUT1|WALLET_OUTPUT2|AMOUNT_1|...|AMOUNT_OUTPUT|SIGNATURE_1|...|SIGNATURE_N`
+The transaction hash is computed with the SHA256 function in hashing the string `HASH_1|OUTPUT_NUMBER_1|...|HASH_N|OUTPUT_NUMBER_N|WALLET_1|...|WALLET_N|WALLET_OUTPUT1|WALLET_OUTPUT2|AMOUNT_1|...|AMOUNT_OUTPUT`
 
 TRANSACTION_ERROR
 -----------------
