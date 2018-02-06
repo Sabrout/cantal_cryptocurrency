@@ -4,9 +4,12 @@ import queue
 
 class Server:
     def __init__(self, IP, port):
+        # Setup the server
         self.server_socket = socket.socket()
         self.server_socket.bind((IP, port))
         self.server_socket.listen()
+
+        # Don't need it now
         self.queue = queue.Queue()
 
     def read(self, socket, encoding, number_bytes=1):
@@ -14,14 +17,20 @@ class Server:
         message = b""
         while(True):
             m = socket.recv(number_bytes)
+
+            # If we receive nothing
             if(len(m) == 0):
                 return None
+
+            # This is the end of a message
             elif(m == b"\n" and end_message):
                 message += m
                 break
             elif(m == b"\r"):
                 message += m
                 end_message = True
+
+            # We are still receiving the message
             else:
                 message += m
 
@@ -35,6 +44,7 @@ class Server:
         # We create a thread where we accept the connection
         def accept_thread():
             socket, _ = self.server_socket.accept()
+            
             # Actually we will call the parser but until it is
             # ready, we just call the read function
             Thread(target=self.read, args=(socket, True)).start()
