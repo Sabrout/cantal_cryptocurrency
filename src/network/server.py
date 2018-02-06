@@ -47,7 +47,10 @@ class Server:
             
             # Actually we will call the parser but until it is
             # ready, we just call the read function
-            Thread(target=self.read, args=(socket, True)).start()
+            message = ""
+            while(message is not None):
+                message = self.read(socket, True)
+                print(message)
         t = Thread(target = accept_thread)
         return t
 

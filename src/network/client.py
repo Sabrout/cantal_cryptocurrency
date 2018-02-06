@@ -9,9 +9,14 @@ class Client:
         # Really need a thread here ?
         def send_thread():
             self.socket.sendall(message)
-            self.socket.close()
         t = Thread(target = send_thread)
         return t
 
+    def close(self):
+        self.socket.close()
+
+
 c = Client('localhost', 9999)
-c.send(b"Bonjour\r\n")
+c.send(b"rebonjour\r\n").start()
+c.send(b"close\r\n").start()
+c.close()
