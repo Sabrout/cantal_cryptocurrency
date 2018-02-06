@@ -9,29 +9,28 @@ class Server:
         self.server_socket.listen()
         self.queue = queue.Queue()
 
-    def read(self, socket, encoding, number_bits=1):
-        message = socket.recv(number_bits)
+    def read(self, socket, encoding, number_bytes=1):
+        end_message = False
+        message = b""
+        while(True):
+            m = socket.recv(number_bytes)
+            if(len(m) == 0):
+                return None
+            elif(m == b"\n" and end_message):
+                message += m
+                break
+            elif(m == b"\r"):
+                message += m
+                end_message = True
+            else:
+                message += m
+
         # if encoding is true we decode the binary message
         if(encoding):
-            #print(message.decode("utf-8"))
-            return message.decode("utf-8")
-        return message
-        # To test the server
-        #end_message = False
-        #message = b""
-        #while(True):
-        #    m = socket.recv(number_bits)
-        #    if(m == b"\r"):
-        #        message += m
-        #        end_message = True
-        #    elif(m == b"\n" and end_message):
-        #        message += m
-        #        break
-        #    else:
-        #        message += m
-        #print(message.decode("utf-8"))
+            return(message.decode("utf-8"))
+        else:
+            return message
                 
-        
     def accept(self):
         # We create a thread where we accept the connection
         def accept_thread():
