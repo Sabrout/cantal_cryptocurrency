@@ -6,6 +6,7 @@ class Client:
         self.socket = socket.create_connection((IP, port))
 
     def send(self, message):
+        # Really need a thread here ?
         def send_thread():
             self.socket.sendall(message)
             self.socket.close()
