@@ -63,17 +63,26 @@ class WriterTest(unittest.TestCase):
         message = Message()
         message.set_packet(Message.TRANSACTION)
         message.set_packet_type(Message.RESPONSE)
-        data = {"input": [("af34101az", 0)],
-                "wallet": ["2423089323", "232093283", "0"],
+        data = {"input": [("110812f67fa1e1f0117f6f3d70241c1a4"
+                           + "2a7b07711a93c2477cc516d9042f9db", 0)],
+                "wallet": ["110812f67fa1e1f0117f6f3d70241c1a"
+                           + "42a7b07711a93c2477cc516d9042f9db01",
+                           "110812f67fa1e1f0117f6f3d70241c1a42"
+                           + "a7b07711a93c2477cc516d9042f9db02",
+                           "0000000000000000000000000000000000"
+                           + "0000000000000000000000000000000"],
                 "amount": [10, 10, 0],
-                "signature": ["1012912"]}
+                "signature": ["110812f67fa1e1f0117f6f3d70241"
+                              + "c1a42a7b07711a93c2477cc516d9042f9d"]}
         message.set_data(data)
 
         writer = Writer(message)
         string = writer.write()
 
-        self.assertEqual(string, "TRANSACTION RESPONSE af34101az"
-                         + " 0 2423089323 232093283 0 10 10 0 1012912\r\n")
+        self.assertEqual(string, "TRANSACTION RESPONSE 110812f67fa1e1f0117f6f3d70241c1a42a7b07711a93c2477cc516d9042f9db"
+                         + " 0 110812f67fa1e1f0117f6f3d70241c1a42a7b07711a93c2477cc516d9042f9db01 110812f67fa1e1f0117f6f3d70241c1a42a7b07711a93c2477cc516d9042f9db02"
+                         + " 00000000000000000000000000000000000000000000000000000000000000000"
+                         + " 10 10 0 110812f67fa1e1f0117f6f3d70241c1a42a7b07711a93c2477cc516d9042f9d\r\n")
 
     def test_transaction_error(self):
         message = Message()
@@ -100,14 +109,16 @@ class WriterTest(unittest.TestCase):
         message = Message()
         message.set_packet(Message.CHEESE)
         message.set_packet_type(Message.RESPONSE)
-        data = {"transactions": [{"input": [("af34101az", 0)],
-                "wallet": ["2423089323", "232093283", "0"],
-                 "amount": [10, 10, 0],
-                 "signature": ["1012912"]},
-                {"input": [("af34101az", 0)],
-                 "wallet": ["2423089323", "232093283", "0"],
-                 "amount": [10, 10, 0],
-                 "signature": ["1012912"]}],
+        data = {"transactions": [{"input": [("110812f67fa1e1f0117f6f3d70241c1a42a7b07711a93c2477cc516d9042f9db", 0)],
+                "wallet": ["110812f67fa1e1f0117f6f3d70241c1a42a7b07711a93c2477cc516d9042f9db01",
+                           "110812f67fa1e1f0117f6f3d70241c1a42a7b07711a93c2477cc516d9042f9db02", "00000000000000000000000000000000000000000000000000000000000000000"],
+                "amount": [10, 10, 0],
+                "signature": ["110812f67fa1e1f0117f6f3d70241c1a42a7b07711a93c2477cc516d9042f9d"]},
+                {"input": [("110812f67fa1e1f0117f6f3d70241c1a42a7b07711a93c2477cc516d9042f9db", 0)],
+                "wallet": ["110812f67fa1e1f0117f6f3d70241c1a42a7b07711a93c2477cc516d9042f9db01",
+                           "110812f67fa1e1f0117f6f3d70241c1a42a7b07711a93c2477cc516d9042f9db02", "00000000000000000000000000000000000000000000000000000000000000000"],
+                "amount": [10, 10, 0],
+                "signature": ["110812f67fa1e1f0117f6f3d70241c1a42a7b07711a93c2477cc516d9042f9d"]}],
                 "nonce": 123456789}
 
         message.set_data(data)
@@ -115,11 +126,15 @@ class WriterTest(unittest.TestCase):
         writer = Writer(message)
         string = writer.write()
 
-        self.assertEqual(string, "CHEESE RESPONSE"
-                         + " af34101az 0 2423089323 232093283"
-                         + " 0 10 10 0 1012912"
-                         + " af34101az 0 2423089323 232093283"
-                         + " 0 10 10 0 1012912 123456789\r\n")
+        self.assertEqual(string, "CHEESE RESPONSE "
+                         + "110812f67fa1e1f0117f6f3d70241c1a42a7b07711a93c2477cc516d9042f9db"
+                         + " 0 110812f67fa1e1f0117f6f3d70241c1a42a7b07711a93c2477cc516d9042f9db01 110812f67fa1e1f0117f6f3d70241c1a42a7b07711a93c2477cc516d9042f9db02"
+                         + " 00000000000000000000000000000000000000000000000000000000000000000"
+                         + " 10 10 0 110812f67fa1e1f0117f6f3d70241c1a42a7b07711a93c2477cc516d9042f9d "
+                         + "110812f67fa1e1f0117f6f3d70241c1a42a7b07711a93c2477cc516d9042f9db"
+                         + " 0 110812f67fa1e1f0117f6f3d70241c1a42a7b07711a93c2477cc516d9042f9db01 110812f67fa1e1f0117f6f3d70241c1a42a7b07711a93c2477cc516d9042f9db02"
+                         + " 00000000000000000000000000000000000000000000000000000000000000000"
+                         + " 10 10 0 110812f67fa1e1f0117f6f3d70241c1a42a7b07711a93c2477cc516d9042f9d 123456789\r\n")
 
     def test_cheese_error(self):
         message = Message()
