@@ -1,3 +1,5 @@
+from src.network.message import Message
+
 class Writer():
 
     def __init__(self, message):
@@ -67,7 +69,7 @@ class Writer():
         return "TRANSACTION REQUEST\r\n"
 
     def write_transaction_response(self):
-        string = "TRANSACTION RESPONSE "
+        string = "TRANSACTION RESPONSE"
         string = self.write_transaction(string)+"\r\n"
         return string
 
@@ -127,7 +129,7 @@ class Writer():
         amount_list = self.message.get_data()["amount"]
 
         for amount in amount_list:
-            string += " "+amount
+            string += " "+str(amount)
 
         return string
 
