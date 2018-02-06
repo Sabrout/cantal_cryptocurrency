@@ -23,6 +23,8 @@ class Message():
            or packet == Message.CHEESE):
 
             self.packet = packet
+        else:
+            self.packet = Message.NOTHING
 
     def get_packet(self):
         return self.packet
@@ -34,6 +36,11 @@ class Message():
            or packet_type == Message.ERROR):
 
             self.packet_type = packet_type
+        else:
+            self.packet = Message.NOTHING
+
+    def get_packet_type(self):
+        return self.packet_type
 
     def set_data(self, data):
         self.data = data
