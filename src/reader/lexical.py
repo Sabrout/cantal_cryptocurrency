@@ -1,10 +1,11 @@
 import re
+from src.network.message import Message
 
 
 class LexicalParser():
 
-    def __init__(self, read):
-        self.sentence = self.read()
+    def __init__(self, sentence):
+        self.sentence = sentence
         self.text = ""
 
     def get_text(self):
@@ -25,7 +26,7 @@ class LexicalParser():
         raise NotImplementedError
 
 
-class ProtocolLexicalParser(LexicalParser):
+class MessageLexicalParser(LexicalParser):
     LIST = 0
     MEMBER = 1
     TRANSACTION = 2
@@ -41,7 +42,8 @@ class ProtocolLexicalParser(LexicalParser):
     IP = 9
     HASH = 10
     PUBLIC_KEY = 11
-    DIGIT = 12
+    SIGNATURE = 12
+    DIGIT = 13
 
     def lexeme(self):
 
@@ -63,14 +65,16 @@ class ProtocolLexicalParser(LexicalParser):
         if self.match("ERROR"):
             return self.ERROR
 
+        byte_ip = "(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])"
 
-        if self.match("[0-9]{3}\.[0-9]{3}\.[0-9]{3}\.[0-9]{3}"):
+        if self.match(byte_ip+"\."+byte_ip+"\."+byte_ip+"\."+byte_ip):
             return self.IP
+
         if self.match("[0-9a-z]{65}"):
-            return self.HASH
-        if self.match("[0-9a-z]{67}"):
             return self.PUBLIC_KEY
         if self.match("[0-9a-z]{64}"):
+            return self.HASH
+        if self.match("[0-9a-z]{63}"):
             return self.SIGNATURE
 
         if self.match("0|[1-9][0-9]*"):

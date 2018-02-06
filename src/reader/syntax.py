@@ -1,5 +1,6 @@
-from lexical import LexicalParser
-from ..network.message import Message
+from src.reader.lexical import LexicalParser
+from src.reader.lexical import MessageLexicalParser
+from src.network.message import Message
 import sys
 
 
@@ -7,11 +8,11 @@ class SyntaxParser():
     """
     Create a syntaxical parser
     """
-    def __init__(self, read):
+    def __init__(self, sentence):
         """
         Initialize the parser with a sentence and initialize the lexical parser
         """
-        self.lexical = LexicalParser(read)
+        self.lexical = LexicalParser(sentence)
         self.lookahead = None
 
     def get_lookahead(self):
@@ -20,11 +21,11 @@ class SyntaxParser():
         """
         return self.lookahead
 
-    def look(self, number_bits=1, encoding=True):
+    def look(self):
         """
         Shift: get the lexeme
         """
-        self.lookahead = self.lexical.lexeme(number_bits, encoding)
+        self.lookahead = self.lexical.lexeme()
         self.text = self.lexical.text
 
     def shift(self):
@@ -44,12 +45,20 @@ class SyntaxParser():
 
 class MessageSyntaxParser(SyntaxParser):
 
+    def __init__(self, sentence):
+        """
+        Initialize the parser with a sentence and initialize the lexical parser
+        """
+        self.lexical = MessageLexicalParser(sentence)
+        self.lookahead = None
+
     def parse(self):
         """
         Parse the sentence
         """
         self.message = Message()
         self.packet()
+        return self.message
 
     def packet(self):
         self.look()
@@ -95,7 +104,7 @@ class MessageSyntaxParser(SyntaxParser):
 
         self.look()
         self.check(self.lexical.DIGIT)
-        port = self.lexical.get_text()
+        port = int(self.lexical.get_text())
         self.shift()
 
         self.message.set_data(port)
@@ -116,7 +125,7 @@ class MessageSyntaxParser(SyntaxParser):
 
         self.look()
         self.check(self.lexical.DIGIT)
-        port = self.lexical.get_text()
+        port = int(self.lexical.get_text())
         self.shift()
 
         self.message.set_data([(ip, port)])
@@ -132,7 +141,7 @@ class MessageSyntaxParser(SyntaxParser):
 
             self.look()
             self.check(self.lexical.SHORT)
-            port = self.lexical.get_text()
+            port = int(self.lexical.get_text())
             self.shift()
 
             list_message = self.message.get_data()
@@ -162,6 +171,7 @@ class MessageSyntaxParser(SyntaxParser):
     def member_report(self):
         self.look()
         self.check(self.lexical.REPORT)
+        self.message.set_packet_type(self.lexical.REPORT)
         self.shift()
 
         self.look()
@@ -169,9 +179,9 @@ class MessageSyntaxParser(SyntaxParser):
         ip = self.lexical.get_text()
         self.shift()
 
-        self.look(2, text=False)
+        self.look()
         self.check(self.lexical.DIGIT)
-        port = self.lexical.get_text()
+        port = int(self.lexical.get_text())
         self.shift()
 
         self.message.set_data((ip, port))
@@ -230,7 +240,7 @@ class MessageSyntaxParser(SyntaxParser):
 
         self.look()
         self.check(self.lexical.DIGIT)
-        ouput = self.lexical.get_text()
+        ouput = int(self.lexical.get_text())
         self.shift()
 
         data["input"].append((hash, ouput))
@@ -241,13 +251,13 @@ class MessageSyntaxParser(SyntaxParser):
         data = self.message.get_data()
 
         self.look()
-        if(self.lexical.get_text() == self.lexical.HASH):
+        if(self.get_lookahead() == self.lexical.HASH):
             hash = self.lexical.get_text()
             self.shift()
 
             self.look()
             self.check(self.lexical.DIGIT)
-            ouput = self.lexical.get_text()
+            ouput = int(self.lexical.get_text())
             self.shift()
 
             data["input"].append((hash, ouput))
@@ -257,18 +267,18 @@ class MessageSyntaxParser(SyntaxParser):
     def wallet_list(self):
         data = self.message.get_data()
         self.look()
-        self.check(self.lexical.self.PUBLIC_KEY)
+        self.check(self.lexical.PUBLIC_KEY)
         key = self.lexical.get_text()
         self.shift()
 
         data["wallet"].append(key)
 
-        self.input_list_next()
+        self.wallet_list_next()
 
     def wallet_list_next(self):
         data = self.message.get_data()
         self.look()
-        if(self.lexical.get_text() == self.lexical.PUBLIC_KEY):
+        if(self.get_lookahead() == self.lexical.PUBLIC_KEY):
             key = self.lexical.get_text()
             self.shift()
 
@@ -278,8 +288,8 @@ class MessageSyntaxParser(SyntaxParser):
     def amount_list(self):
         data = self.message.get_data()
         self.look()
-        self.check(self.lexical.self.AMOUNT)
-        amount = self.lexical.get_text()
+        self.check(self.lexical.DIGIT)
+        amount = int(self.lexical.get_text())
         self.shift()
 
         data["amount"].append(amount)
@@ -288,8 +298,8 @@ class MessageSyntaxParser(SyntaxParser):
     def amount_list_next(self):
         data = self.message.get_data()
         self.look()
-        if(self.lexical.get_text() == self.lexical.AMOUNT):
-            amount = self.lexical.get_text()
+        if(self.get_lookahead() == self.lexical.DIGIT):
+            amount = int(self.lexical.get_text())
             self.shift()
 
             data["amount"].append(amount)
@@ -298,7 +308,7 @@ class MessageSyntaxParser(SyntaxParser):
     def sign_list(self):
         data = self.message.get_data()
         self.look()
-        self.check(self.lexical.self.SIGNATURE)
+        self.check(self.lexical.SIGNATURE)
         signature = self.lexical.get_text()
         self.shift()
 
@@ -308,7 +318,7 @@ class MessageSyntaxParser(SyntaxParser):
     def sign_list_next(self):
         data = self.message.get_data()
         self.look()
-        if(self.lexical.get_text() == self.lexical.SIGNATURE):
+        if(self.get_lookahead() == self.lexical.SIGNATURE):
             signature = self.lexical.get_text()
             self.shift()
 
@@ -367,8 +377,13 @@ class MessageSyntaxParser(SyntaxParser):
 
         self.look()
         self.check(self.lexical.DIGIT)
-        nonce = self.lexical.get_text()
+        nonce = int(self.lexical.get_text())
         data["nonce"] = nonce
+        self.shift()
+
+    def cheese_error(self):
+        self.look()
+        self.check(self.lexical.ERROR)
         self.shift()
 
     def transaction_list(self):
