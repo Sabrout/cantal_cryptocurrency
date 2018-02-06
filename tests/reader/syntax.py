@@ -1,13 +1,13 @@
 import unittest
 from src.network.message import Message
-from src.reader.syntax import MessageSyntaxParser
+from src.reader.syntax import SyntaxReader
 
 
-class SyntaxTest(unittest.TestCase):
+class SyntaxReaderTest(unittest.TestCase):
 
     def list_request_test(self):
         string = "LIST REQUEST 1234\r\n"
-        parser = MessageSyntaxParser(string)
+        parser = SyntaxReader(string)
         message = parser.parse()
 
         self.assertEqual(message.get_packet(), Message.LIST)
@@ -16,7 +16,7 @@ class SyntaxTest(unittest.TestCase):
 
     def list_response_test(self):
         string = "LIST RESPONSE 192.168.1.1 2 127.0.0.0.1 1234\r\n"
-        parser = MessageSyntaxParser(string)
+        parser = SyntaxReader(string)
         message = parser.parse()
 
         self.assertEqual(message.get_packet(), Message.LIST)
@@ -26,7 +26,7 @@ class SyntaxTest(unittest.TestCase):
 
     def list_list_error(self):
         string = "LIST ERROR\r\n"
-        parser = MessageSyntaxParser(string)
+        parser = SyntaxReader(string)
         message = parser.parse()
 
         self.assertEqual(message.get_packet(), Message.LIST)
@@ -34,7 +34,7 @@ class SyntaxTest(unittest.TestCase):
 
     def test_member_report(self):
         string = "MEMBER REPORT 192.168.1.1 2\r\n"
-        parser = MessageSyntaxParser(string)
+        parser = SyntaxReader(string)
         message = parser.parse()
 
         self.assertEqual(message.get_packet(), Message.MEMBER)
@@ -44,7 +44,7 @@ class SyntaxTest(unittest.TestCase):
 
     def test_transaction_request(self):
         string = "TRANSACTION REQUEST\r\n"
-        parser = MessageSyntaxParser(string)
+        parser = SyntaxReader(string)
         message = parser.parse()
 
         self.assertEqual(message.get_packet(), Message.TRANSACTION)
@@ -61,7 +61,7 @@ class SyntaxTest(unittest.TestCase):
         string += "000000000000000000000000"
         string += " 10 10 0 110812f67fa1e1f0117f6f3d70241c1a42a7b07711a9"
         string += "3c2477cc516d9042f9d\r\n"
-        parser = MessageSyntaxParser(string)
+        parser = SyntaxReader(string)
         message = parser.parse()
 
         self.assertEqual(message.get_packet(), Message.TRANSACTION)
@@ -81,7 +81,7 @@ class SyntaxTest(unittest.TestCase):
 
     def test_transaction_error(self):
         string = "TRANSACTION ERROR\r\n"
-        parser = MessageSyntaxParser(string)
+        parser = SyntaxReader(string)
         message = parser.parse()
 
         self.assertEqual(message.get_packet(), Message.TRANSACTION)
@@ -91,7 +91,7 @@ class SyntaxTest(unittest.TestCase):
         string = "CHEESE REQUEST"
         string += " 110812f67fa1e1f0117f6f3d70241c1a42"
         string += "a7b07711a93c2477cc516d9042f9db\r\n"
-        parser = MessageSyntaxParser(string)
+        parser = SyntaxReader(string)
         message = parser.parse()
 
         self.assertEqual(message.get_packet(), Message.CHEESE)
@@ -122,7 +122,7 @@ class SyntaxTest(unittest.TestCase):
         string += " 10 10 0 110812f67fa1e1f0117f6f3d70241c1a42a7b07711a9"
         string += "3c2477cc516d9042f9d 123456789\r\n"
 
-        parser = MessageSyntaxParser(string)
+        parser = SyntaxReader(string)
         message = parser.parse()
 
         self.assertEqual(message.get_packet(), Message.CHEESE)
@@ -155,7 +155,7 @@ class SyntaxTest(unittest.TestCase):
 
     def test_cheese_error(self):
         string = "CHEESE ERROR\r\n"
-        parser = MessageSyntaxParser(string)
+        parser = SyntaxReader(string)
         message = parser.parse()
 
         self.assertEqual(message.get_packet(), Message.CHEESE)

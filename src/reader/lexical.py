@@ -1,17 +1,29 @@
 import re
-from src.network.message import Message
 
 
-class LexicalParser():
+class LexicalReader():
+    """
+    Create a lexical parser
+    """
 
     def __init__(self, sentence):
+        """
+        The constructor give store the sentence
+        to parse
+        """
         self.sentence = sentence
         self.text = ""
 
     def get_text(self):
+        """
+        Get the text matched
+        """
         return self.text
 
     def match(self, pattern=0):
+        """
+        Try to match with the beginning of the sentence
+        """
         m = re.match(r"^"+pattern, self.sentence)
         if m is None:
             return None
@@ -19,14 +31,13 @@ class LexicalParser():
         return self.text
 
     def shift(self):
+        """
+        Shift the sentence when we found
+        the good lexeme
+        """
         length = len(self.text)
         self.sentence = self.sentence[length:]
 
-    def lexeme(self):
-        raise NotImplementedError
-
-
-class MessageLexicalParser(LexicalParser):
     LIST = 0
     MEMBER = 1
     TRANSACTION = 2
@@ -45,8 +56,12 @@ class MessageLexicalParser(LexicalParser):
     SIGNATURE = 12
     DIGIT = 13
 
-    def lexeme(self):
 
+    def lexeme(self):
+        """
+        Try to match with differents patterns
+        and find the good one
+        """
         if self.match("LIST"):
             return self.LIST
         if self.match("MEMBER"):
