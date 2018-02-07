@@ -1,10 +1,8 @@
-from src.reader.lexical import LexicalParser
-from src.reader.lexical import MessageLexicalParser
+from src.reader.lexical import LexicalReader
 from src.network.message import Message
-import sys
 
 
-class SyntaxParser():
+class SyntaxReader():
     """
     Create a syntaxical parser
     """
@@ -12,7 +10,7 @@ class SyntaxParser():
         """
         Initialize the parser with a sentence and initialize the lexical parser
         """
-        self.lexical = LexicalParser(sentence)
+        self.lexical = LexicalReader(sentence)
         self.lookahead = None
 
     def get_lookahead(self):
@@ -23,34 +21,23 @@ class SyntaxParser():
 
     def look(self):
         """
-        Shift: get the lexeme
+        Get the current lexeme
         """
         self.lookahead = self.lexical.lexeme()
         self.text = self.lexical.text
 
     def shift(self):
+        """
+        Shift the sentence
+        """
         self.lexical.shift()
 
     def check(self, lookahead):
+        """
+        Check if the lookahead is good
+        """
         if(self.lookahead != lookahead):
-            print("Syntax error")
-            sys.exit(0)
-
-    def parse(self):
-        """
-        The parse function which is not implemented for the general parser
-        """
-        raise NotImplementedError
-
-
-class MessageSyntaxParser(SyntaxParser):
-
-    def __init__(self, sentence):
-        """
-        Initialize the parser with a sentence and initialize the lexical parser
-        """
-        self.lexical = MessageLexicalParser(sentence)
-        self.lookahead = None
+            raise Exception("Syntax error")
 
     def parse(self):
         """
@@ -61,6 +48,9 @@ class MessageSyntaxParser(SyntaxParser):
         return self.message
 
     def packet(self):
+        """
+        Parse the sentence
+        """
         self.look()
         if(self.get_lookahead() == self.lexical.LIST):
             self.message.set_packet(self.lexical.LIST)
