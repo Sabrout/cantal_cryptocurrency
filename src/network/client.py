@@ -1,22 +1,22 @@
 from threading import Thread
+from src.network.message import Message
+from src.writer.writer import Writer
 import socket
 
 class Client:
     def __init__(self, IP, port):
         self.socket = socket.create_connection((IP, port))
+        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
 
     def send(self, message):
-        # Really need a thread here ?
-        def send_thread():
-            self.socket.sendall(message)
-        t = Thread(target = send_thread)
-        return t
-
+        writer = Writer(message)
+        string = writer.write()
+        string = string.encode()
+        self.socket.sendall(string)
+        
     def close(self):
         self.socket.close()
 
 
-c = Client('localhost', 9999)
-c.send(b"rebonjour\r\n").start()
-c.send(b"close\r\n").start()
-c.close()
+

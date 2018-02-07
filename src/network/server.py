@@ -1,4 +1,5 @@
 from threading import Thread
+from src.reader.syntax import SyntaxReader 
 import socket
 import queue
 
@@ -8,11 +9,16 @@ class Server:
         self.server_socket = socket.socket()
         self.server_socket.bind((IP, port))
         self.server_socket.listen()
+        self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
 
         # Don't need it now
         self.queue = queue.Queue()
 
-    def read(self, socket, encoding, number_bytes=1):
+    def close(self):
+        self.server_socket.close()
+        
+    def recv(self, socket, encoding, number_bytes=1):
         end_message = False
         message = b""
         while(True):
@@ -39,20 +45,19 @@ class Server:
             return(message.decode("utf-8"))
         else:
             return message
-                
+
+
+    def read(self, socket):
+        message = self.recv(socket, True)
+        reader = SyntaxReader(message)
+        return reader.parse()
+        
     def accept(self):
         # We create a thread where we accept the connection
         def accept_thread():
             socket, _ = self.server_socket.accept()
-            
             # Actually we will call the parser but until it is
             # ready, we just call the read function
-            message = ""
-            while(message is not None):
-                message = self.read(socket, True)
-                print(message)
+            message = self.read(socket)
         t = Thread(target = accept_thread)
         return t
-
-s = Server('localhost', 9999)
-s.accept().start()
