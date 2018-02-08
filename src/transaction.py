@@ -1,6 +1,6 @@
+import hmac
 import hashlib
-import sys
-import os
+import base64
 
 
 class Transaction:
@@ -44,9 +44,13 @@ class Transaction:
                 raise Exception('INVALID AMOUNT SIZE ERROR')
             self.hashable_string += i
         self.list_amount = list_amount
-        
+
         self.hash.update(str.encode(self.hashable_string))
         self.hash.digest()
+
+    def sign(self, key):
+        sign = hmac.new(str.encode(key), msg=self.hash, digestmod=hashlib.sha256).digest()
+        self.list_sign.append(sign)
 
 
 def main():
@@ -75,7 +79,7 @@ def main():
     print(trans.output_number1)
     print(trans.list_amount)
     print(trans.hashable_string)
-    print(trans.hash)
+    print(trans.hash.digest())
 
 
 if __name__ == "__main__":
