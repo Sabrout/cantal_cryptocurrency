@@ -1,9 +1,9 @@
 import hashlib
 import sys
+import os
 
 
 class Transaction:
-
     list_input = list()
     list_wallet = list()
     list_amount = list()
@@ -16,35 +16,36 @@ class Transaction:
     def __init__(self, list_input, list_wallet, list_amount):
 
         # Checking format of list_input
+        temp_string = ''
         for i in list_input:
             (hash, output) = i
-            print(hash)
-            if sys.getsizeof(hash) != 32:
+            if len(hash) != 32:
                 raise Exception('INVALID HASH SIZE ERROR')
-            if sys.getsizeof(output) != 1:
+            if output != 1 and output != 0:
                 raise Exception('INVALID OUTPUT NUMBER ERROR')
+            self.hashable_string += hash
+            self.hashable_string += str(output)
         self.list_input = list_input
-        self.hashable_string += list_input
 
         # Checking format of list_wallet
         for i in list_wallet:
-            if sys.getsizeof(i) != 33:
+            if len(i) != 33:
                 raise Exception('INVALID WALLET_PUB SIZE ERROR')
+            self.hashable_string += i
         self.list_wallet = list_wallet
-        self.hashable_string += list_wallet
 
         # Adding the 2 output numbers (Don't know why yet)
-        self.hashable_string += self.output_number0
-        self.hashable_string += self.output_number1
+        self.hashable_string += str(self.output_number0)
+        self.hashable_string += str(self.output_number1)
 
         # Checking format of list_amount
         for i in list_amount:
-            if sys.getsizeof(i) != 4:
+            if len(i) != 4:
                 raise Exception('INVALID AMOUNT SIZE ERROR')
+            self.hashable_string += i
         self.list_amount = list_amount
-        self.hashable_string += list_amount
-
-        self.hash.update(self.hashable_string)
+        
+        self.hash.update(str.encode(self.hashable_string))
         self.hash.digest()
 
 
