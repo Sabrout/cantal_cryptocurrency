@@ -49,7 +49,7 @@ class Transaction:
         self.hash.digest()
 
     def sign(self, key):
-        sign = hmac.new(str.encode(key), msg=self.hash, digestmod=hashlib.sha256).digest()
+        sign = hmac.new(str.encode(key), msg=str(self.hash.digest()), digestmod=hashlib.sha256).digest()
         self.list_sign.append(sign)
 
 
@@ -80,6 +80,10 @@ def main():
     print(trans.list_amount)
     print(trans.hashable_string)
     print(trans.hash.digest())
+
+    # Testing sign function
+    trans.sign('MYKEY')
+    print(trans.list_sign)
 
 
 if __name__ == "__main__":
