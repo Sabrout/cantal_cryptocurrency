@@ -90,8 +90,8 @@ class Transaction:
 #     # print(trans.list_sign)
 
 #
-# if __name__ == "__main__":
-#     main()
+    # if __name__ == "__main__":
+    #     main()
 
 
 
