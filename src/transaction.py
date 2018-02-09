@@ -58,10 +58,6 @@ class Transaction:
 
 
 def main():
-    # try:
-    #     value = int('100x')
-    # except ValueError:
-    #     raise Exception('Nope')
     # Generating list_input
     list_input = list()
     list_input.append(('063E418310654DACA9B72F05F5FDF8E2', 0))
