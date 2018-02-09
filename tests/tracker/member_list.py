@@ -1,6 +1,6 @@
 import unittest
 import random
-from src.member_list import MemberList
+from src.tracker.member_list import MemberList
 
 
 class MemberListTest(unittest.TestCase):
@@ -9,8 +9,9 @@ class MemberListTest(unittest.TestCase):
     def populate(size):
         list = MemberList()
         for i in range(size):
-            ip = str(random.randint(1, 255)) + '.' + str(random.randint(1, 255)) + '.' \
-                 + str(random.randint(1, 255)) + '.' + str(random.randint(1, 255))
+            ip = str(random.randint(1, 255)) + '.'
+            + str(random.randint(1, 255)) + '.'
+            + str(random.randint(1, 255)) + '.' + str(random.randint(1, 255))
             port = '' + str(random.randint(1, 9999))
             list.add_member((ip, port))
         return list
