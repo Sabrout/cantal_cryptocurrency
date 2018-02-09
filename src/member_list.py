@@ -1,4 +1,5 @@
-from collections import deque
+import random
+import math
 
 
 class MemberList():
@@ -23,19 +24,40 @@ class MemberList():
             (ip, port) = i
             print("Member: {}:{}".format(ip, port))
 
+    def get_sublist(self):
+        # Getting number of members to get a ratio for the sublist
+        if len(self.list) < 1:
+            # Base Case
+            return {}
+        if len(self.list) == 1:
+            # Base Case
+            return self.list
+        # it depends on the function f(x)=4ln(x+2.5)-4
+        num = math.floor((4 * math.log1p(len(self.list) + 2.5)) - 4)
+        sublist = random.sample(list(self.list), num)
+        return sublist
+
 
 def main():
     list = MemberList()
-    list.add_member(('172.0.0.1', '8080'))
-    list.add_member(('172.0.0.2', '8081'))
+    list.add_member(('172.0.0.0', '8080'))
+    list.add_member(('172.0.0.1', '8081'))
+    list.add_member(('172.0.0.2', '8082'))
+    list.add_member(('172.0.0.3', '8083'))
+    list.add_member(('172.0.0.4', '8084'))
+    list.add_member(('172.0.0.5', '8085'))
+    list.add_member(('172.0.0.6', '8086'))
 
     print("---------")
     list.print_list()
-
-    list.remove_member(('172.0.0.2', '8081'))
+    print("Size: {}".format(len(list.list)))
 
     print("---------")
-    list.print_list()
+    sublist = list.get_sublist()
+    for i in sublist:
+        (ip, port) = i
+        print("Member: {}:{}".format(ip, port))
+    print("Size: {}".format(len(sublist)))
 
 
 if __name__ == "__main__":

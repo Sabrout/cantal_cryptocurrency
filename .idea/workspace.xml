@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e9854161-ed54-4022-a1a1-5376b7d92071" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/src/member_list.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/src/tracker.py" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/src/transaction.py" afterPath="$PROJECT_DIR$/src/transaction.py" />
+      <change beforePath="$PROJECT_DIR$/src/member_list.py" afterPath="$PROJECT_DIR$/src/member_list.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -44,9 +41,11 @@
       <file leaf-file-name="member_list.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/member_list.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="238">
-              <caret line="14" column="36" lean-forward="true" selection-start-line="14" selection-start-column="36" selection-end-line="14" selection-end-column="36" />
-              <folding />
+            <state relative-caret-position="272">
+              <caret line="16" column="12" lean-forward="true" selection-start-line="16" selection-start-column="12" selection-end-line="16" selection-end-column="12" />
+              <folding>
+                <element signature="e#0#13#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -500,9 +499,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/member_list.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="14" column="36" lean-forward="true" selection-start-line="14" selection-start-column="36" selection-end-line="14" selection-end-column="36" />
-          <folding />
+        <state relative-caret-position="272">
+          <caret line="16" column="12" lean-forward="true" selection-start-line="16" selection-start-column="12" selection-end-line="16" selection-end-column="12" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
