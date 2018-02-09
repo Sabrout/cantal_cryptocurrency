@@ -57,41 +57,41 @@ class Transaction:
         self.list_sign.append(sign)
 
 
-def main():
-    # Generating list_input
-    list_input = list()
-    list_input.append(('063E418310654DACA9B72F05F5FDF8E2', 0))
-    list_input.append(('8D6D35CC70BA14FBE1DBCA3057791135', 1))
-    list_input.append(('5EFC60B80FA21BAA18D66C9A9C33C51E', 1))
-    # Generating list_wallet
-    list_wallet = list()
-    list_wallet.append('063E418310654DACA9B72F05F5FDF8E2E')
-    list_wallet.append('8D6D35CC70BA14FBE1DBCA3057791135E')
-    list_wallet.append('5EFC60B80FA21BAA18D66C9A9C33C51EE')
-    # Generating list_amount
-    list_amount = list()
-    list_amount.append('1000')
-    list_amount.append('2000')
-    list_amount.append('3000')
-    list_amount.append('4000')
-    # Creating the transaction
-    trans = Transaction(list_input, list_wallet, list_amount)
-    # Printing Statements
-    print(trans.list_input)
-    print(trans.list_wallet)
-    print(trans.output_number0)
-    print(trans.output_number1)
-    print(trans.list_amount)
-    print(trans.hashable_string)
-    print(trans.hash.digest())
+# def main():
+#     # Generating list_input
+#     list_input = list()
+#     list_input.append(('063E418310654DACA9B72F05F5FDF8E2', 0))
+#     list_input.append(('8D6D35CC70BA14FBE1DBCA3057791135', 1))
+#     list_input.append(('5EFC60B80FA21BAA18D66C9A9C33C51E', 1))
+#     # Generating list_wallet
+#     list_wallet = list()
+#     list_wallet.append('063E418310654DACA9B72F05F5FDF8E2E')
+#     list_wallet.append('8D6D35CC70BA14FBE1DBCA3057791135E')
+#     list_wallet.append('5EFC60B80FA21BAA18D66C9A9C33C51EE')
+#     # Generating list_amount
+#     list_amount = list()
+#     list_amount.append('1000')
+#     list_amount.append('2000')
+#     list_amount.append('3000')
+#     list_amount.append('4000')
+#     # Creating the transaction
+#     trans = Transaction(list_input, list_wallet, list_amount)
+#     # Printing Statements
+#     print(trans.list_input)
+#     print(trans.list_wallet)
+#     print(trans.output_number0)
+#     print(trans.output_number1)
+#     print(trans.list_amount)
+#     print(trans.hashable_string)
+#     print(trans.hash.digest())
+#
+#     # Testing sign function
+#     # trans.sign('MYKEY')
+#     # print(trans.list_sign)
 
-    # Testing sign function
-    # trans.sign('MYKEY')
-    # print(trans.list_sign)
-
-
-if __name__ == "__main__":
-    main()
+#
+# if __name__ == "__main__":
+#     main()
 
 
 
