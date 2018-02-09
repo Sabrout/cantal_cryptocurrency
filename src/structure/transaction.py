@@ -1,98 +1,95 @@
-import hmac
+from src.structure.crypto import Crypto
 import hashlib
+import binascii
 
 
-class Transaction:
-    list_input = list()
-    list_wallet = list()
-    list_amount = list()
-    list_sign = list()
-    hash = hashlib.sha256()
-    output_number0 = 0
-    output_number1 = 1
-    hashable_string = ''
-
+class Transaction():
+    """
+    The class used for the transactions
+    """
     def __init__(self, list_input, list_wallet, list_amount):
+        """
+        The constructor will set all the lists and will verify the content
+        """
+        self.list_sign = list()
 
         # Checking format of list_input
-        temp_string = ''
-        for i in list_input:
-            (hash, output) = i
+        for (hash, output) in list_input:
             if len(hash) != 32:
-                raise Exception('INVALID HASH SIZE ERROR')
+                raise Exception('Error: Invalid Hash Size')
             if output != 1 and output != 0:
-                raise Exception('INVALID OUTPUT NUMBER ERROR')
-            self.hashable_string += hash
-            self.hashable_string += str(output)
+                raise Exception('Error: Invalid Output Number')
+
         self.list_input = list_input
 
         # Checking format of list_wallet
-        for i in list_wallet:
-            if len(i) != 33:
-                raise Exception('INVALID WALLET_PUB SIZE ERROR')
-            self.hashable_string += i
+        for wallet in list_wallet:
+            if len(wallet) != 33:
+                raise Exception('Error: Invalid Wallet_Pub Size')
+
         self.list_wallet = list_wallet
 
-        # Adding the 2 output numbers (Don't know why yet)
-        self.hashable_string += str(self.output_number0)
-        self.hashable_string += str(self.output_number1)
-
         # Checking format of list_amount
-        for i in list_amount:
-            if len(i) != 4:
-                raise Exception('INVALID AMOUNT SIZE ERROR')
+        for amount in list_amount:
             try:
-                value = int(i)
+                amount = int(amount)
             except ValueError:
-                print("comon")
-                raise Exception('INVALID AMOUNT ERROR')
-            self.hashable_string += i
+                raise Exception('Error: Invalid Amount')
+            self.hashable_string += str(amount)+"|"
+
         self.list_amount = list_amount
 
-        self.hash.update(str.encode(self.hashable_string))
-        self.hash.digest()
+        # We compute the hash of the function
+        self.compute_hash()
 
-    def sign(self, key):
-        sign = hmac.new(str.encode(key), msg=str.encode(self.hash.digest()), digestmod=hashlib.sha256).digest()
-        self.list_sign.append(sign)
+    def set_list_sign(self, list_sign):
+        """
+        We set and verify the signatures
+        """
+        self.list_sign = list_sign
+        if not(self.verify()):
+            self.list_sign = list()
 
+    def compute_hash(self):
+        """
+        We compute an hash for the transaction: it will
+        represent the transaction
+        """
+        hashable_string = ''
 
-# def main():
-#     # Generating list_input
-#     list_input = list()
-#     list_input.append(('063E418310654DACA9B72F05F5FDF8E2', 0))
-#     list_input.append(('8D6D35CC70BA14FBE1DBCA3057791135', 1))
-#     list_input.append(('5EFC60B80FA21BAA18D66C9A9C33C51E', 1))
-#     # Generating list_wallet
-#     list_wallet = list()
-#     list_wallet.append('063E418310654DACA9B72F05F5FDF8E2E')
-#     list_wallet.append('8D6D35CC70BA14FBE1DBCA3057791135E')
-#     list_wallet.append('5EFC60B80FA21BAA18D66C9A9C33C51EE')
-#     # Generating list_amount
-#     list_amount = list()
-#     list_amount.append('1000')
-#     list_amount.append('2000')
-#     list_amount.append('3000')
-#     list_amount.append('4000')
-#     # Creating the transaction
-#     trans = Transaction(list_input, list_wallet, list_amount)
-#     # Printing Statements
-#     print(trans.list_input)
-#     print(trans.list_wallet)
-#     print(trans.output_number0)
-#     print(trans.output_number1)
-#     print(trans.list_amount)
-#     print(trans.hashable_string)
-#     print(trans.hash.digest())
-#
-#     # Testing sign function
-#     # trans.sign('MYKEY')
-#     # print(trans.list_sign)
+        # We add the list of inputs
+        for (hash, output) in self.list_input:
+            hashable_string += hash+"|"
+            hashable_string += str(output)+"|"
 
-#
-    # if __name__ == "__main__":
-    #     main()
+        # We add the list of wallets
+        for wallet in self.list_wallet:
+            hashable_string += wallet+"|"
 
+        # We add the list of amounts
+        for amount in self.list_amount:
+            self.hashable_string += str(amount)+"|"
 
+        # We delete the last pipe
+        self.hashable_string = self.hashable_string[:-1]
 
+        # We encode the hashable string
+        hashable_string = hashable_string[:-1]
+        hash = hashlib.sha256()
+        hash.update(str.encode(hashable_string))
+        self.hash = binascii.hexlify(hash.digest()).decode("utf-8")
 
+    def verify(self):
+        """
+        This function will verify all the signature i.e a transaction is valid
+        iff all signatures are valid (we don't have now the history
+        of transactions)
+        """
+        if len(self.list_sign) != len(self.list_wallet)-2:
+            return False
+
+        for i in range(0, len(self.list_sign)):
+            if not(Crypto.verify(self.list_wallet[i], self.list_sign[i],
+                                 self.hash)):
+                return False
+        return True
