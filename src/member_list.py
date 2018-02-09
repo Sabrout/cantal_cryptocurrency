@@ -19,6 +19,12 @@ class MemberList():
         except ValueError:
             raise Exception('MEMBER NOT FOUND ERROR')
 
+    def is_member(self, member):
+        if len(self.list) == 0 or self.list.get(member) == None:
+            return False
+        else:
+            return True
+
     def print_list(self):
         for i in self.list.keys():
             (ip, port) = i
@@ -58,6 +64,9 @@ def main():
         (ip, port) = i
         print("Member: {}:{}".format(ip, port))
     print("Size: {}".format(len(sublist)))
+
+    print("---------")
+    print(list.is_member(('172.0.0.9', '8080')))
 
 
 if __name__ == "__main__":

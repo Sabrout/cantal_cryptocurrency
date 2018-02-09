@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e9854161-ed54-4022-a1a1-5376b7d92071" name="Default" comment="">
+      <change beforePath="" afterPath="$PROJECT_DIR$/tests/structure/member_list.py" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/src/member_list.py" afterPath="$PROJECT_DIR$/src/member_list.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -38,13 +40,37 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="member_list.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="member_list.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/member_list.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="272">
-              <caret line="16" column="12" lean-forward="true" selection-start-line="16" selection-start-column="12" selection-end-line="16" selection-end-column="12" />
+            <state relative-caret-position="-17">
+              <caret line="22" column="64" lean-forward="false" selection-start-line="22" selection-start-column="64" selection-end-line="22" selection-end-column="64" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="member_list.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/tests/structure/member_list.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="391">
+              <caret line="23" column="27" lean-forward="false" selection-start-line="23" selection-start-column="27" selection-end-line="23" selection-end-column="27" />
+              <folding>
+                <element signature="e#0#15#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="transaction.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/tests/structure/transaction.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="221">
+              <caret line="13" column="28" lean-forward="true" selection-start-line="13" selection-start-column="28" selection-end-line="13" selection-end-column="28" />
+              <folding>
+                <element signature="e#0#15#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -68,6 +94,7 @@
         <option value="$PROJECT_DIR$/src/temp.py" />
         <option value="$PROJECT_DIR$/src/tracker.py" />
         <option value="$PROJECT_DIR$/src/transaction.py" />
+        <option value="$PROJECT_DIR$/tests/structure/member_list.py" />
         <option value="$PROJECT_DIR$/src/member_list.py" />
       </list>
     </option>
@@ -111,6 +138,12 @@
               <item name="2018-net-c" type="462c0819:PsiDirectoryNode" />
               <item name="tests" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="2018-net-c" type="b2602c69:ProjectViewProjectNode" />
+              <item name="2018-net-c" type="462c0819:PsiDirectoryNode" />
+              <item name="tests" type="462c0819:PsiDirectoryNode" />
+              <item name="structure" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -134,7 +167,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.member_list">
+  <component name="RunManager" selected="Python tests.Unittests in member_list.py">
     <configuration name="member_list" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -189,16 +222,32 @@
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
-    <list size="3">
+    <configuration name="Unittests in member_list.py" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests/structure" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="2018-net-c" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;$PROJECT_DIR$/tests/structure/member_list.py&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
+    </configuration>
+    <list size="4">
       <item index="0" class="java.lang.String" itemvalue="Python.temp" />
       <item index="1" class="java.lang.String" itemvalue="Python.transaction" />
       <item index="2" class="java.lang.String" itemvalue="Python.member_list" />
+      <item index="3" class="java.lang.String" itemvalue="Python tests.Unittests in member_list.py" />
     </list>
     <recent_temporary>
-      <list size="3">
-        <item index="0" class="java.lang.String" itemvalue="Python.member_list" />
-        <item index="1" class="java.lang.String" itemvalue="Python.transaction" />
-        <item index="2" class="java.lang.String" itemvalue="Python.temp" />
+      <list size="4">
+        <item index="0" class="java.lang.String" itemvalue="Python tests.Unittests in member_list.py" />
+        <item index="1" class="java.lang.String" itemvalue="Python.member_list" />
+        <item index="2" class="java.lang.String" itemvalue="Python.transaction" />
+        <item index="3" class="java.lang.String" itemvalue="Python.temp" />
       </list>
     </recent_temporary>
   </component>
@@ -217,6 +266,38 @@
       <updated>1517838066206</updated>
     </task>
     <servers />
+  </component>
+  <component name="TestHistory">
+    <history-entry file="Unittests_in_member_list_py - 2018.02.09 at 15h 20m 09s.xml">
+      <configuration name="Unittests in member_list.py" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_in_member_list_py - 2018.02.09 at 15h 20m 17s.xml">
+      <configuration name="Unittests in member_list.py" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_in_member_list_py - 2018.02.09 at 15h 22m 05s.xml">
+      <configuration name="Unittests in member_list.py" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_in_member_list_py - 2018.02.09 at 15h 22m 54s.xml">
+      <configuration name="Unittests in member_list.py" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_in_member_list_py - 2018.02.09 at 15h 23m 36s.xml">
+      <configuration name="Unittests in member_list.py" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_in_member_list_py - 2018.02.09 at 15h 24m 06s.xml">
+      <configuration name="Unittests in member_list.py" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_in_member_list_py - 2018.02.09 at 15h 24m 27s.xml">
+      <configuration name="Unittests in member_list.py" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_in_member_list_py - 2018.02.09 at 15h 24m 40s.xml">
+      <configuration name="Unittests in member_list.py" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_in_member_list_py - 2018.02.09 at 15h 26m 15s.xml">
+      <configuration name="Unittests in member_list.py" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_in_member_list_py - 2018.02.09 at 15h 28m 44s.xml">
+      <configuration name="Unittests in member_list.py" configurationId="tests" />
+    </history-entry>
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1096" extended-state="6" />
@@ -469,16 +550,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tests/structure/transaction.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="12" column="32" lean-forward="true" selection-start-line="12" selection-start-column="32" selection-end-line="12" selection-end-column="32" />
-          <folding>
-            <element signature="e#0#15#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/tracker.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -497,12 +568,32 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/tests/structure/transaction.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="13" column="28" lean-forward="true" selection-start-line="13" selection-start-column="28" selection-end-line="13" selection-end-column="28" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/member_list.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="16" column="12" lean-forward="true" selection-start-line="16" selection-start-column="12" selection-end-line="16" selection-end-column="12" />
+        <state relative-caret-position="-17">
+          <caret line="22" column="64" lean-forward="false" selection-start-line="22" selection-start-column="64" selection-end-line="22" selection-end-column="64" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/structure/member_list.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="391">
+          <caret line="23" column="27" lean-forward="false" selection-start-line="23" selection-start-column="27" selection-end-line="23" selection-end-column="27" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
           </folding>
         </state>
       </provider>
