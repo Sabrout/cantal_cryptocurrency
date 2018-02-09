@@ -41,6 +41,11 @@ class Transaction:
         for i in list_amount:
             if len(i) != 4:
                 raise Exception('INVALID AMOUNT SIZE ERROR')
+            try:
+                value = int(i)
+            except ValueError:
+                print("comon")
+                raise Exception('INVALID AMOUNT ERROR')
             self.hashable_string += i
         self.list_amount = list_amount
 
@@ -51,7 +56,12 @@ class Transaction:
         sign = hmac.new(str.encode(key), msg=str.encode(self.hash.digest()), digestmod=hashlib.sha256).digest()
         self.list_sign.append(sign)
 
+
 def main():
+    # try:
+    #     value = int('100x')
+    # except ValueError:
+    #     raise Exception('Nope')
     # Generating list_input
     list_input = list()
     list_input.append(('063E418310654DACA9B72F05F5FDF8E2', 0))
