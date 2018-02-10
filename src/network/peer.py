@@ -27,3 +27,4 @@ class Peer():
         there are in the receive queue
         """
         message = self.server.queue_receive.get()
+        return message
