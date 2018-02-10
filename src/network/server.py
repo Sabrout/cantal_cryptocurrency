@@ -76,7 +76,3 @@ class Server:
         return t
 
 
-s = Server('localhost', 9999)
-
-s.accept().start()
-print(s.consumer_receive().start())

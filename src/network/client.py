@@ -15,6 +15,10 @@ class Client:
         self.queue_response = queue.Queue()
         
 
+    def setup_client(self, IP, port):
+        self.socket = socket.create_connection((IP, port))
+        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        
     def send(self, message):
         writer = Writer(message)
         string = writer.write()
@@ -25,9 +29,9 @@ class Client:
         self.socket.close()
 
 
-    def consumer_response(self, queue):
+    def consumer_response(self):
         def handle_thread():
-            socket, message = queue.get()
+            socket, message = self.queue_response.get()
 
             print(socket)
             print(message)
@@ -36,10 +40,4 @@ class Client:
         return t
 
 
-c = Client('localhost', 9999)
-
-message_client = Message.create(Message.LIST, Message.REQUEST, 1234)
-c.send(message_client)
-
-c.close()
 

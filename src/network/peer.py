@@ -8,17 +8,11 @@ class Peer():
         self.client = Client()
 
     def producer_response(self, socket, message):
-        def handle_thread():
-            self.client.queue_response.put((socket, message))
+        self.client.queue_response.put((socket, message))
             
-        t = Thread(target = handle_thread)
-        return t
 
     def consumer_receive(self):
-        def handle_thread():
-           message = self.server.queue_receive.get()
+        message = self.server.queue_receive.get()
  
-        t = Thread(target = handle_thread)
-        return t 
 
     
