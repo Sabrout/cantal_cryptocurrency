@@ -1,43 +1,67 @@
 from threading import Thread
-from src.network.message import Message
 from src.writer.writer import Writer
 import socket
 import queue
 
+
 class Client:
+    """
+    This class represent a network client
+    """
+
     def __init__(self, IP=None, port=None):
+        """
+        The constructor will instanciate a client with the IP and the Port if
+        the information is available
+        """
+        # We can set the socket if we have the IP and the port
         if(IP is None or port is None):
             self.socket = None
         else:
-            self.socket = socket.create_connection((IP, port))
-            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            self.set_client(IP, port)
 
+        # We set the queue for the client (i.e the client with consume the
+        # queue)
         self.queue_response = queue.Queue()
-        
 
-    def setup_client(self, IP, port):
+    def set_socket(self, socket):
+        """
+        We set the socket here
+        """
+        self.socket = socket
+
+    def set_client(self, IP, port):
+        """
+        We create the client with an IP and a port
+        """
         self.socket = socket.create_connection((IP, port))
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        
+
     def send(self, message):
+        """
+        We send a object Message through the network
+        """
         writer = Writer(message)
         string = writer.write()
         string = string.encode()
         self.socket.sendall(string)
-        
+
     def close(self):
+        """
+        We close the socket
+        """
         self.socket.close()
 
-
-    def consumer_response(self):
+    def consume_response(self):
+        """
+        The function will create a Thread to consume the queue
+        and send the response
+        """
         def handle_thread():
             socket, message = self.queue_response.get()
+            self.set_socket(socket)
+            self.send(message)
+            handle_thread()
 
-            print(socket)
-            print(message)
-
-        t = Thread(target = handle_thread)
+        t = Thread(target=handle_thread)
         return t
-
-
-
