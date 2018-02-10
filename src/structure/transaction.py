@@ -93,3 +93,10 @@ class Transaction():
                                  self.hash)):
                 return False
         return True
+
+    def save(self, transaction_file):
+        # If transaction_file is a path then we open the file
+        if isinstance(transaction_file, str):
+            transaction_file = open(transaction_file, "wb")
+
+        # transaction_file.write()
