@@ -11,7 +11,7 @@ class TransactionList():
         """
         self.transaction_list = []
 
-    def add(self, transaction):
+    def __setitem__(self, transaction):
         """
         This function add a transaction if the object is a transaction
         """
@@ -19,6 +19,12 @@ class TransactionList():
             self.transaction_list.append()
         else:
             raise Exception("Error: not a transaction")
+
+    def __len__(self):
+        return len(self.transaction_list)
+
+    def __getitem__(self, item):
+       return self.transaction_list[item]
 
     def __str__(self):
         """
