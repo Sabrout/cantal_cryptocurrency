@@ -1,5 +1,5 @@
 from threading import Thread
-from src.reader.syntax import SyntaxReader
+from src.network.syntax import SyntaxReader
 import socket
 import queue
 

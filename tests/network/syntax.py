@@ -1,6 +1,6 @@
 import unittest
 from src.network.message import Message
-from src.reader.syntax import SyntaxReader
+from src.network.syntax import SyntaxReader
 
 
 class SyntaxReaderTest(unittest.TestCase):

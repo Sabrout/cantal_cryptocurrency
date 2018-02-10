@@ -1,12 +1,12 @@
 from threading import Thread
-from src.writer.writer import Writer
+from src.network.writer import MessageWriter
 import socket
 import queue
 
 
 class Client:
     """
-    This class represent a network client
+    This class represents a network client
     """
 
     def __init__(self, IP=None, port=None):
@@ -41,7 +41,7 @@ class Client:
         """
         We send a object Message through the network
         """
-        writer = Writer(message)
+        writer = MessageWriter(message)
         string = writer.write()
         string = string.encode()
         self.socket.sendall(string)
