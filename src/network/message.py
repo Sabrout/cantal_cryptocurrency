@@ -16,6 +16,13 @@ class Message():
         self.packet_type = Message.NOTHING
         self.data = None
 
+    def create(packet, packet_type, data):
+        message = Message()
+        message.set_packet(packet)
+        message.set_packet_type(packet_type)
+        message.set_data(data)
+        return message
+
     def set_packet(self, packet):
         if(packet == Message.LIST
            or packet == Message.MEMBER
