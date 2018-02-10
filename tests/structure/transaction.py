@@ -1,5 +1,5 @@
 import unittest
-from src.transaction import Transaction
+from src.structure.transaction import Transaction
 
 
 class TransactionTest(unittest.TestCase):
