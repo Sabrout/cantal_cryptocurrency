@@ -1,9 +1,9 @@
 from src.network.message import Message
 
 
-class Writer():
+class MessageWriter():
     """
-    The class Writer will take a object Message
+    The class MessageWriter will take a object Message
     and it will interpret the object to have a network message
     """
     def __init__(self, message):
