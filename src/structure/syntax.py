@@ -1,4 +1,8 @@
 from src.structure.lexical import LexicalReader
+from src.structure.blockchain import CheeseStack
+from src.structure.blockchain import Cheese
+from src.structure.transaction import Transaction
+from src.structure.transaction_list import TransactionList
 
 class SyntaxReader():
     """
