@@ -9,22 +9,27 @@ class TransactionList():
         """
         The constructor will initialize the list of transactions
         """
+        self.transaction_index = {}
         self.transaction_list = []
 
-    def __setitem__(self, transaction):
+    def add(self, transaction):
         """
         This function add a transaction if the object is a transaction
         """
         if isinstance(transaction, Transaction):
-            self.transaction_list.append()
+            self.transaction_list.append(transaction)
+            size = len(self.transaction_list)-1
+            self.transaction_index[transaction.hash] = size
         else:
             raise Exception("Error: not a transaction")
 
     def __len__(self):
         return len(self.transaction_list)
 
-    def __getitem__(self, item):
-       return self.transaction_list[item]
+    def get(self, item):
+        if isinstance(item, str):
+            item = self.transaction_index[item]
+        return self.transaction_list[item]
 
     def __str__(self):
         """
@@ -35,3 +40,7 @@ class TransactionList():
             string += transaction.hash+"|"
         string = string[:-1]
         return string
+
+    def __iter__(self):
+        for transaction in self.transaction_list:
+            yield transaction

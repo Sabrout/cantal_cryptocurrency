@@ -12,6 +12,7 @@ class Transaction():
         The constructor will set all the lists and will verify the content
         """
         self.list_sign = list()
+        self.used_output = [None, None]
 
         # Checking format of list_input
         for (hash, output) in list_input:
@@ -85,6 +86,10 @@ class Transaction():
         iff all signatures are valid (we don't have now the history
         of transactions)
         """
+        total_amount = sum(self.list_sign[:-1])
+        if self.list_amount[len(self.list_amount)-1] <= total_amount:
+            return False
+
         if len(self.list_sign) != len(self.list_wallet)-2:
             return False
 
