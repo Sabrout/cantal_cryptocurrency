@@ -12,6 +12,13 @@ class Cheese:
         self.nonce = nonce
         self.data = data
 
+    def create(smell, parent_smell, nonce, data):
+        """
+        Create a cheese
+        """
+        cheese = Cheese(smell, parent_smell, nonce, data)
+        return cheese
+    
     def set_smell(self, smell):
         """
         The smell of a cheese is the hash of the parent smell + data + nonce

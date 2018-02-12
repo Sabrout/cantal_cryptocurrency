@@ -7,13 +7,41 @@ class Transaction():
     """
     The class used for the transactions
     """
-    def __init__(self, list_input, list_wallet, list_amount):
+    def __init__(self, list_input=None, list_wallet=None, list_amount=None):
         """
         The constructor will set all the lists and will verify the content
         """
         self.list_sign = list()
         self.used_output = [None, None]
 
+        if(list_input is not None):
+            # Checking format of list_input
+            self.set_list_input(list_input)
+        else:
+            self.list_input = list_input
+
+        if(list_wallet is not None):
+            # Checking format of list_wallet
+            self.set_list_wallet(list_wallet)
+        else:
+            self.list_wallet = list_wallet
+
+        if(list_amount is not None):
+            # Checking format of list_amount
+            self.set_list_amount(list_amount)
+        else:
+            self.list_amount = list_amount
+
+        if(list_input is not None and list_wallet is not None
+           and list_amount is not None):
+            # We compute the hash of the function
+            self.compute_hash()
+
+    def set_list_input(self, list_input):
+        """
+        Verify the format and
+        set the list of input
+        """
         # Checking format of list_input
         for (hash, output) in list_input:
             if len(hash) != 64:
@@ -23,6 +51,11 @@ class Transaction():
 
         self.list_input = list_input
 
+    def set_list_wallet(self, list_wallet):
+        """
+        Verify the format and
+        set the list of wallet
+        """
         # Checking format of list_wallet
         for wallet in list_wallet:
             if len(wallet) != 96:
@@ -30,6 +63,11 @@ class Transaction():
 
         self.list_wallet = list_wallet
 
+    def set_list_amount(self, list_amount):
+        """
+        Verify the format and
+        set the list of amount
+        """
         # Checking format of list_amount
         for amount in list_amount:
             try:
@@ -38,9 +76,6 @@ class Transaction():
                 raise Exception('Error: Invalid Amount')
 
         self.list_amount = list_amount
-
-        # We compute the hash of the function
-        self.compute_hash()
 
     def set_list_sign(self, list_sign, verify=True):
         """
