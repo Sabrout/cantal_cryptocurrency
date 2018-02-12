@@ -1,2 +1,8 @@
+*.pyc
+__pycache__
 *.xml
-*.xml
+*.iml
+*~
+.DS_Store
+\#*
+.\#*
