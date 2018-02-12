@@ -115,6 +115,10 @@ class Transaction():
         self.hash = binascii.hexlify(hash.digest()).decode("utf-8")
 
     def verify_bank(self):
+        """
+        We verify if the only sender is bank ie there is only wallet_bank in
+        list_wallet
+        """
         wallet_bank = "0000000000000000000000000000000000000000000000"
         wallet_bank += "00000000000000000000000000000000000000000000000000"
 
@@ -124,6 +128,10 @@ class Transaction():
         return False
 
     def verify_miner(self):
+        """
+        We verify that a transaction is a particular kind of transaction which is
+        mining, ie: bank gives 1 to the miner and cash in hand the rest
+        """
         if len(self.list_input) != 1:
             return False
 
