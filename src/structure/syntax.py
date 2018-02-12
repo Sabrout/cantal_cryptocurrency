@@ -110,6 +110,7 @@ class SyntaxReader():
         self.list_transaction = TransactionList()
         
         self.transaction()
+        self.transaction.compute_hash()
         self.list_transaction.transaction_list.append(self.transaction)
         
         self.list_transaction_next()
@@ -123,6 +124,7 @@ class SyntaxReader():
             self.shift()
             
             self.transaction()
+            self.transaction.compute_hash()
             self.list_transaction.transaction_list.append(self.transaction)
             
             self.list_transaction_next()
