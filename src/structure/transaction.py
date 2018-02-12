@@ -73,7 +73,6 @@ class Transaction():
                 amount = int(amount)
             except ValueError:
                 raise Exception('Error: Invalid Amount')
-            self.hashable_string += str(amount)+"|"
 
         self.list_amount = list_amount
         
@@ -84,6 +83,17 @@ class Transaction():
         self.list_sign = list_sign
         if not(self.verify()):
             self.list_sign = list()
+
+    def set_used_output(self, first_hash, second_hash):
+        """
+        We verify the format of the hash
+        and we store them in used_output
+        """
+        # Checking format of hash
+        if len(first_hash) != 32 or len(second_hash) !=32 :
+            raise Exception('Error: Invalid Hash Size')
+
+        self.used_output = [first_hash, second_hash]
 
     def compute_hash(self):
         """
@@ -103,10 +113,10 @@ class Transaction():
 
         # We add the list of amounts
         for amount in self.list_amount:
-            self.hashable_string += str(amount)+"|"
+            hashable_string += str(amount)+"|"
 
         # We delete the last pipe
-        self.hashable_string = self.hashable_string[:-1]
+        hashable_string = hashable_string[:-1]
 
         # We encode the hashable string
         hashable_string = hashable_string[:-1]
@@ -148,8 +158,8 @@ class Transaction():
         iff all signatures are valid (we don't have now the history
         of transactions)
         """
-        total_amount = sum(self.list_sign[:-1])
-        if self.list_amount[len(self.list_amount)-1] <= total_amount:
+        total_amount = sum(self.list_amount[:-1])
+        if self.list_amount[len(self.list_amount)-1] > total_amount:
             return False
 
         if len(self.list_sign) != len(self.list_wallet)-2:
