@@ -17,7 +17,7 @@ class MemberList():
         try:
             self.list.__delitem__(member)
         except ValueError:
-            raise Exception('MEMBER NOT FOUND ERROR')
+            raise Exception('Error: Member not found')
 
     def is_member(self, member):
         if len(self.list) == 0 or self.list.get(member) is None:
