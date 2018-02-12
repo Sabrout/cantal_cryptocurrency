@@ -1,4 +1,4 @@
-from src.reader.lexical import LexicalReader
+from src.network.lexical import LexicalReader
 from src.network.message import Message
 
 
