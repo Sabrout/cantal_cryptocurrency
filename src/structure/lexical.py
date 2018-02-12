@@ -1,6 +1,7 @@
 import re
 
-class LexicalReader():
+
+class CheeseLexicalReader():
     """
     Create a lexical parser
     """
@@ -41,7 +42,7 @@ class LexicalReader():
     SIGNATURE = 3
 
     SEPARATOR = 4
-    SEPARATOR_CHEESE_ELEM = 5  
+    SEPARATOR_CHEESE_ELEM = 5
     SEPARATOR_TRANSACTION_INNER = 6
 
     def lexeme(self):
@@ -63,4 +64,3 @@ class LexicalReader():
             return self.SEPARATOR_CHEESE_ELEM
         if self.match("-"):
             return self.SEPARATOR_TRANSACTION_INNER
-    

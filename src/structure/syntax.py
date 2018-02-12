@@ -1,14 +1,19 @@
-from src.structure.lexical import LexicalReader
+from src.structure.lexical import CheeseLexicalReader
+from src.structure.cheese import Cheese
+from src.structure.transaction_list import TransactionList
+from src.structure.transaction import Transaction
 
-class SyntaxReader():
+
+class CheeseSyntaxReader():
     """
     Create a syntaxical parser
     """
-    def __init__(self, sentence):
+    def __init__(self, sentence, cheese_stack):
         """
         Initialize the parser with a sentence and initialize the lexical parser
         """
-        self.lexical = LexicalReader(sentence)
+        self.cheese_stack = cheese_stack
+        self.lexical = CheeseLexicalReader(sentence)
         self.lookahead = None
 
     def get_lookahead(self):
@@ -41,7 +46,6 @@ class SyntaxReader():
         """
         Parse the sentence and return the cheese stack object
         """
-        self.cheese_stack = CheeseStack()
         self.list_cheese()
         return self.cheese_stack
 
@@ -51,7 +55,7 @@ class SyntaxReader():
         """
         self.cheese()
         self.cheese_stack.push(self.cheese)
-        
+
         self.list_cheese_next()
 
     def list_cheese_next(self):
@@ -64,7 +68,7 @@ class SyntaxReader():
 
             self.cheese()
             self.cheese_stack.push(self.cheese)
-            
+
             self.list_cheese_next()
 
     def cheese(self):
@@ -72,7 +76,7 @@ class SyntaxReader():
         Parse a cheese
         """
         self.cheese = Cheese()
-        
+
         self.look()
         self.check(self.lexical.HASH)
         # Get the smell which is the hash
@@ -104,10 +108,10 @@ class SyntaxReader():
         Parse a list of transaction
         """
         self.list_transaction = TransactionList()
-        
+
         self.transaction()
         self.list_transaction.transaction_list.append(self.transaction)
-        
+
         self.list_transaction_next()
 
     def list_transaction_next(self):
@@ -117,10 +121,10 @@ class SyntaxReader():
         self.look()
         if(self.get_lookahead() == self.lexical.SEPARATOR):
             self.shift()
-            
+
             self.transaction()
             self.list_transaction.transaction_list.append(self.transaction)
-            
+
             self.list_transaction_next()
 
     def transaction(self):
@@ -128,7 +132,7 @@ class SyntaxReader():
         Parse a transaction
         """
         self.transaction = Transaction()
-        
+
         self.list_input()
         self.transaction.set_list_input(self.list_input)
 
@@ -158,7 +162,7 @@ class SyntaxReader():
         Parse a list of input
         """
         self.list_input = list()
-        
+
         self.look()
         self.check(self.lexical.HASH)
         hash = self.lexical.get_text()
@@ -183,18 +187,18 @@ class SyntaxReader():
         Parse a list of input
         """
         self.look()
-        if(self.get_lookahead() ==  self.lexical.SEPARATOR_TRANSACTION_INNER):
+        if(self.get_lookahead() == self.lexical.SEPARATOR_TRANSACTION_INNER):
             self.shift()
 
             self.look()
             self.check(self.lexical.HASH)
             hash = self.lexical.get_text()
             self.shift()
-            
+
             self.look()
             self.check(self.lexical.SEPARATOR)
             self.shift()
-            
+
             self.look()
             self.check(self.lexical.DIGIT)
             digit = int(self.lexical.get_text())
@@ -202,7 +206,7 @@ class SyntaxReader():
 
             # Add an input in the list of input
             self.list_input.append((hash, digit))
-            
+
             self.list_input_next()
 
     def list_wallet(self):
@@ -210,7 +214,7 @@ class SyntaxReader():
         Parse a list of wallet
         """
         self.list_wallet = list()
-        
+
         self.look()
         self.check(self.lexical.PUBLIC_KEY)
         public_key = self.lexical.get_text()
@@ -236,7 +240,7 @@ class SyntaxReader():
 
             # Add a public_key to the list of wallet
             self.list_wallet.append(public_key)
-            
+
             self.list_wallet_next()
 
     def list_amount(self):
@@ -244,7 +248,7 @@ class SyntaxReader():
         Parse a list of amount
         """
         self.list_amount = list()
-        
+
         self.look()
         self.check(self.lexical.DIGIT)
         digit = int(self.lexical.get_text())
@@ -270,7 +274,7 @@ class SyntaxReader():
 
             # Add an amount to the list of amount
             self.list_amount.append(digit)
-            
+
             self.list_amount_next()
 
     def list_sign(self):
@@ -278,7 +282,7 @@ class SyntaxReader():
         Parse a list of signature
         """
         self.list_sign = list()
-        
+
         self.look()
         self.check(self.lexical.SIGNATURE)
         signature = self.lexical.get_text()
@@ -289,7 +293,7 @@ class SyntaxReader():
 
         self.list_sign_next()
 
-    def list_sign_next():
+    def list_sign_next(self):
         """
         Parse a list of signature
         """
@@ -304,13 +308,5 @@ class SyntaxReader():
 
             # Add a signature to the list of signature
             self.list_sign.append(signature)
-            
+
             self.list_sign_next()
-            
-        
-
-        
-        
-        
-
-        
