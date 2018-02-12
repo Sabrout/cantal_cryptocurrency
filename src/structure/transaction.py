@@ -12,6 +12,7 @@ class Transaction():
         The constructor will set all the lists and will verify the content
         """
         self.list_sign = list()
+        self.used_output = [None, None]
 
         if(list_input is not None):
             # Checking format of list_input
@@ -113,12 +114,44 @@ class Transaction():
         hash.update(str.encode(hashable_string))
         self.hash = binascii.hexlify(hash.digest()).decode("utf-8")
 
+    def verify_bank(self):
+        wallet_bank = "0000000000000000000000000000000000000000000000"
+        wallet_bank += "00000000000000000000000000000000000000000000000000"
+
+        for wallet in self.list_wallet:
+            if wallet == wallet_bank:
+                return True
+        return False
+
+    def verify_miner(self):
+        if len(self.list_input) != 1:
+            return False
+
+        if len(self.list_wallet) != 3:
+            return False
+
+        wallet_bank = "0000000000000000000000000000000000000000000000"
+        wallet_bank += "00000000000000000000000000000000000000000000000000"
+
+        if (self.list_wallet[0] != wallet_bank or
+                self.list_wallet[2] != wallet_bank):
+            return False
+
+        if self.list_amount[1] != 1:
+            return False
+
+        return True
+
     def verify(self):
         """
         This function will verify all the signature i.e a transaction is valid
         iff all signatures are valid (we don't have now the history
         of transactions)
         """
+        total_amount = sum(self.list_sign[:-1])
+        if self.list_amount[len(self.list_amount)-1] <= total_amount:
+            return False
+
         if len(self.list_sign) != len(self.list_wallet)-2:
             return False
 
