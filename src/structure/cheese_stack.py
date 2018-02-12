@@ -15,7 +15,7 @@ class CheeseStack:
         self.block_index = {}
         self.transaction_index = {}
 
-    def isEmpty(self):
+    def is_empty(self):
         """
         Return true if the blockchain is empty
         """
@@ -36,9 +36,10 @@ class CheeseStack:
 
             #
             for (hash, output) in transaction.list_input:
-                input_block = self.transaction_index[hash]
-                input_transaction = self.blockchain[input_block].data.get(hash)
-                input_transaction.used_output[output] = transaction.hash
+                if len(self) != 1:
+                    input_block = self.transaction_index[hash]
+                    input_transaction = self.blockchain[input_block].data.get(hash)
+                    input_transaction.used_output[output] = transaction.hash
 
     def last(self):
         """
