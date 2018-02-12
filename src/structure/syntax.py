@@ -54,7 +54,7 @@ class CheeseSyntaxReader():
         Parse a list a cheese
         """
         self.cheese()
-        self.cheese_stack.push(self.cheese)
+        self.cheese_stack.add(self.cheese)
 
         self.list_cheese_next()
 
@@ -82,6 +82,17 @@ class CheeseSyntaxReader():
         # Get the smell which is the hash
         smell = self.lexical.get_text()
         self.cheese.set_smell(smell)
+        self.shift()
+
+        self.look()
+        self.check(self.lexical.SEPARATOR_CHEESE_ELEM)
+        self.shift()
+
+        self.look()
+        self.check(self.lexical.HASH)
+        # Get the smell which is the hash
+        smell = self.lexical.get_text()
+        self.cheese.set_parent_smell(smell)
         self.shift()
 
         self.look()
@@ -157,7 +168,12 @@ class CheeseSyntaxReader():
         self.shift()
 
         self.list_sign()
-        self.transaction.set_list_sign(self.list_sign)
+
+        # We don't need to test the blue transaction
+        if len(self.cheese_stack) != 0:
+            self.transaction.set_list_sign(self.list_sign)
+        else:
+            self.transaction.set_list_sign(self.list_sign, verify=False)
 
     def list_input(self):
         """
@@ -218,7 +234,7 @@ class CheeseSyntaxReader():
         self.list_wallet = list()
 
         self.look()
-        self.check(self.lexical.PUBLIC_KEY)
+        self.check(self.lexical.ENCRYPTION)
         public_key = self.lexical.get_text()
         self.shift()
 
@@ -236,7 +252,7 @@ class CheeseSyntaxReader():
             self.shift()
 
             self.look()
-            self.check(self.lexical.PUBLIC_KEY)
+            self.check(self.lexical.ENCRYPTION)
             public_key = self.lexical.get_text()
             self.shift()
 
@@ -266,7 +282,7 @@ class CheeseSyntaxReader():
         Parse a list of amount
         """
         self.look()
-        if(self.get_lookahead == self.lexical.SEPARATOR_TRANSACTION_INNER):
+        if(self.get_lookahead() == self.lexical.SEPARATOR_TRANSACTION_INNER):
             self.shift()
 
             self.look()
@@ -286,7 +302,7 @@ class CheeseSyntaxReader():
         self.list_sign = list()
 
         self.look()
-        self.check(self.lexical.SIGNATURE)
+        self.check(self.lexical.ENCRYPTION)
         signature = self.lexical.get_text()
         self.shift()
 
@@ -304,7 +320,7 @@ class CheeseSyntaxReader():
             self.shift()
 
             self.look()
-            self.check(self.lexical.SIGNATURE)
+            self.check(self.lexical.ENCRYPTION)
             signature = self.lexical.get_text()
             self.shift()
 

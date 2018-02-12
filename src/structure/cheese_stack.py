@@ -34,7 +34,7 @@ class CheeseStack():
                            + "00000000000000000000000000000000000000000000000"]
             list_amount = [3000000, 3000000]
             list_sign = ["0000000000000000000000000000000000000000000000000"
-                          + "00000000000000000000000000000000000000000000000"]
+                         + "00000000000000000000000000000000000000000000000"]
             blue_trans = Transaction(list_input, list_wallet, list_amount)
             blue_trans.set_list_sign(list_sign, verify=False)
             transaction_list = TransactionList()
@@ -46,8 +46,7 @@ class CheeseStack():
             blue_cheese = Cheese(smell, parent_smell, nonce, transaction_list)
             cheese_stack = CheeseStack()
             cheese_stack.add(blue_cheese)
-            print(blue_cheese)
-            print(blue_cheese.smell)
+
             writer = CheeseStackWriter(cheese_stack, cheese_path)
             writer.write()
             writer.close()
@@ -81,7 +80,8 @@ class CheeseStack():
             if len(self.blockchain) != 1:
                 for (hash, output) in transaction.list_input:
                     input_block = self.transaction_index[hash]
-                    input_transaction = self.blockchain[input_block].data.get(hash)
+                    input_data_transaction = self.blockchain[input_block].data
+                    input_transaction = input_data_transaction.get(hash)
                     input_transaction.used_output[output] = transaction.hash
 
     def last(self):
