@@ -50,6 +50,10 @@ class Cheese:
         self.nonce=nonce
         self.data=data
 
+    def create(smell, parent_smell, nonce, data):
+        cheese = Cheese(smell, parent_smell, nonce, data)
+        return cheese
+
     def set_smell(self, smell):
         self.smell = smell
 
