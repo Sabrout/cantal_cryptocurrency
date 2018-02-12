@@ -49,14 +49,14 @@ class LexicalReader():
         Try to match with differents patterns
         and find the good one
         """
+        if self.match("[0-9a-z]{100}"):
+            return self.PUBLIC_KEY
+        if self.match("[0-9a-z]{96}"):
+            return self.SIGNATURE
         if self.match("[0-9a-f]{64}"):
             return self.HASH
         if self.match("0|[1-9][0-9]*"):
             return self.DIGIT
-        if self.match("[0-9a-z]{65}"):
-            return self.PUBLIC_KEY
-        if self.match("[0-9a-z]{63}"):
-            return self.SIGNATURE
         if self.match(","):
             return self.SEPARATOR
         if self.match(";"):

@@ -1,6 +1,6 @@
 from src.structure.lexical import LexicalReader
-from src.structure.blockchain import CheeseStack
-from src.structure.blockchain import Cheese
+from src.structure.cheese_stack import CheeseStack
+from src.structure.cheese import Cheese
 from src.structure.transaction import Transaction
 from src.structure.transaction_list import TransactionList
 
@@ -79,9 +79,20 @@ class SyntaxReader():
         
         self.look()
         self.check(self.lexical.HASH)
-        # Get the smell which is the hash
+        # Get the smell which is the first hash
         smell = self.lexical.get_text()
         self.cheese.set_smell(smell)
+        self.shift()
+
+        self.look()
+        self.check(self.lexical.SEPARATOR_CHEESE_ELEM)
+        self.shift()
+
+        self.look()
+        self.check(self.lexical.HASH)
+        # Get the parent_smell which is the second hash
+        parent_smell = self.lexical.get_text()
+        self.cheese.set_parent_smell(parent_smell)
         self.shift()
 
         self.look()
@@ -152,12 +163,21 @@ class SyntaxReader():
         self.list_amount()
         self.transaction.set_list_amount(self.list_amount)
 
+        # We have all we need to compyte the hash
+        self.transaction.compute_hash()
+
         self.look()
         self.check(self.lexical.SEPARATOR)
         self.shift()
 
         self.list_sign()
         self.transaction.set_list_sign(self.list_sign)
+
+        self.look()
+        self.check(self.lexical.SEPARATOR)
+        self.shift()
+
+        self.used_output()
 
     def list_input(self):
         """
@@ -266,7 +286,7 @@ class SyntaxReader():
         Parse a list of amount
         """
         self.look()
-        if(self.get_lookahead == self.lexical.SEPARATOR_TRANSACTION_INNER):
+        if(self.get_lookahead() == self.lexical.SEPARATOR_TRANSACTION_INNER):
             self.shift()
 
             self.look()
@@ -295,7 +315,7 @@ class SyntaxReader():
 
         self.list_sign_next()
 
-    def list_sign_next():
+    def list_sign_next(self):
         """
         Parse a list of signature
         """
@@ -312,8 +332,27 @@ class SyntaxReader():
             self.list_sign.append(signature)
             
             self.list_sign_next()
-            
+
+    def used_output(self):
+        """
+        Parse the used outputs
+        """
+        self.look()
+        self.check(self.lexical.HASH)
+        first_output = self.lexical.get_text()
+        self.shift()
+
+        self.look()
+        self.check(self.lexical.SEPARATOR)
+        self.shift()
         
+        self.look()
+        self.check(self.lexical.HASH)
+        second_output = self.lexical.get_text()
+        self.shift()
+
+        # Add the used outputs to the transaction
+        self.transaction.set_used_output(first_output, second_output)
 
         
         
