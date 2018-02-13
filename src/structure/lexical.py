@@ -49,6 +49,7 @@ class CheeseLexicalReader():
         Try to match with differents patterns
         and find the good one
         """
+
         if self.match("[0-9a-f]{96}"):
             return self.ENCRYPTION
         if self.match("[0-9a-f]{64}"):

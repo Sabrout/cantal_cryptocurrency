@@ -85,6 +85,17 @@ class Transaction():
         if verify and not(self.verify()):
             raise Exception('Error: Invalid Signatures')
 
+    def set_used_output(self, first_hash, second_hash):
+        """
+        We verify the format of the hash
+        and we store them in used_output
+        """
+        # Checking format of hash
+        if len(first_hash) != 32 or len(second_hash) !=32 :
+            raise Exception('Error: Invalid Hash Size')
+
+        self.used_output = [first_hash, second_hash]
+
     def compute_hash(self):
         """
         We compute an hash for the transaction: it will
@@ -148,8 +159,8 @@ class Transaction():
         iff all signatures are valid (we don't have now the history
         of transactions)
         """
-        total_amount = sum(self.list_sign[:-1])
-        if self.list_amount[len(self.list_amount)-1] <= total_amount:
+        total_amount = sum(self.list_amount[:-1])
+        if self.list_amount[len(self.list_amount)-1] > total_amount:
             return False
 
         if len(self.list_sign) != len(self.list_wallet)-2:

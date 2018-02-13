@@ -79,7 +79,7 @@ class CheeseSyntaxReader():
 
         self.look()
         self.check(self.lexical.HASH)
-        # Get the smell which is the hash
+        # Get the smell which is the first hash
         smell = self.lexical.get_text()
         self.cheese.set_smell(smell)
         self.shift()
@@ -90,9 +90,10 @@ class CheeseSyntaxReader():
 
         self.look()
         self.check(self.lexical.HASH)
-        # Get the smell which is the hash
-        smell = self.lexical.get_text()
-        self.cheese.set_parent_smell(smell)
+
+        # Get the parent_smell which is the second hash
+        parent_smell = self.lexical.get_text()
+        self.cheese.set_parent_smell(parent_smell)
         self.shift()
 
         self.look()
@@ -163,6 +164,9 @@ class CheeseSyntaxReader():
         self.list_amount()
         self.transaction.set_list_amount(self.list_amount)
 
+        # We have all we need to compyte the hash
+        self.transaction.compute_hash()
+
         self.look()
         self.check(self.lexical.SEPARATOR)
         self.shift()
@@ -174,6 +178,12 @@ class CheeseSyntaxReader():
             self.transaction.set_list_sign(self.list_sign)
         else:
             self.transaction.set_list_sign(self.list_sign, verify=False)
+
+        self.look()
+        self.check(self.lexical.SEPARATOR)
+        self.shift()
+
+        self.used_output()
 
     def list_input(self):
         """
@@ -326,5 +336,25 @@ class CheeseSyntaxReader():
 
             # Add a signature to the list of signature
             self.list_sign.append(signature)
-
             self.list_sign_next()
+
+    def used_output(self):
+        """
+        Parse the used outputs
+        """
+        self.look()
+        self.check(self.lexical.HASH)
+        first_output = self.lexical.get_text()
+        self.shift()
+
+        self.look()
+        self.check(self.lexical.SEPARATOR)
+        self.shift()
+
+        self.look()
+        self.check(self.lexical.HASH)
+        second_output = self.lexical.get_text()
+        self.shift()
+
+        # Add the used outputs to the transaction
+        self.transaction.set_used_output(first_output, second_output)
