@@ -32,7 +32,8 @@ class Transaction():
         else:
             self.list_amount = list_amount
 
-        if(list_input is not None and list_wallet is not None and list_amount is not None):
+        if(list_input is not None and list_wallet is not None
+           and list_amount is not None):
             # We compute the hash of the function
             self.compute_hash()
 
@@ -43,11 +44,11 @@ class Transaction():
         """
         # Checking format of list_input
         for (hash, output) in list_input:
-            if len(hash) != 32:
+            if len(hash) != 64:
                 raise Exception('Error: Invalid Hash Size')
             if output != 1 and output != 0:
                 raise Exception('Error: Invalid Output Number')
-            
+
         self.list_input = list_input
 
     def set_list_wallet(self, list_wallet):
@@ -57,7 +58,7 @@ class Transaction():
         """
         # Checking format of list_wallet
         for wallet in list_wallet:
-            if len(wallet) != 33:
+            if len(wallet) != 96:
                 raise Exception('Error: Invalid Wallet_Pub Size')
 
         self.list_wallet = list_wallet
@@ -75,14 +76,14 @@ class Transaction():
                 raise Exception('Error: Invalid Amount')
 
         self.list_amount = list_amount
-        
-    def set_list_sign(self, list_sign):
+
+    def set_list_sign(self, list_sign, verify=True):
         """
         We set and verify the signatures
         """
         self.list_sign = list_sign
-        if not(self.verify()):
-            self.list_sign = list()
+        if verify and not(self.verify()):
+            raise Exception('Error: Invalid Signatures')
 
     def set_used_output(self, first_hash, second_hash):
         """
@@ -170,10 +171,3 @@ class Transaction():
                                  self.hash)):
                 return False
         return True
-
-    def save(self, transaction_file):
-        # If transaction_file is a path then we open the file
-        if isinstance(transaction_file, str):
-            transaction_file = open(transaction_file, "wb")
-
-        # transaction_file.write()

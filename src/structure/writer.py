@@ -1,7 +1,3 @@
-from src.structure.cheese import CheeseStack
-from src.structure.cheese import Cheese
-
-
 class CheeseStackWriter():
     """
     The class CheeseStackWriter will take the cheese stack
@@ -11,8 +7,11 @@ class CheeseStackWriter():
         """
         We constructor will save the stack
         """
-        self.file = open(path, "wb")
+        self.file = open(path, "w")
         self.stack = stack
+
+    def close(self):
+        self.file.close()
 
     def write(self):
         """
@@ -24,7 +23,7 @@ class CheeseStackWriter():
         """
         We write all the stack in a file
         """
-        for i in range(self.size_file, len(self.stack)-1):
+        for i in range(self.stack.size_file, len(self.stack)-1):
             self.write_cheese(self.stack[i])
             self.file.write(",")
         self.write_cheese(self.stack[len(self.stack)-1])
@@ -33,8 +32,9 @@ class CheeseStackWriter():
         """
         Write a cheese in a file
         """
-        self.file.write(cheese.hash+";")
-        self.write_trasaction_list(cheese.data)
+        self.file.write(cheese.smell+";")
+        self.file.write(cheese.parent_smell+";")
+        self.write_transaction_list(cheese.data)
         self.file.write(";"+str(cheese.nonce))
 
     def write_transaction_list(self, transaction_list):

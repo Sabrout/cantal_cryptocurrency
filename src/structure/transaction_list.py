@@ -68,6 +68,11 @@ class TransactionList():
                     return False
         return True
 
+    def __getitem__(self, item):
+        if isinstance(item, str):
+            item = self.transaction_index[item]
+        return self.transaction_list[item]
+
     def __len__(self):
         """
         The function will return the size of the list
