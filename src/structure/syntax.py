@@ -90,7 +90,6 @@ class CheeseSyntaxReader():
 
         self.look()
         self.check(self.lexical.HASH)
-
         # Get the parent_smell which is the second hash
         parent_smell = self.lexical.get_text()
         self.cheese.set_parent_smell(parent_smell)
