@@ -349,7 +349,7 @@ class CheeseSyntaxReader():
         self.look()
         self.check(self.lexical.SEPARATOR)
         self.shift()
-        
+
         self.look()
         self.check(self.lexical.HASH)
         second_output = self.lexical.get_text()

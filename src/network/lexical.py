@@ -52,9 +52,8 @@ class LexicalReader():
 
     IP = 9
     HASH = 10
-    PUBLIC_KEY = 11
-    SIGNATURE = 12
-    DIGIT = 13
+    ENCRYPTION = 11
+    DIGIT = 12
 
 
     def lexeme(self):
@@ -85,12 +84,10 @@ class LexicalReader():
         if self.match(byte_ip+"\."+byte_ip+"\."+byte_ip+"\."+byte_ip):
             return self.IP
 
-        if self.match("[0-9a-z]{65}"):
-            return self.PUBLIC_KEY
-        if self.match("[0-9a-z]{64}"):
+        if self.match("[0-9a-f]{96}"):
+            return self.ENCRYPTION
+        if self.match("[0-9a-f]{64}"):
             return self.HASH
-        if self.match("[0-9a-z]{63}"):
-            return self.SIGNATURE
 
         if self.match("0|[1-9][0-9]*"):
             return self.DIGIT

@@ -76,8 +76,7 @@ class CheeseStack():
         # for the key hash of each transactions
         for transaction in cheese.data:
             self.transaction_index[transaction.hash] = len(self.blockchain)-1
-
-
+            
             if len(self.blockchain) != 1:
                 for (hash, output) in transaction.list_input:
                     input_block = self.transaction_index[hash]
