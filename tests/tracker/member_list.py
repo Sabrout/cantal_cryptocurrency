@@ -12,7 +12,7 @@ class MemberListTest(unittest.TestCase):
             ip = str(random.randint(1, 255)) + '.'\
                  + str(random.randint(1, 255)) + '.'\
                  + str(random.randint(1, 255)) + '.' + str(random.randint(1, 255))
-            port = '' + str(random.randint(1, 9999))
+            port = random.randint(1, 9999)
             list.add_member((ip, port))
         return list
 

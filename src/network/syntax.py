@@ -130,7 +130,7 @@ class SyntaxReader():
             self.shift()
 
             self.look()
-            self.check(self.lexical.SHORT)
+            self.check(self.lexical.DIGIT)
             port = int(self.lexical.get_text())
             self.shift()
 
