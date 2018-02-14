@@ -61,6 +61,7 @@ class LexicalReader():
         Try to match with differents patterns
         and find the good one
         """
+        print("mess: "+self.sentence)
         if self.match("LIST"):
             return self.LIST
         if self.match("MEMBER"):
