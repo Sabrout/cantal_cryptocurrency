@@ -1,5 +1,6 @@
 from src.tracker.member_list import MemberList
 from src.network.peer import Peer
+from src.network.message import Message
 
 
 class Tracker(Peer):
@@ -7,11 +8,22 @@ class Tracker(Peer):
         Peer.__init__(self, IP, port)
         self.list = MemberList()
 
-    def add_member(self, new_member):
-        self.list.add_member(new_member)
+    def process_message(self, tuple):
+        (socket, message) = tuple
+        ip = socket.getsockname()[0]
+        # Handling Requests
+        if message.packet_type == Message.REQUEST:
+            # List REQUEST
+            if message.packet == Message.LIST:
+                # Creating a RESPONSE message
+                response = Message()
+                response.set_packet(Message.LIST)
+                response.set_packet_type(Message.RESPONSE)
+                response.set_data(self.list.get_sublist())
+                # Adding member to list
 
-    def remove_member(self, member):
-        self.list.remove_member(member)
+                self.list.add_member((ip, int(message.data)))
 
-    def get_sublist(self):
-        return self.get_sublist()
+
+
+print(int('a11'))
