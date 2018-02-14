@@ -4,8 +4,6 @@ import math
 
 class MemberList():
 
-    list = {}
-
     def __init__(self):
         self.list = {}
 
