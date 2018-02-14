@@ -9,9 +9,9 @@ class MemberListTest(unittest.TestCase):
     def populate(size):
         list = MemberList()
         for i in range(size):
-            ip = str(random.randint(1, 255)) + '.'
-            + str(random.randint(1, 255)) + '.'
-            + str(random.randint(1, 255)) + '.' + str(random.randint(1, 255))
+            ip = str(random.randint(1, 255)) + '.'\
+                 + str(random.randint(1, 255)) + '.'\
+                 + str(random.randint(1, 255)) + '.' + str(random.randint(1, 255))
             port = '' + str(random.randint(1, 9999))
             list.add_member((ip, port))
         return list

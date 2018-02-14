@@ -1,14 +1,15 @@
 class Message():
     """
-    The message reprents all possible
+    The message represents all possible
     message of the protocol
     """
+    # Packet
     NOTHING = -1
     LIST = 0
     MEMBER = 1
     TRANSACTION = 2
     CHEESE = 3
-
+    # Packet Type
     RESPONSE = 4
     REQUEST = 5
     REPORT = 6
