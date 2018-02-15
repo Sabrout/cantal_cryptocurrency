@@ -1,6 +1,5 @@
 from src.network.server import Server
 from src.network.client import Client
-from src.network.message import Message
 
 
 class Peer():
@@ -8,11 +7,11 @@ class Peer():
     The peer is the base for the
     tracker and the member
     """
-    def __init__(self, IP, port):
+    def __init__(self, port):
         """
         The peer will have a server and a client
         """
-        self.server = Server(IP, port)
+        self.server = Server(port)
         self.client = Client()
 
     def produce_response(self, IP, port, message):

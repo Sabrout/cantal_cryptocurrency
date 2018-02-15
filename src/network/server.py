@@ -2,24 +2,32 @@ from threading import Thread
 from src.network.syntax import SyntaxReader
 import socket
 import queue
+import threading
 
 
 class Server:
     """
     This class represents a network server
     """
-    def __init__(self, IP, port):
+    def __init__(self, port):
         """
         The constructor will set up the server
         """
-        self.server_socket = socket.socket()
-        self.server_socket.bind((IP, port))
+        self.host_name = socket.gethostname()
+        self.port = port
+        self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.server_socket.bind((self.host_name, port))
         self.server_socket.listen()
-        self.server_socket.setsockopt(socket.SOL_SOCKET,
-                                      socket.SO_REUSEADDR, 1)
 
         self.queue_receive = queue.Queue()
-        self.accept().start()
+        self.thread_accept = self.accept()
+        self.thread_accept.start()
+
+    def get_host_name(self):
+        return self.host_name
+
+    def get_port(self):
+        return self.port
 
     def close(self):
         """
@@ -77,7 +85,7 @@ class Server:
             message = self.read(socket)
 
             if(message is not None):
-                IP = socket.getsockname()[0]
+                IP = socket.getpeername()[0]
                 self.queue_receive.put((IP, message))
                 handle_thread()
             else:
@@ -91,9 +99,12 @@ class Server:
         We create a thread where we accept the connection
         """
         def handle_thread():
-            socket, _ = self.server_socket.accept()
-            self.produce_receive(socket).start()
-            handle_thread()
+            try:
+                socket, _ = self.server_socket.accept()
+                self.produce_receive(socket).start()
+                handle_thread()
+            except ConnectionAbortedError:
+                return None
 
         t = Thread(target=handle_thread)
         return t

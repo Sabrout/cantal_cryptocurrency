@@ -1,18 +1,19 @@
 from src.tracker.member_list import MemberList
 from src.network.peer import Peer
 from src.network.message import Message
+from threading import Thread
 
 
 class Tracker(Peer):
-    def __init__(self, IP, port):
-        Peer.__init__(self, IP, port)
+    def __init__(self, port):
+        Peer.__init__(self, port)
         self.list = MemberList()
+        self.main().start()
 
     def process_message(self, tuple):
         (ip, message) = tuple
 
         # Handling Messages
-
         if message.get_packet() == Message.LIST:
 
             # List REQUEST
@@ -32,6 +33,10 @@ class Tracker(Peer):
 
             # List ERROR
             if message.get_packet_type() == Message.ERROR:
+                try:
+                    port = int(message.get_data())
+                except ValueError:
+                    raise Exception('Error: Invalid Port')
                 self.produce_response(ip, port, response)
 
         # Member REPORT
@@ -44,3 +49,21 @@ class Tracker(Peer):
             except ValueError:
                 raise Exception('Error: Invalid Port')
             self.list.remove_member((ip, port))
+
+    def main(self):
+        """
+        We create a thread where we accept the connection
+        """
+        def handle_thread():
+            self.process_message(self.consume_receive())
+            handle_thread()
+
+        t = Thread(target=handle_thread)
+        return t
+
+
+if __name__ == "__main__":
+    tracker = Tracker(9990)
+    host = tracker.server.get_host_name()
+    port = tracker.server.get_port()
+    print("Debug: Tracker opened at "+str(host)+":"+str(port))
