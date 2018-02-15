@@ -19,6 +19,7 @@ class Server:
                                       socket.SO_REUSEADDR, 1)
 
         self.queue_receive = queue.Queue()
+        self.accept().start()
 
     def close(self):
         """
@@ -63,6 +64,8 @@ class Server:
         and transform it in a message object
         """
         message = self.recv(socket, True)
+        if(message is None):
+            return None
         reader = SyntaxReader(message)
         return reader.parse()
 
@@ -74,7 +77,9 @@ class Server:
             message = self.read(socket)
 
             if(message is not None):
-                self.queue_receive.put((socket, message))
+                IP = socket.getsockname()[0]
+                self.queue_receive.put((IP, message))
+                handle_thread()
             else:
                 socket.close()
 
@@ -87,7 +92,7 @@ class Server:
         """
         def handle_thread():
             socket, _ = self.server_socket.accept()
-            self.producer_receive(socket).start()
+            self.produce_receive(socket).start()
             handle_thread()
 
         t = Thread(target=handle_thread)

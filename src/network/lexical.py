@@ -79,7 +79,7 @@ class LexicalReader():
         if self.match("ERROR"):
             return self.ERROR
 
-        byte_ip = "(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])"
+        byte_ip = "(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])"
 
         if self.match(byte_ip+"\."+byte_ip+"\."+byte_ip+"\."+byte_ip):
             return self.IP
