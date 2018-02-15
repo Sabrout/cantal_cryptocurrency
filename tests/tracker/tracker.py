@@ -33,7 +33,9 @@ class TrackerTest(unittest.TestCase):
             if not tracker.list.is_member(i):
                 flag = False
 
-        client1.client.socket.close()
-        tracker.client.socket.close()
+        client1.client.close()
+        # client1.server.close()
+        tracker.client.close()
+        # tracker.server.close()
 
         self.assertEqual(flag, True)

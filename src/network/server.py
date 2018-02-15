@@ -75,7 +75,6 @@ class Server:
         """
         def handle_thread():
             message = self.read(socket)
-
             if(message is not None):
                 IP = socket.getsockname()[0]
                 self.queue_receive.put((IP, message))

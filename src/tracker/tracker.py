@@ -1,12 +1,14 @@
 from src.tracker.member_list import MemberList
 from src.network.peer import Peer
 from src.network.message import Message
+from threading import Thread
 
 
 class Tracker(Peer):
     def __init__(self, IP, port):
         Peer.__init__(self, IP, port)
         self.list = MemberList()
+        self.main().start()
 
     def process_message(self, tuple):
         (ip, message) = tuple
@@ -48,3 +50,18 @@ class Tracker(Peer):
             except ValueError:
                 raise Exception('Error: Invalid Port')
             self.list.remove_member((ip, port))
+
+    def main(self):
+        """
+        We create a thread where we accept the connection
+        """
+        def handle_thread():
+            self.process_message(self.consume_receive())
+            handle_thread()
+
+        t = Thread(target=handle_thread)
+        return t
+
+
+if __name__ == "__main__":
+    Tracker('192.168.43.56', 9990)
