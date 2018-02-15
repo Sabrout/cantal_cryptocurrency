@@ -9,16 +9,19 @@ class TrackerTest(unittest.TestCase):
 
     def test_list_request(self):
         # Tracker
+
         tracker = Tracker('127.0.0.1', 9990)
         tracker.list = MemberListTest.populate(40)
 
         client1 = Peer('127.0.0.1', 9991)
         client1.client.set_client('127.0.0.1', 9990)
 
+
         # List Request Message
         request = Message()
         request.set_packet_type(Message.REQUEST)
         request.set_packet(Message.LIST)
+
         request.set_data(9991)
 
         client1.produce_response('127.0.0.1', 9990, request)
@@ -26,6 +29,7 @@ class TrackerTest(unittest.TestCase):
         message = tracker.consume_receive()
 
         tracker.process_message(message)
+
 
         response = client1.consume_receive()[1]
 
