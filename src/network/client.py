@@ -4,7 +4,7 @@ import socket
 import queue
 
 
-class Client:
+class Client():
     """
     This class represents a network client
     """
@@ -29,8 +29,8 @@ class Client:
         """
         We create the client with an IP and a port
         """
-        self.socket = socket.create_connection((IP, port))
-        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket.connect((IP, port))
 
     def send(self, message):
         """
@@ -56,6 +56,7 @@ class Client:
             IP, port, message = self.queue_response.get()
             self.set_client(IP, port)
             self.send(message)
+            self.close()
             handle_thread()
 
         t = Thread(target=handle_thread)

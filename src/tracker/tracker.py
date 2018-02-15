@@ -5,8 +5,8 @@ from threading import Thread
 
 
 class Tracker(Peer):
-    def __init__(self, IP, port):
-        Peer.__init__(self, IP, port)
+    def __init__(self, port):
+        Peer.__init__(self, port)
         self.list = MemberList()
         self.main().start()
 
@@ -14,7 +14,6 @@ class Tracker(Peer):
         (ip, message) = tuple
 
         # Handling Messages
-
         if message.get_packet() == Message.LIST:
 
             # List REQUEST
@@ -64,4 +63,7 @@ class Tracker(Peer):
 
 
 if __name__ == "__main__":
-    Tracker('192.168.43.56', 9990)
+    tracker = Tracker(9990)
+    host = tracker.server.get_host_name()
+    port = tracker.server.get_port()
+    print("Debug: Tracker opened at "+str(host)+":"+str(port))
