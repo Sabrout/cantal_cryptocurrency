@@ -32,6 +32,10 @@ class Tracker(Peer):
 
             # List ERROR
             if message.get_packet_type() == Message.ERROR:
+                try:
+                    port = int(message.get_data())
+                except ValueError:
+                    raise Exception('Error: Invalid Port')
                 self.produce_response(ip, port, response)
 
         # Member REPORT
