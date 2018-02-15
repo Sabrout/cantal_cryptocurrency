@@ -15,11 +15,11 @@ class Peer():
         self.server = Server(IP, port)
         self.client = Client()
 
-    def produce_response(self, socket, message):
+    def produce_response(self, IP, port, message):
         """
         The peer will produce a message response in the queue
         """
-        self.client.queue_response.put((socket, message))
+        self.client.queue_response.put((IP, port, message))
 
     def consume_receive(self):
         """

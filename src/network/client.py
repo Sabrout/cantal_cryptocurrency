@@ -23,12 +23,7 @@ class Client:
         # We set the queue for the client (i.e the client with consume the
         # queue)
         self.queue_response = queue.Queue()
-
-    def set_socket(self, socket):
-        """
-        We set the socket here
-        """
-        self.socket = socket
+        self.consume_response().start()
 
     def set_client(self, IP, port):
         """
@@ -58,8 +53,8 @@ class Client:
         and send the response
         """
         def handle_thread():
-            socket, message = self.queue_response.get()
-            self.set_socket(socket)
+            IP, port, message = self.queue_response.get()
+            self.set_client(IP, port)
             self.send(message)
             handle_thread()
 

@@ -9,8 +9,8 @@ class Tracker(Peer):
         self.list = MemberList()
 
     def process_message(self, tuple):
-        (socket, message) = tuple
-        ip = socket.getsockname()[0]
+        (ip, message) = tuple
+
         # Handling Messages
 
         if message.get_packet() == Message.LIST:
@@ -28,14 +28,16 @@ class Tracker(Peer):
                 except ValueError:
                     raise Exception('Error: Invalid Port')
                 self.list.add_member((ip, port))
-                Peer.produce_response(self, socket, response)
+                self.produce_response(ip, port, response)
 
             # List ERROR
             if message.get_packet_type() == Message.ERROR:
-                Peer.produce_response(self, socket, response)
+                self.produce_response(ip, port, response)
 
         # Member REPORT
-        if message.get_packet_type() == Message.REPORT and message.get_packet() == Message.MEMBER:
+        if (message.get_packet_type() == Message.REPORT and
+            message.get_packet() == Message.MEMBER):
+            # NOOOOTTTTT FINISHEEEDDDD
             # Removing member
             try:
                 port = int(message.get_data())

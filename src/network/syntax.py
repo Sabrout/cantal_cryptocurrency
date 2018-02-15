@@ -130,7 +130,7 @@ class SyntaxReader():
             self.shift()
 
             self.look()
-            self.check(self.lexical.SHORT)
+            self.check(self.lexical.DIGIT)
             port = int(self.lexical.get_text())
             self.shift()
 
@@ -257,7 +257,7 @@ class SyntaxReader():
     def wallet_list(self):
         data = self.message.get_data()
         self.look()
-        self.check(self.lexical.PUBLIC_KEY)
+        self.check(self.lexical.ENCRYPTION)
         key = self.lexical.get_text()
         self.shift()
 
@@ -268,7 +268,7 @@ class SyntaxReader():
     def wallet_list_next(self):
         data = self.message.get_data()
         self.look()
-        if(self.get_lookahead() == self.lexical.PUBLIC_KEY):
+        if(self.get_lookahead() == self.lexical.ENCRYPTION):
             key = self.lexical.get_text()
             self.shift()
 
@@ -298,7 +298,7 @@ class SyntaxReader():
     def sign_list(self):
         data = self.message.get_data()
         self.look()
-        self.check(self.lexical.SIGNATURE)
+        self.check(self.lexical.ENCRYPTION)
         signature = self.lexical.get_text()
         self.shift()
 
@@ -308,7 +308,7 @@ class SyntaxReader():
     def sign_list_next(self):
         data = self.message.get_data()
         self.look()
-        if(self.get_lookahead() == self.lexical.SIGNATURE):
+        if(self.get_lookahead() == self.lexical.ENCRYPTION):
             signature = self.lexical.get_text()
             self.shift()
 
