@@ -40,4 +40,3 @@ class TrackerTest(unittest.TestCase):
     def test_list_error(self):
         # Tracker
         tracker = Tracker(9995)
-        tracker.list = 
