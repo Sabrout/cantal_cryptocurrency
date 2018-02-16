@@ -105,6 +105,8 @@ class Server:
                 handle_thread()
             except ConnectionAbortedError:
                 return None
+            except OSError:
+                return None
 
         t = Thread(target=handle_thread)
         return t
