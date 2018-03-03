@@ -2,6 +2,7 @@ from src.tracker.member_list import MemberList
 from src.network.peer import Peer
 from src.network.message import Message
 from threading import Thread
+import random
 
 
 class Tracker(Peer):
@@ -45,7 +46,7 @@ class Tracker(Peer):
             # NOOOOTTTTT FINISHEEEDDDD
             # Removing member
             try:
-                port = int(message.get_data())
+                port = message.get_data()
             except ValueError:
                 raise Exception('Error: Invalid Port')
             self.list.remove_member((ip, port))
@@ -61,9 +62,19 @@ class Tracker(Peer):
         t = Thread(target=handle_thread)
         return t
 
+    @staticmethod
+    def populate(size):
+        list = MemberList()
+        for i in range(size):
+            ip = str(random.randint(1, 255)) + '.'\
+                 + str(random.randint(1, 255)) + '.'\
+                 + str(random.randint(1, 255)) + '.' + str(random.randint(1, 255))
+            port = random.randint(1, 9999)
+            list.add_member((ip, port))
+        return list
 
-if __name__ == "__main__":
-    tracker = Tracker(9990)
-    host = tracker.server.get_host_name()
-    port = tracker.server.get_port()
-    print("Debug: Tracker opened at "+str(host)+":"+str(port))
+# if __name__ == "__main__":
+#     tracker = Tracker(9990)
+#     host = tracker.server.get_host_name()
+#     port = tracker.server.get_port()
+#     print("Debug: Tracker opened at "+str(host)+":"+str(port))

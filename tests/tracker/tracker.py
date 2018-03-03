@@ -12,7 +12,7 @@ class TrackerTest(unittest.TestCase):
     def test_list_request(self):
         # Tracker
         tracker = Tracker(9990)
-        tracker.list = MemberListTest.populate(40)
+        tracker.list = Tracker.populate(40)
 
         client1 = Peer(9991)
 
@@ -42,7 +42,7 @@ class TrackerTest(unittest.TestCase):
     def test_list_error(self):
         # Tracker
         tracker = Tracker(9995)
-        tracker.list = MemberListTest.populate(40)
+        tracker.list = Tracker.populate(40)
 
         client1= Peer(9992)
 
@@ -70,25 +70,29 @@ class TrackerTest(unittest.TestCase):
     def test_member_error(self):
         # Tracker
         tracker = Tracker(9996)
-        tracker.list = MemberListTest.populate(40)
+        tracker.list = Tracker.populate(5)
 
         client1 = Peer(9997)
+        print("step 1")
         # Add the client to Member List
-        tracker.list.add_member((client1.consume_receive()[0], client1.consume_receive()[1]))
-
+        print(tracker.list.print_list())
+        tracker.list.add_member((socket.gethostbyname(client1.server.host_name), client1.server.port))
+        print("step 2")
+        print(tracker.list.print_list())
         # List Request Message
         request = Message()
         request.set_packet_type(Message.REPORT)
         request.set_packet(Message.MEMBER)
-        request.set_data(9997)
-
+        request.set_data((socket.gethostbyname(client1.server.host_name), client1.server.port))
+        print("step 3")
         client1.produce_response(socket.gethostname(), 9996, request)
-        response = client1.consume_receive()[1]
-
-        # Checking the IP and Port
-        flag = True
-        # if tracker.list.is_member((client1.consume_receive()[0], client1.consume_receive()[1])):
-        #     flag = False
+        print("step 4")
+        response = client1.consume_receive()
+        print(tracker.list.print_list())
+        print("step 5")
+        # Checking if Client is in Member List
+        flag = tracker.list.is_member((socket.gethostbyname(socket.gethostname()), client1.server.port))
+        print("step 6")
 
         client1.client.close()
         tracker.client.close()
