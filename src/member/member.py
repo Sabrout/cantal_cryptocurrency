@@ -4,6 +4,7 @@ from src.structure.cheese_stack import CheeseStack
 from src.structure.ressource import Ressource
 from threading import Thread
 
+
 class Member(Peer):
     def __init__(self, port):
         Peer.__init__(self, port)
