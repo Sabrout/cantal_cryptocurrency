@@ -11,19 +11,26 @@ class Peer():
         """
         The peer will have a server and a client
         """
-        self.server = Server(port)
-        self.client = Client()
+        self.queue_response = queue.Queue()
+        self.queue_receive = queue.Queue()
+        
+        self.server = Server(port, self.queue_receive)
+        self.client = Client(self.queue_response)
 
-    def produce_response(self, IP, port, message):
+        self.list_socket = [self.server]
+        
+    def produce_response(self, IP=None, port=None, socket=None, close=False, message):
         """
         The peer will produce a message response in the queue
         """
-        self.client.queue_response.put((IP, port, message))
+        self.queue_response.put((IP, port, socket, close, message))
 
     def consume_receive(self):
         """
         The peer will consume the message that
         there are in the receive queue
         """
-        message = self.server.queue_receive.get()
+        message = self.queue_receive.get()
         return message
+
+

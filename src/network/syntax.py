@@ -343,6 +343,9 @@ class SyntaxReader():
         elif(self.get_lookahead() == self.lexical.RESPONSE):
             self.message.set_packet_type(self.lexical.RESPONSE)
             self.cheese_response()
+        elif(self.get_lookahead() == self.lexical.BROADCAST):
+            self.message.set_packet_type(self.lexical.BROADCAST)
+            self.cheese_broadcast()
         elif(self.get_lookahead() == self.lexical.ERROR):
             self.message.set_packet_type(self.lexical.ERROR)
             self.cheese_error()
@@ -378,6 +381,61 @@ class SyntaxReader():
         nonce = int(self.lexical.get_text())
         data["nonce"] = nonce
         self.shift()
+
+        def cheese_response(self):
+        self.look()
+        self.check(self.lexical.RESPONSE)
+        self.shift()
+
+        data = {"transactions": [], "nonce": 0}
+        self.message.set_data(data)
+
+        self.transaction_list()
+
+        self.look()
+        self.check(self.lexical.DIGIT)
+        nonce = int(self.lexical.get_text())
+        data["nonce"] = nonce
+        self.shift()
+
+    def cheese_broadcast(self):
+        self.look()
+        self.check(self.lexical.BROADCAST)
+        self.shift()
+
+        data = {"hash": 0, "transactions": [], "nonce": 0}
+        self.message.set_data(data)
+
+        self.look()
+        self.check(self.lexical.HASH)
+        hash = self.lexical.get_text()
+        data["hash"] = hash
+        self.shift()
+
+        self.transaction_list()
+
+        self.look()
+        self.check(self.lexical.DIGIT)
+        nonce = int(self.lexical.get_text())
+        data["nonce"] = nonce
+        self.shift()
+
+        def cheese_response(self):
+        self.look()
+        self.check(self.lexical.RESPONSE)
+        self.shift()
+
+        data = {"transactions": [], "nonce": 0}
+        self.message.set_data(data)
+
+        self.transaction_list()
+
+        self.look()
+        self.check(self.lexical.DIGIT)
+        nonce = int(self.lexical.get_text())
+        data["nonce"] = nonce
+        self.shift()
+
 
     def cheese_error(self):
         self.look()

@@ -50,6 +50,9 @@ class MessageWriter():
               and self.message.packet_type == Message.RESPONSE):
             return self.write_cheese_response()
         elif (self.message.packet == Message.CHEESE
+              and self.message.packet_type == Message.BROADCAST):
+            return self.write_cheese_broadcast()
+        elif (self.message.packet == Message.CHEESE
               and self.message.packet_type == Message.ERROR):
             return self.write_cheese_error()
 
@@ -136,6 +139,19 @@ class MessageWriter():
         string = self.write_transaction_list(string)
         string += " "+str(data["nonce"])+"\r\n"
         return string
+
+    def write_cheese_broadcast(self):
+        """
+        The function write the message of a CHEESE RESPONSE
+        """
+
+        string = "CHEESE BROADCAST"
+        data = self.message.get_data()
+        string += " "+str(data["hash"])
+        string += self.write_transaction_list(string)
+        string += " "+str(data["nonce"])+"\r\n"
+        return string
+
 
     def write_cheese_error(self):
         """
