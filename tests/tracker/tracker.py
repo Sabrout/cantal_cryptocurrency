@@ -19,11 +19,11 @@ class TrackerTest(unittest.TestCase):
         request = Message()
         request.set_packet_type(Message.REQUEST)
         request.set_packet(Message.LIST)
+
         request.set_data(9991)
 
-        client1.produce_response(socket.gethostname(), 9990, request)
-        response = client1.consume_receive()[1]
-
+        client1.produce_response(IP=socket.gethostbyname(socket.gethostname()), port=9990, message=request)
+        response = client1.consume_receive()[2]
         # Checking the sublist
         flag = True
         for i in response.get_data():
@@ -51,10 +51,10 @@ class TrackerTest(unittest.TestCase):
         request.set_packet(Message.LIST)
         request.set_data(9992)
 
-        client1.produce_response(socket.gethostname(), 9995, request)
+        client1.produce_response(IP=socket.gethostbyname(socket.gethostname()), port=9995, message=request)
         flag = True
         try:
-            response = client1.consume_receive()[1]
+            response = client1.consume_receive()[2]
         except Exception:
             flag = False
 
@@ -84,14 +84,14 @@ class TrackerTest(unittest.TestCase):
         request.set_packet(Message.MEMBER)
         request.set_data((socket.gethostbyname(client1.server.host_name), client1.server.port))
         print("step 3")
-        client1.produce_response(socket.gethostname(), 9996, request)
+        client1.produce_response(IP=socket.gethostbyname(socket.gethostname()), port=9996, message=request)
         print("step 4")
         # NOOOOOOOOOT FINISHEDDDDDDDDDDDDDD
-        response = client1.consume_receive()
         print(tracker.list.print_list())
         print("step 5")
         # Checking if Client is in Member List
         flag = tracker.list.is_member((socket.gethostbyname(socket.gethostname()), client1.server.port))
+        print(flag)
         print("step 6")
 
         client1.client.close()
