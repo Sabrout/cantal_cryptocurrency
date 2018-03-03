@@ -1,6 +1,6 @@
 from src.network.server import Server
 from src.network.client import Client
-
+import queue
 
 class Peer():
     """
@@ -13,13 +13,14 @@ class Peer():
         """
         self.queue_response = queue.Queue()
         self.queue_receive = queue.Queue()
+        self.list_socket = []
         
-        self.server = Server(port, self.queue_receive)
-        self.client = Client(self.queue_response)
+        self.server = Server(self.queue_receive, self.list_socket, port=port)
+        self.client = Client(self.queue_receive, self.queue_response, self.list_socket)
 
-        self.list_socket = [self.server]
         
-    def produce_response(self, IP=None, port=None, socket=None, close=False, message):
+        
+    def produce_response(self, IP=None, port=None, socket=None, close=False, message=None):
         """
         The peer will produce a message response in the queue
         """
