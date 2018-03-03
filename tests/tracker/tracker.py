@@ -51,12 +51,11 @@ class TrackerTest(unittest.TestCase):
         request.set_packet_type(Message.ERROR)
         request.set_packet(Message.LIST)
         request.set_data(9992)
-        print(request.get_data())
 
         client1.produce_response(socket.gethostname(), 9995, request)
         flag = True
         try:
-            response = tracker.consume_receive()[1]
+            response = client1.consume_receive()[1]
         except Exception:
             flag = False
 
@@ -64,5 +63,6 @@ class TrackerTest(unittest.TestCase):
         tracker.client.close()
         client1.server.close()
         tracker.server.close()
+
 
         self.assertEqual(flag, True)

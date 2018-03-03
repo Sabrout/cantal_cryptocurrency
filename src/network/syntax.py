@@ -143,6 +143,14 @@ class SyntaxReader():
         self.look()
         self.check(self.lexical.ERROR)
         self.shift()
+        # Omar Edit
+
+        self.look()
+        self.check(self.lexical.DIGIT)
+        port = int(self.lexical.get_text())
+        self.shift()
+
+        self.message.set_data(port)
 
     def member_packet(self):
         self.look()

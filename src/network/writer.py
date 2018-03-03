@@ -80,7 +80,9 @@ class MessageWriter():
         The function write the message of a LIST ERROR
         """
 
-        string = "LIST ERROR\r\n"
+        # string = "LIST ERROR\r\n"
+        port = self.message.get_data()
+        string = "LIST ERROR " + str(port) + "\r\n"
         return string
 
     def write_member_report(self):

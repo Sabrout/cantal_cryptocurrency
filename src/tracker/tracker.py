@@ -33,7 +33,6 @@ class Tracker(Peer):
 
             # List ERROR
             if message.get_packet_type() == Message.ERROR:
-                print(message.get_data())
                 try:
                     port = int(message.get_data())
                 except ValueError:
