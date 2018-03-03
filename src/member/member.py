@@ -3,6 +3,7 @@ from src.tracker.member_list import MemberList
 from src.structure.cheese_stack import CheeseStack
 from src.structure.ressource import Ressource
 from src.member.money_list import MoneyList
+from src.structure.transaction_list import TransactionList
 from threading import Thread
 
 
@@ -14,11 +15,19 @@ class Member(Peer):
         self.member_list = Ressource(self.member_list)
         self.cheese_stack = Ressource(self.cheese_stack)
 
-        self.transaction_list = None
-        self.monney_list = MoneyList()
+        self.transaction_list = TransactionList()
+        self.transaction_list = Ressource(self.transaction_list)
+
+        self.money_list = Ressource(MoneyList())
 
     def process_message(self):
-        return "Don't care"
+        def handle_thread():
+            print()
+        t = Thread(target=handle_thread)
+        return t
+
+    def process_transaction_request(self):
+        print()
 
     def process_member_list(self):
         def handle_thread():
