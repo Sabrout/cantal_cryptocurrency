@@ -69,11 +69,11 @@ class Member(Peer):
             return "Don't care"
         t = Thread(target=handle_thread)
         return t
-
+    
     def main(self):
         def handle_thread():
             self.process_message(self.consume_receive())
             handle_thread()
 
         t = Thread(target=handle_thread)
-        return t 
+        return t
