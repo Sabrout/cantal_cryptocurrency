@@ -8,6 +8,7 @@ import socket
 
 class TrackerTest(unittest.TestCase):
 
+    # List Request test
     def test_list_request(self):
         # Tracker
         tracker = Tracker(9990)
@@ -37,6 +38,31 @@ class TrackerTest(unittest.TestCase):
 
         self.assertEqual(flag, True)
 
+    # List Error test (making sure that the error message is sent and not how it is generated)
     def test_list_error(self):
         # Tracker
         tracker = Tracker(9995)
+        tracker.list = MemberListTest.populate(40)
+
+        client1= Peer(9992)
+
+        # List Error Message
+        request = Message()
+        request.set_packet_type(Message.ERROR)
+        request.set_packet(Message.LIST)
+        request.set_data(9992)
+        print(request.get_data())
+
+        client1.produce_response(socket.gethostname(), 9995, request)
+        flag = True
+        try:
+            response = tracker.consume_receive()[1]
+        except Exception:
+            flag = False
+
+        client1.client.close()
+        tracker.client.close()
+        client1.server.close()
+        tracker.server.close()
+
+        self.assertEqual(flag, True)
