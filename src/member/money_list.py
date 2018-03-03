@@ -57,15 +57,15 @@ class MoneyList():
             self.list.append((hash, int(output)))
 
 
-if __name__ == "__main__":
-    money_list = MoneyList()
-    # money_list.add_money(('1234', 0))
-    # money_list.add_money(('4562', 1))
-    # money_list.add_money(('1234', 1))
-    # money_list.add_money(('1235', 0))
-
-    # print(len(money_list.list))
-    for i in money_list.list:
-        print(i)
+# if __name__ == "__main__":
+#     money_list = MoneyList()
+#     # money_list.add_money(('1234', 0))
+#     # money_list.add_money(('4562', 1))
+#     # money_list.add_money(('1234', 1))
+#     # money_list.add_money(('1235', 0))
+#
+#     # print(len(money_list.list))
+#     for i in money_list.list:
+#         print(i)
 
 
