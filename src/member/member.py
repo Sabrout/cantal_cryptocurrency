@@ -4,8 +4,8 @@ from src.structure.cheese_stack import CheeseStack
 from src.structure.transaction import Transaction
 from src.structure.transaction_list import TransactionList
 from src.structure.ressource import Ressource
-from src.strucutre.message import Message
-import Thread
+from src.network.message import Message
+from threading import Thread
 
 
 class Member(Peer):
