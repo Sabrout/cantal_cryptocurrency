@@ -2,6 +2,7 @@ from src.network.peer import Peer
 from src.tracker.member_list import MemberList
 from src.structure.cheese_stack import CheeseStack
 from src.structure.ressource import Ressource
+from src.member.money_list import MoneyList
 from threading import Thread
 
 
@@ -14,7 +15,7 @@ class Member(Peer):
         self.cheese_stack = Ressource(self.cheese_stack)
 
         self.transaction_list = None
-        self.monney_list = None
+        self.monney_list = MoneyList()
 
     def process_message(self):
         return "Don't care"
