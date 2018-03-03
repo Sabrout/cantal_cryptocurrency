@@ -45,16 +45,16 @@ class LexicalReader():
 
     RESPONSE = 4
     REQUEST = 5
-    REPORT = 6
-    ERROR = 7
+    BROADCAST = 6
+    REPORT = 7
+    ERROR = 8
 
-    END = 8
+    END = 9
 
-    IP = 9
-    HASH = 10
-    ENCRYPTION = 11
-    DIGIT = 12
-
+    IP = 10
+    HASH = 11
+    ENCRYPTION = 12
+    DIGIT = 13
 
     def lexeme(self):
         """
@@ -74,6 +74,8 @@ class LexicalReader():
             return self.RESPONSE
         if self.match("REQUEST"):
             return self.REQUEST
+        if self.match("BROADCAST"):
+            return self.BROADCAST
         if self.match("REPORT"):
             return self.REPORT
         if self.match("ERROR"):
