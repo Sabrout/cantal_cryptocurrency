@@ -3,7 +3,7 @@ from src.tracker.tracker import Tracker
 from src.network.peer import Peer
 from src.network.message import Message
 import socket
-
+import time
 
 class TrackerTest(unittest.TestCase):
 
@@ -68,10 +68,14 @@ class TrackerTest(unittest.TestCase):
     # Member Error test
     def test_member_error(self):
         # Tracker
+        print('begin')
         tracker = Tracker(9996)
+        print(tracker.client)
+        print('end')
         tracker.list = Tracker.populate(5)
-
+        print('beginC')
         client1 = Peer(9997)
+        print('endC')
         print("step 1")
         # Add the client to Member List
         print(tracker.list.print_list())
@@ -87,15 +91,16 @@ class TrackerTest(unittest.TestCase):
         client1.produce_response(IP=socket.gethostbyname(socket.gethostname()), port=9996, message=request)
         print("step 4")
         # NOOOOOOOOOT FINISHEDDDDDDDDDDDDDD
-        print(tracker.list.print_list())
         print("step 5")
         # Checking if Client is in Member List
-        flag = tracker.list.is_member((socket.gethostbyname(socket.gethostname()), client1.server.port))
+        flag = tracker.list.is_member((socket.gethostbyname(client1.server.host_name), client1.server.port))
         print(flag)
         print("step 6")
 
+        #time.sleep(2)
+        print('Socket '+ str(client1.client.socket))
         client1.client.close()
-        tracker.client.close()
+        #tracker.client.close()
         client1.server.close()
         tracker.server.close()
 

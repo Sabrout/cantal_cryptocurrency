@@ -51,6 +51,7 @@ class Tracker(Peer):
             except ValueError:
                 raise Exception('Error: Invalid Port')
             self.list.remove_member(ip_port)
+            print(self.list.print_list())
             print('sstep 3')
             return
 
