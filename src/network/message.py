@@ -12,8 +12,9 @@ class Message():
     # Packet Type
     RESPONSE = 4
     REQUEST = 5
-    REPORT = 6
-    ERROR = 7
+    BROADCAST = 6
+    REPORT = 7
+    ERROR = 8
 
     def __init__(self):
         """
@@ -61,6 +62,7 @@ class Message():
         """
         if(packet_type == Message.RESPONSE
            or packet_type == Message.REQUEST
+           or packet_type == Message.BROADCAST
            or packet_type == Message.REPORT
            or packet_type == Message.ERROR):
 
