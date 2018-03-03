@@ -9,19 +9,24 @@ class Server:
     """
     This class represents a network server
     """
-    def __init__(self, port):
+    def __init__(self, socket=None, port=None, queue_receive, list_server):
         """
         The constructor will set up the server
         """
-        self.host_name = socket.gethostname()
-        self.port = port
-        self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server_socket.bind((self.host_name, port))
-        self.server_socket.listen()
+        if(port is not None):
+            self.host_name = socket.gethostname()
+            self.port = port
+            self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.server_socket.bind((self.host_name, port))
+            self.server_socket.listen()
+            self.thread_accept = self.accept()
+            self.thread_accept.start()
+        else:
+            self.server_socket = socket
+            
+        self.queue_receive = queue_receive
+        self.list_server = list_server
 
-        self.queue_receive = queue.Queue()
-        self.thread_accept = self.accept()
-        self.thread_accept.start()
 
     def get_host_name(self):
         return self.host_name
@@ -34,6 +39,7 @@ class Server:
         We close the socket
         """
         self.server_socket.close()
+        self.list_server.remove(self)
 
     def recv(self, socket, encoding, number_bytes=1):
         """
@@ -86,7 +92,7 @@ class Server:
 
             if(message is not None):
                 IP = socket.getpeername()[0]
-                self.queue_receive.put((IP, message))
+                self.queue_receive.put((IP, socket, message))
                 handle_thread()
             else:
                 socket.close()
@@ -104,9 +110,9 @@ class Server:
                 self.produce_receive(socket).start()
                 handle_thread()
             except ConnectionAbortedError:
-                return None
+                self.close()
             except OSError:
-                return None
+                self.close()
 
         t = Thread(target=handle_thread)
         return t
