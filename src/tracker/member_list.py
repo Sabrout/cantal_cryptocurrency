@@ -48,6 +48,10 @@ class MemberList():
         list = list(self.list)
         return list[item]
 
+    def get_random(self):
+        list = list(self.list)
+        i = random.randint(0, len(list)-1)
+        return list[i]
 
 
 
