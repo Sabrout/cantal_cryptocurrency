@@ -10,13 +10,14 @@ class Client():
     This class represents a network client
     """
 
-    def __init__(self, queue_response, list_server):
+    def __init__(self, queue_receive, queue_response, list_server):
         """
         The constructor will instanciate a client with the IP and the Port if
         the information is available
         """
 
         self.queue_response = queue_response
+        self.queue_receive  = queue_receive
         self.list_server = list_server 
         # We set the queue for the client (i.e the client with consume the
         # queue)
@@ -53,17 +54,17 @@ class Client():
         and send the response
         """
         def handle_thread():
-            IP, port, socket, close, message = self.queue_response.get()
-
-            if(socket is None):
+            IP, port, server_socket, close, message = self.queue_response.get()
+            if(server_socket is None):
                 self.set_client(IP, port)
             else:
-                self.set_socket(socket)
-                
+                self.set_socket(server_socket)
+
             self.send(message)
 
-            if(socket not in self.list_socket and not(close)):
-                Server(socket=socket)
+            if(server_socket not in self.list_server and not(close)):
+                server = Server(self.queue_receive, self.list_server, server_socket=self.socket)
+                self.list_server.append(server_socket)
 
             if(close):
                 self.close()

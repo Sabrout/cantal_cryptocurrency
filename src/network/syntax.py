@@ -382,22 +382,6 @@ class SyntaxReader():
         data["nonce"] = nonce
         self.shift()
 
-        def cheese_response(self):
-        self.look()
-        self.check(self.lexical.RESPONSE)
-        self.shift()
-
-        data = {"transactions": [], "nonce": 0}
-        self.message.set_data(data)
-
-        self.transaction_list()
-
-        self.look()
-        self.check(self.lexical.DIGIT)
-        nonce = int(self.lexical.get_text())
-        data["nonce"] = nonce
-        self.shift()
-
     def cheese_broadcast(self):
         self.look()
         self.check(self.lexical.BROADCAST)
@@ -411,22 +395,6 @@ class SyntaxReader():
         hash = self.lexical.get_text()
         data["hash"] = hash
         self.shift()
-
-        self.transaction_list()
-
-        self.look()
-        self.check(self.lexical.DIGIT)
-        nonce = int(self.lexical.get_text())
-        data["nonce"] = nonce
-        self.shift()
-
-        def cheese_response(self):
-        self.look()
-        self.check(self.lexical.RESPONSE)
-        self.shift()
-
-        data = {"transactions": [], "nonce": 0}
-        self.message.set_data(data)
 
         self.transaction_list()
 

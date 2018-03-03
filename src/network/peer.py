@@ -4,6 +4,7 @@ from src.network.ping import Ping
 from src.network.message import Message
 import queue
 
+
 class Peer():
     """
     The peer is the base for the
@@ -16,15 +17,13 @@ class Peer():
 
         self.queue_response = queue.Queue()
         self.queue_receive = queue.Queue()
+        self.list_socket = []
 
-        self.server = Server(port, self.queue_receive)
-        self.client = Client(self.queue_response)
+        self.server = Server(self.queue_receive, self.list_socket, port=port)
+        self.client = Client(self.queue_receive, self.queue_response, self.list_socket)
 
         self.ping = Ping()
 
-
-        self.list_socket = [self.server]
-        
     def produce_response(self, IP=None, port=None, socket=None, close=False, message=None):
         """
         The peer will produce a message response in the queue
@@ -52,5 +51,4 @@ class Peer():
         """
         message = Message.create(Message.PING, Message.REQUEST)
         self.ping.queue_ping.put((IP, port, message))
-
 
