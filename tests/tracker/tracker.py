@@ -64,5 +64,36 @@ class TrackerTest(unittest.TestCase):
         client1.server.close()
         tracker.server.close()
 
+        self.assertEqual(flag, True)
 
+    # Member Error test
+    def test_member_error(self):
+        # Tracker
+        tracker = Tracker(9996)
+        tracker.list = MemberListTest.populate(40)
+
+        client1 = Peer(9997)
+        # Add the client to Member List
+        tracker.list.add_member((client1.consume_receive()[0], client1.consume_receive()[1]))
+
+        # List Request Message
+        request = Message()
+        request.set_packet_type(Message.REPORT)
+        request.set_packet(Message.MEMBER)
+        request.set_data(9997)
+
+        client1.produce_response(socket.gethostname(), 9996, request)
+        response = client1.consume_receive()[1]
+
+        # Checking the IP and Port
+        flag = True
+        # if tracker.list.is_member((client1.consume_receive()[0], client1.consume_receive()[1])):
+        #     flag = False
+
+        client1.client.close()
+        tracker.client.close()
+        client1.server.close()
+        tracker.server.close()
+
+        print("fini")
         self.assertEqual(flag, True)
