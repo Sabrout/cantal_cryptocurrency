@@ -6,7 +6,7 @@ class MoneyListTest(unittest.TestCase):
 
     def test_add_member_pos(self):
         list = MoneyList()
-        list.add_money(('172.0.0.1', '8080'))
+        list.add_money(('49f68a5c8493ec2c0bf489821c21fc3b', 0))
         self.assertEqual(list.is_member(('172.0.0.1', '8080')), True)
 
     def test_add_member_neg(self):

@@ -56,6 +56,9 @@ class MoneyList():
             self.verify((hash, output))
             self.list.append((hash, int(output)))
 
+    def has_money(self, money):
+        money = self.verify(money)
+        return money in self.list
 
 # if __name__ == "__main__":
 #     money_list = MoneyList()
@@ -67,5 +70,7 @@ class MoneyList():
 #     # print(len(money_list.list))
 #     for i in money_list.list:
 #         print(i)
+#
+#     print(money_list.has_money(('4562', 1)))
 
 
