@@ -49,15 +49,15 @@ class Cheese:
                 return False
         return True
 
-    def mine(self):
+    def mine(self, ntimes):
         """
-        Mining a cheese by generating random nonces
+        Mining a cheese by generating random nonces (ntimes trying)
         """
-        self.nonce = int(str(random.random()).replace(",", ""))
-        self.compute_smell()
-        if self.verify_policy():
-            return True
-        return self.mine()
+        for i in range(ntimes):
+            self.nonce = int(str(random.random()).replace(",", ""))
+            self.compute_smell()
+            if self.verify_policy():
+                return True
 
     def compute_smell(self):
         """

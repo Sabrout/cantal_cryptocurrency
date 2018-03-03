@@ -151,3 +151,10 @@ class Member(Peer):
             handle_thread()
         t = Thread(target=handle_thread)
         return t
+
+    def mine(self):
+        def handle_thread():
+            self.cheese_stack.last.mine()
+            handle_thread()
+        t = Thread(target=handle_thread)
+        return t
