@@ -46,8 +46,7 @@ class MemberList():
 
     def __getitem__(self, item):
         list = list(self.list)
-        i = random.randint(0, len(list)-1)
-        return list[i]
+        return list[item]
 
 
 
