@@ -1,7 +1,7 @@
 from threading import Thread
 import socket
 import queue
-from src.message import Message
+from src.network.message import Message
 
 
 class Ping():
