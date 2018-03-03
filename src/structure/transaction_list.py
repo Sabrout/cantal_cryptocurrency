@@ -68,6 +68,12 @@ class TransactionList():
                     return False
         return True
 
+    def get_last(self):
+        length = len(self.transaction_list)
+        if length > 0:
+            return self.transaction_list[length-1]
+        return None
+
     def __getitem__(self, item):
         if isinstance(item, str):
             item = self.transaction_index[item]
