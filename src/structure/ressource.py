@@ -27,7 +27,7 @@ class Ressource():
         self.sem_nb_writer += 1
         if self.sem_nb_writer == 1:
             self.sem_reader.acquire()
-        self.sem_writer.release()
+        self.sem_nb_writer.release()
 
         self.sem_writer.acquire()
         self.ressource.fun(*args)
