@@ -49,7 +49,7 @@ class Tracker(Peer):
                 port = message.get_data()
             except ValueError:
                 raise Exception('Error: Invalid Port')
-            self.list.remove_member((ip, port))
+            self.list.remove_member(port)
 
     def main(self):
         """

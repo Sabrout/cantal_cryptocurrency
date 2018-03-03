@@ -1,7 +1,6 @@
 import unittest
 from src.tracker.tracker import Tracker
 from src.network.peer import Peer
-from tests.tracker.member_list import MemberListTest
 from src.network.message import Message
 import socket
 
@@ -87,6 +86,7 @@ class TrackerTest(unittest.TestCase):
         print("step 3")
         client1.produce_response(socket.gethostname(), 9996, request)
         print("step 4")
+        # NOOOOOOOOOT FINISHEDDDDDDDDDDDDDD
         response = client1.consume_receive()
         print(tracker.list.print_list())
         print("step 5")

@@ -13,9 +13,12 @@ class MemberList():
 
     def remove_member(self, member):
         try:
-            print(member)
+            # for x in self.list:
+            #     print(x)
+            # print(member)
             # self.list.__delitem__(member)
             del self.list[member]
+            # self.list.pop(member)
         except ValueError:
             raise Exception('Error: Member not found')
 
