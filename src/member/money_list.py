@@ -2,7 +2,7 @@ import os
 
 
 class MoneyList():
-    hash_size = 4
+    hash_size = 64
 
     def __init__(self):
         self.list = list()
