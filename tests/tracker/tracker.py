@@ -36,3 +36,7 @@ class TrackerTest(unittest.TestCase):
         tracker.server.close()
 
         self.assertEqual(flag, True)
+
+    def test_list_error(self):
+        # Tracker
+        tracker = Tracker(9995)
