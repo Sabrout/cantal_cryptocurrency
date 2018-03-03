@@ -1,6 +1,6 @@
 from src.network.server import Server
 from src.network.client import Client
-
+from src.network.ping import Ping
 
 class Peer():
     """
@@ -13,6 +13,7 @@ class Peer():
         """
         self.server = Server(port)
         self.client = Client()
+        self.ping = Ping()
 
     def produce_response(self, IP, port, message):
         """
@@ -27,3 +28,18 @@ class Peer():
         """
         message = self.server.queue_receive.get()
         return message
+
+    def consume_pong(self):
+        """
+        We get the response of the pong
+        """
+        ip, port, message = self.ping.queue_pong.get()
+        return ip, port, message.get_data()
+
+    def produce_ping(self, ip, port):
+        """
+        Ask for a ping
+        """
+        message = Message.create(Message.PING, Message.REQUEST)
+        self.ping.queue_ping.put((IP, port, message))
+
