@@ -30,7 +30,7 @@ class Ressource():
         self.sem_nb_writer.release()
 
         self.sem_writer.acquire()
-        self.ressource.fun(*args)
+        result = self.ressource.fun(*args)
         self.sem_writer.release()
 
         self.sem_nb_writer.acquire()
@@ -38,6 +38,7 @@ class Ressource():
         if self.nb_writer == 0:
             self.sem_reader.release()
         self.sem_nb_writer.release()
+        return result
 
     def read(self, fun, *args):
         """
@@ -53,7 +54,7 @@ class Ressource():
         self.sem_nb_reader.release()
         self.sem_reader.release()
 
-        self.ressource.fun(*args)
+        result = self.ressource.fun(*args)
 
         self.sem_nb_reader.acquire()
         self.nb_reader -= 1
@@ -61,3 +62,4 @@ class Ressource():
             self.sem_writer.release()
 
         self.sem_nb_reader.release()
+        return result

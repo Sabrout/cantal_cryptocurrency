@@ -7,7 +7,7 @@ from threading import Thread
 class Tracker(Peer):
     def __init__(self, port):
         Peer.__init__(self, port)
-        self.list = MemberList()
+
         self.main().start()
 
     def process_message(self, tuple):
@@ -21,14 +21,14 @@ class Tracker(Peer):
             response = Message()
             response.set_packet(Message.LIST)
             response.set_packet_type(Message.RESPONSE)
-            response.set_data(self.list.get_sublist())
+            response.set_data(self.member_list.get_sublist())
             if message.get_packet_type() == Message.REQUEST:
                 # Adding member to list
                 try:
                     port = int(message.get_data())
                 except ValueError:
                     raise Exception('Error: Invalid Port')
-                self.list.add_member((ip, port))
+                self.member_list.add_member((ip, port))
                 self.produce_response(ip, port, response)
 
             # List ERROR
@@ -48,7 +48,7 @@ class Tracker(Peer):
                 port = int(message.get_data())
             except ValueError:
                 raise Exception('Error: Invalid Port')
-            self.list.remove_member((ip, port))
+            self.member_list.remove_member((ip, port))
 
     def main(self):
         """

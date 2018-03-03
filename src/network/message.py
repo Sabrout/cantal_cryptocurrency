@@ -9,11 +9,14 @@ class Message():
     MEMBER = 1
     TRANSACTION = 2
     CHEESE = 3
+    PING = 4
+
     # Packet Type
-    RESPONSE = 4
-    REQUEST = 5
-    REPORT = 6
-    ERROR = 7
+    RESPONSE = 5
+    REQUEST = 6
+    BROADCAST = 7
+    REPORT = 8
+    ERROR = 9
 
     def __init__(self):
         """
@@ -40,6 +43,7 @@ class Message():
         informations
         """
         if(packet == Message.LIST
+           or packet == Message.PING
            or packet == Message.MEMBER
            or packet == Message.TRANSACTION
            or packet == Message.CHEESE):
@@ -61,6 +65,7 @@ class Message():
         """
         if(packet_type == Message.RESPONSE
            or packet_type == Message.REQUEST
+           or packet_type == Message.BROADCAST
            or packet_type == Message.REPORT
            or packet_type == Message.ERROR):
 
