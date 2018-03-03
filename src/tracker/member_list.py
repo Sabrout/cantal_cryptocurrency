@@ -41,6 +41,18 @@ class MemberList():
         sublist = random.sample(list(self.list), num)
         return sublist
 
+    def __len__(self):
+        return len(self.list)
+
+    def __getitem__(self, item):
+        list = list(self.list)
+        i = random.randint(0, len(list)-1)
+        return list[i]
+
+
+
+
+
 
 # def main():
 #     list = MemberList()
