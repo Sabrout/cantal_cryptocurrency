@@ -8,11 +8,18 @@ class Member(Peer):
         self.member_list = Ressource(self.member_list)
         self.cheese_stack = Ressource(self.cheese_stack)
 
-        self.transaction_list = None
-        self.monney_list = None
+        self.transaction_list = TransactionList()
+        self.transaction_list = Ressource(self.transaction_list)
+
+        self.monney_list = Ressource(list())
 
     def process_message(self):
-        return "Don't care"
+        def handle_thread():
+        t = Thread(target=handle_thread)
+        return t
+
+    def process_transaction_request(self):
+
 
     def process_member_list(self):
         def handle_thread():
