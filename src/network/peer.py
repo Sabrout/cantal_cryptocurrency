@@ -14,16 +14,14 @@ class Peer():
         """
         The peer will have a server and a client
         """
-        self.server = Server(port)
-        self.client = Client()
-        self.ping = Ping()
-
         self.queue_response = queue.Queue()
         self.queue_receive = queue.Queue()
         self.list_socket = []
 
         self.server = Server(self.queue_receive, self.list_socket, port=port)
         self.client = Client(self.queue_receive, self.queue_response, self.list_socket)
+
+        self.ping = Ping()
 
     def produce_response(self, IP=None, port=None, socket=None, close=False, message=None):
         """
