@@ -51,6 +51,5 @@ class Peer():
         """
         Ask for a ping
         """
-        message = Message.create(Message.PING, Message.REQUEST)
+        message = Message.create(Message.PING, Message.REQUEST, None)
         self.ping.queue_ping.put((IP, port, message))
-

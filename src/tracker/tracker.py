@@ -8,7 +8,7 @@ import random
 class Tracker(Peer):
     def __init__(self, port):
         Peer.__init__(self, port)
-
+        self.list = MemberList()
         self.main().start()
 
     def process_message(self, tuple):
@@ -82,8 +82,8 @@ class Tracker(Peer):
             list.add_member((ip, port))
         return list
 
-# if __name__ == "__main__":
-#     tracker = Tracker(9990)
-#     host = tracker.server.get_host_name()
-#     port = tracker.server.get_port()
-#     print("Debug: Tracker opened at "+str(host)+":"+str(port))
+if __name__ == "__main__":
+    tracker = Tracker(9990)
+    host = tracker.server.get_host_name()
+    port = tracker.server.get_port()
+    print("Debug: Tracker opened at "+str(host)+":"+str(port))
