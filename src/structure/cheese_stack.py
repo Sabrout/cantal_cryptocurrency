@@ -89,6 +89,7 @@ class CheeseStack():
         """
         :return: The last cheese
         """
+        print(len(self.blockchain) - 1)
         return self.blockchain[len(self.blockchain) - 1]
 
     def verify(self, cheese):

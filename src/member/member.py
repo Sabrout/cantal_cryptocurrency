@@ -11,20 +11,22 @@ from threading import Thread
 from threading import Event
 import random
 import time
+import os
 
 
 class Member(Peer):
-    def __init__(self, port, ip_tracker, port_tracker, ttl=0):
+    def __init__(self, port, ip_tracker, port_tracker, ttl=5):
+        self.event = Event()
         Peer.__init__(self, port)
         self.port = port
         self.ip_tracker = ip_tracker
         self.port_tracker = port_tracker
 
         self.member_list = MemberList()
-        self.cheese_stack = CheeseStack()
+        self.cheese_stack = CheeseStack.load()
         self.member_list = Ressource(self.member_list)
         self.cheese_stack = Ressource(self.cheese_stack)
-
+        
         self.transaction_list = TransactionList()
         self.transaction_list = Ressource(self.transaction_list)
 
@@ -68,7 +70,11 @@ class Member(Peer):
             member_list = self.member_list.ressource
             print((ip,port))
             self.member_list.write(member_list.add_member, (ip, port))
-        Event.set()
+        print("I set the flag to true")
+        self.event.set()
+        print("I already set it to true")
+
+
 
     def process_transaction_error(self, message):
         print(message.data)
@@ -131,7 +137,10 @@ class Member(Peer):
             size_member = self.member_list.read(self.member_list.ressource.__len__)
             print("list_size")
             if size_member < size:
-                Event.clear()
+                print("I set the flag to false")
+                self.event.clear()
+                print("I already set it false")
+
                 print("size: "+str(size_member))
                 message = Message.create(Message.LIST, Message.REQUEST, self.port)
                 self.produce_response(IP=self.ip_tracker, port=self.port_tracker, message=message)
@@ -183,24 +192,28 @@ class Member(Peer):
         t = Thread(target=handle_thread)
         return t
 
-    def update_cheese_stack(self, event):
+    def update_cheese_stack(self):
         def handle_thread():
-            event.wait()
+            self.event.wait()
             member_list = self.member_list.ressource
+            print("je wait")
+            self.event.wait()
+            print("j'ai fini de wait")
             if(self.member_list.read(member_list.__len__) != 0):
                 ttl = self.ttl.ressource
                 cheese_stack = self.cheese_stack.ressource
                 while(self.ttl.read(ttl.is_zero) is False):
-                    print("while bedut")
+                    print("COUCOU")
                     last_cheese = self.cheese_stack.read(cheese_stack.last)
                     last_smell = last_cheese.smell
 
                     message = Message.create(Message.CHEESE, Message.REQUEST, last_smell)
                     self.send(message)
-                print("while fin")
+                print("PAS COUCOU NORMAL")
             else:
+                print("ELSE")
                 handle_thread()
-        t = Thread(target=handle_thread(), args=(e,))
+        t = Thread(target=handle_thread)
         return t
 
     def send(self, message):
@@ -216,15 +229,15 @@ class Member(Peer):
 
     def init(self):
         event = Event()
-        self.process_member_list_size(1, 5, event).start()
+        self.process_member_list_size(1, 5).start()
         self.process_member_list_ping(5).start()
         self.process_member_list_pong().start()
-        self.update_cheese_stack(event).start()
+        self.update_cheese_stack().start()
         print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
 
-    def main(self):
+    def main(self):        
         def handle_thread():
-            print("DOPKDPZDPOJEZPODZPJ")
+            print("je suis dans le main")
             self.process_message(self.consume_receive())
             handle_thread()
         t = Thread(target=handle_thread)
@@ -245,8 +258,9 @@ if __name__ == "__main__":
     try:
         member = Member(9001, ip_tracker, port_tracker)
         member.init()
-        print('mainaianpidnazdpnzapdna')
+        print("AVANT START")
         member.main().start()
+        print("APRES MAIN START")
     except (KeyboardInterrupt, SystemExit):
         print("PUNTAIINNN MMAIS JE PETE DES CALBES")
         member.client.close()

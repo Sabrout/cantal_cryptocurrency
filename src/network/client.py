@@ -49,6 +49,7 @@ class Client():
         except BrokenPipeError:
             print("Debug: Broken pipe")
 
+
     def close(self):
         """
         We close the socket
