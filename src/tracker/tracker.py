@@ -8,7 +8,6 @@ import random
 class Tracker(Peer):
     def __init__(self, port):
         Peer.__init__(self, port)
-
         self.main().start()
 
     def process_message(self, tuple):

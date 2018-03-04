@@ -34,6 +34,9 @@ class Member(Peer):
         (IP, socket, message) = tuple
 
         # Handling messages
+        if(message.get_packet() == Message.LIST):
+            if(message.get_packet_type() == Message.RESPONSE):
+                self.process_list_response(message)
         if(message.get_packet() == Message.TRANSACTION):
             if(message.get_packet_type() == Message.REQUEST):
                 response = self.process_transaction_request()
@@ -51,6 +54,11 @@ class Member(Peer):
                 # Maybe we have to send back a message if the received cheese is bad
             if(message.get_packet_type() == Message.ERROR):
                 self.process_cheese_error(message)
+
+    def process_list_response(self, message):
+        for (ip, port) in message.get_data():
+            member_list = self.member_list.ressource
+            self.member_list.write(member_list.add_member, (ip, port))
 
     def process_transaction_error(self, message):
         print(message.data)
@@ -101,9 +109,11 @@ class Member(Peer):
     def process_member_list_size(self, size, sleep):
         def handle_thread():
             size_member = self.member_list.read(self.member_list.ressource.__len__)
+            print("list_size")
             if size_member < size:
-                message = Message(Message.LIST, Message.REQUEST, self.port)
-                self.produce_response(ip=self.ip_tracker, port=self.port_tracker, message=message)
+                print("size: "+str(size_member))
+                message = Message.create(Message.LIST, Message.REQUEST, self.port)
+                self.produce_response(IP=self.ip_tracker, port=self.port_tracker, message=message)
 
             time.sleep(sleep)
 
@@ -164,7 +174,7 @@ class Member(Peer):
             self.produce_response(ip=ip, port=port, message=message)
 
     def init(self):
-        self.process_member_list_size(0, 5).start()
+        self.process_member_list_size(1, 5).start()
         self.process_member_list_ping(5).start()
         self.process_member_list_pong().start()
 
@@ -185,9 +195,9 @@ class Member(Peer):
 
 if __name__ == "__main__":
     port = 9001
-    ip_tracker = "192.168.0.30"
+    ip_tracker = "192.168.0.29"
     port_tracker = 9990
-    member = Member(9001, "192.168.0.30", 9990)
+    member = Member(9001, ip_tracker, port_tracker)
     member.init()
     member.main().start()
     print("Debug: Member connected to "+str(ip_tracker)+":"+str(port_tracker))
