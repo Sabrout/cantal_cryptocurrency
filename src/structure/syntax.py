@@ -358,10 +358,11 @@ class CheeseSyntaxReader():
 
     def output(self):
         self.look()
-        if(self.get_lookahead == self.lexical.HASH):
+
+        if(self.get_lookahead() == self.lexical.HASH):
             self.shift()
             return self.lexical.get_text()
-        elif(self.get_lookahead == self.lexical.DIGIT):
+        elif(self.get_lookahead() == self.lexical.DIGIT):
             self.shift()
             return int(self.lexical.get_text())
         else:

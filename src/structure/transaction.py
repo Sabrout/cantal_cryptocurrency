@@ -90,10 +90,6 @@ class Transaction():
         We verify the format of the hash
         and we store them in used_output
         """
-        # Checking format of hash
-        if len(first_hash) != 32 or len(second_hash) !=32 :
-            raise Exception('Error: Invalid Hash Size')
-
         self.used_output = [first_hash, second_hash]
 
     def compute_hash(self):
