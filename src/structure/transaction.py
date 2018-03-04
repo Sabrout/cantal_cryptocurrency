@@ -58,7 +58,7 @@ class Transaction():
         """
         # Checking format of list_wallet
         for wallet in list_wallet:
-            if len(wallet) <= 64*3:
+            if len(wallet) <= 3:
                 # It's <= 64*3 because there should be 2 output keys and at least one input key
                 # For the transaction
                 raise Exception('Error: Invalid Wallet_Pub Size')

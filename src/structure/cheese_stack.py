@@ -177,9 +177,24 @@ class CheeseStack():
         self.push(cheese)
 
     def calculate_money(self, member):
+        money = 0
         money_list = member.money_list
-        for i in self:
-            for j in i.data:
-                print(j)
+        for cheese in self:
+            for trans_list in cheese.data:
+                for transaction in trans_list:
+                    if transaction.list_wallet[-2] == member.public_key:
+                        for input in transaction.list_input:
+                            if input in member.money_list:
+                                money+= transaction.list_amount[-1]
+                    if transaction.list_wallet[-1] == member.public_key:
+                        for input in transaction.list_input:
+                            if input in member.money_list:
+                                money+= transaction.list_amount[0] + transaction.list_amount[1] \
+                                        - transaction.list_amount[-1]
+        return money
+
+
+
+
 
 

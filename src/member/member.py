@@ -28,9 +28,9 @@ class Member(Peer):
         self.transaction_list = TransactionList()
         self.transaction_list = Ressource(self.transaction_list)
 
-        self.money_list = Ressource(MoneyList())
+        self.money_list = MoneyList()
         # Public key should fe filled using Crypto
-        self.public_key = 0
+        self.public_key = ''
 
         self.ttl = TTL(ttl)
         self.ttl = Ressource(self.ttl)
@@ -237,6 +237,13 @@ class Member(Peer):
             handle_thread()
         t = Thread(target=handle_thread)
         return t
+
+    def set_public_key(self, key):
+        self.public_key = key
+
+    def add_money_to_list(self, money):
+        money_list = self.money_list.ressource
+        self.money_list.write(money_list.add_money, money)
 
 
 if __name__ == "__main__":
