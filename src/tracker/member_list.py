@@ -41,6 +41,8 @@ class MemberList():
         sublist = random.sample(list(self.list), num)
         return sublist
 
+    def get_list(self):
+        return self.list.keys()
 
 # def main():
 #     list = MemberList()

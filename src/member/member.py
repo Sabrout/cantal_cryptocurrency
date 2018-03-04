@@ -74,7 +74,6 @@ class Member(Peer):
     def process_cheese_error(self, message):
         print(message.get_data())
 
-
     def process_transaction_request(self):
         last = self.transaction_list.read(self.transaction_list.ressource.get_last)
 
@@ -98,7 +97,8 @@ class Member(Peer):
 
     def process_member_list_size(self, size, sleep):
         def handle_thread():
-            if len(self.member_list) < size:
+            size_member = self.member_list.read(self.member_list.ressource.__len__)
+            if size_member < size:
                 message = Message(Message.LIST, Message.REQUEST, self.port)
                 self.produce_response(ip=self.ip_tracker, port=self.port_tracker, message=message)
 
@@ -134,16 +134,29 @@ class Member(Peer):
         t = Thread(target=handle_thread)
         return t
 
-    def process_cheese_stack(self):
+    def process_transaction_list(self, sleep):
         def handle_thread():
+            message = Message()
+            message.set_packet(Message.TRANSACTION)
+            message.set_packet_type(Message.REQUEST)
 
+            self.send(message)
+
+            time.sleep(sleep)
+            handle_thread()
         t = Thread(target=handle_thread)
         return t
 
     def send(self, message):
-        i = random.randint(0, len(self.member_list))
-        (ip, port) = self.member_list[i]
+        member_list = self.member_list.ressource
+        (ip, port) = self.member_list.read(member_list.get_random)
         self.produce_response(ip=ip, port=port, message=message)
+
+    def broadcast(self, message):
+        member_list = self.member_list.ressource
+        member_list = self.member_list.read(member_list.get_list)
+        for (ip, port) in member_list:
+            self.produce_response(ip=ip, port=port, message=message)
 
     def main(self):
         def handle_thread():
