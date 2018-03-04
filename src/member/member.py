@@ -5,13 +5,14 @@ from src.structure.transaction import Transaction
 from src.structure.transaction_list import TransactionList
 from src.structure.ressource import Ressource
 from src.network.message import Message
+from src.member.ttl import TTL
 from threading import Thread
 import random
 import time
 
 
 class Member(Peer):
-    def __init__(self, port, ip_tracker, port_tracker):
+    def __init__(self, port, ip_tracker, port_tracker, ttl):
         Peer.__init__(self, port)
         self.port = port
         self.ip_tracker = ip_tracker
@@ -26,6 +27,8 @@ class Member(Peer):
         self.transaction_list = Ressource(self.transaction_list)
 
         self.money_list = Ressource(list())
+
+        self.ttl = Ressource(ttl)
 
     def process_message(self, tuple):
         (IP, socket, message) = tuple
@@ -64,6 +67,7 @@ class Member(Peer):
         return Message
 
     def process_cheese_response(self, message):
+        self.ttl.write(self.ttl.reset)
         cheese = message.get_data()
 
         if(cheese.verify(cheese) is True):
@@ -72,7 +76,13 @@ class Member(Peer):
             return None
 
     def process_cheese_error(self, message):
-        print(message.get_data())
+        if(self.ttl.read(self.ttl.is_zero) is True):
+            print(message.get_data())
+        else:
+            self.ttl.write(self.ttl.decrement)
+            (ip, port) = self.member_list.read(member_list.get_random)
+            self.produce_response(IP=ip, port=port ,close=False, message=response)
+
 
 
     def process_transaction_request(self):
