@@ -103,5 +103,5 @@ class CheeseStackWriter():
         self.file.write(sign)
 
     def write_used_output(self, transaction):
-        self.file.write(transaction.used_output[0] +
-                        ","+transaction.used_output[1])
+        self.file.write(str(transaction.used_output[0]) +
+                        ","+str(transaction.used_output[1]))

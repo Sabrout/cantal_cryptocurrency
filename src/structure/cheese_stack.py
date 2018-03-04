@@ -56,6 +56,7 @@ class CheeseStack():
         sentence = cheese_file.read()
         reader = CheeseSyntaxReader(sentence, cheese_stack)
         cheese_stack = reader.parse()
+        cheese_file.close()
         return cheese_stack
 
     def save(self, path=os.getcwd()):
