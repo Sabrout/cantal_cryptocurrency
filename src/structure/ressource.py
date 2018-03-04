@@ -23,7 +23,7 @@ class Ressource():
         This function permit to write in the ressource with
         a writer-preference
         """
-        self.sem_nb_writer.aquire()
+        self.sem_nb_writer.acquire()
         self.nb_writer += 1
         if self.nb_writer == 1:
             self.sem_reader.acquire()

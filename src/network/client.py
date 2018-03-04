@@ -18,7 +18,7 @@ class Client():
 
         self.queue_response = queue_response
         self.queue_receive  = queue_receive
-        self.list_server = list_server 
+        self.list_server = list_server
         # We set the queue for the client (i.e the client with consume the
         # queue)
         self.consume_response().start()
@@ -28,6 +28,7 @@ class Client():
         We create the client with an IP and a port
         """
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket.settimeout(3)
         self.socket.connect((IP, port))
         print("je set mon client: "+str(self.socket))
 
@@ -63,7 +64,9 @@ class Client():
             else:
                 self.set_socket(server_socket)
 
+            print("C'est partit")
             self.send(message)
+            print("Niquel")
 
             if(server_socket is not None and server_socket not in self.list_server and not(close)):
                 print("bizarre")

@@ -23,7 +23,6 @@ class Server:
             self.queue_receive = queue_receive
             self.list_server = list_server
 
-            print(self.host_name)
             print("je te print: "+str(self.server_socket))
             self.thread_accept = self.accept()
             self.thread_accept.start()
