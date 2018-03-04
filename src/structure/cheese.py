@@ -58,6 +58,7 @@ class Cheese:
             self.compute_smell()
             if self.verify_policy():
                 return True
+        return False
 
     def compute_smell(self):
         """
@@ -82,3 +83,11 @@ class Cheese:
         if not(self.data.verify()):
             return False
         return True
+
+    def create_temp_cheese(member):
+        transactions = ####get qqchoz
+        cheese = Cheese()
+        cheese.set_parent_smell(member.cheese_stack.last.smell)
+        cheese.set_data(transactions)
+        return cheese
+
