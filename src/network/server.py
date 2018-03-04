@@ -14,7 +14,7 @@ class Server:
         The constructor will set up the server
         """
         if(port is not None):
-            self.host_name = socket.gethostname()
+            self.host_name = socket.gethostbyname(socket.gethostname())
             self.port = port
             self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.server_socket.bind((self.host_name, port))
@@ -22,7 +22,8 @@ class Server:
 
             self.queue_receive = queue_receive
             self.list_server = list_server
-            
+
+            print(self.host_name)
             print("je te print: "+str(self.server_socket))
             self.thread_accept = self.accept()
             self.thread_accept.start()

@@ -13,7 +13,7 @@ import time
 
 
 class Member(Peer):
-    def __init__(self, port, ip_tracker, port_tracker, ttl):
+    def __init__(self, port, ip_tracker, port_tracker, ttl=0):
         Peer.__init__(self, port)
         self.port = port
         self.ip_tracker = ip_tracker
