@@ -30,8 +30,8 @@ class Member(Peer):
 
         self.money_list = Ressource(MoneyList())
 
-
-        self.ttl = Ressource(ttl)
+        self.ttl = TTL(ttl)
+        self.ttl = Ressource(self.ttl)
 
     def process_message(self, tuple):
         (IP, socket, message) = tuple
@@ -68,7 +68,8 @@ class Member(Peer):
 
     def process_cheese_request(self, message):
         parent_smell = message.get_data()
-        cheese = self.cheese_stack[parent_smell]
+        cheese_stack = self.cheese_stack.ressource
+        cheese = self.cheese_stack.read(cheese_stack.__getitem__, parent_smell)
 
         if(cheese is not None):
             message = Message.create(Message.CHEESE, Message.RESPONSE, cheese)
@@ -78,19 +79,22 @@ class Member(Peer):
         return Message
 
     def process_cheese_response(self, message):
-        self.ttl.write(self.ttl.reset)
+        ttl = self.ttl.ressource
+        self.ttl.write(ttl.reset)
         cheese = message.get_data()
 
         if(cheese.verify(cheese) is True):
-            self.cheese_stack.add(cheese)
+            cheese_stack = self.cheese_stack.ressource
+            self.cheese_stack.write(cheese_stack.add, cheese)
         else:
             self.procces_cheese_error(message)
 
     def process_cheese_error(self, message):
-        if(self.ttl.read(self.ttl.is_zero) is True):
+        ttl = self.ttl.ressource
+        if(self.ttl.read(ttl.is_zero) is True):
             print(message.get_data())
         else:
-            self.ttl.write(self.ttl.decrement)
+            self.ttl.write(ttl.decrement)
             print("ttl : "+ str(self.ttl.read(self.ttl.get_ttl)))
 
 
@@ -172,13 +176,22 @@ class Member(Peer):
         return t
 
     def update_cheese_stack(self):
-        while(self.ttl.read(self.ttl.is_zero) is False):
-            last_cheese = self.cheese_stack.last()
-            last_smell = last_cheese.smell
+        def handle_thread():
+            member_list = self.member_list.ressource
+            if(self.member_list.read(member_list.__len__) != 0):
+                ttl = self.ttl.ressource
+                cheese_stack = self.cheese_stack.ressource
+                while(self.ttl.read(ttl.is_zero) is False):
+                    last_cheese = self.cheese_stack.read(cheese_stack.last)
+                    last_smell = last_cheese.smell
 
-            message = Message.create(CHEESE, REQUEST, last_smell)
-            self.send(message)
-            
+                    message = Message.create(Message.CHEESE, Message.REQUEST, last_smell)
+                    self.send(message)
+            else:
+                time.sleep(1)
+                handle_thread()
+        t = Thread(target=handle_thread())
+        return t
         
     def send(self, message):
         member_list = self.member_list.ressource
@@ -195,6 +208,7 @@ class Member(Peer):
         self.process_member_list_size(1, 5).start()
         self.process_member_list_ping(5).start()
         self.process_member_list_pong().start()
+        self.update_cheese_stack().start()
 
     def main(self):
         def handle_thread():
@@ -218,4 +232,5 @@ if __name__ == "__main__":
     member = Member(9001, ip_tracker, port_tracker)
     member.init()
     member.main().start()
+    
     print("Debug: Member connected to "+str(ip_tracker)+":"+str(port_tracker))
