@@ -15,4 +15,7 @@ class TTL():
         if(self.ttl == 0):
             return True
         return False
+
+    def get_ttl(self):
+        return self.ttl
     
