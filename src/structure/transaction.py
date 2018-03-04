@@ -12,7 +12,7 @@ class Transaction():
         The constructor will set all the lists and will verify the content
         """
         self.list_sign = list()
-        self.used_output = [None, None]
+        self.used_output = [0, 0]
 
         if(list_input is not None):
             # Checking format of list_input
@@ -90,10 +90,6 @@ class Transaction():
         We verify the format of the hash
         and we store them in used_output
         """
-        # Checking format of hash
-        if len(first_hash) != 32 or len(second_hash) !=32 :
-            raise Exception('Error: Invalid Hash Size')
-
         self.used_output = [first_hash, second_hash]
 
     def compute_hash(self):
