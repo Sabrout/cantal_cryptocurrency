@@ -27,7 +27,6 @@ class Member(Peer):
         self.transaction_list = TransactionList()
         self.transaction_list = Ressource(self.transaction_list)
 
-
         self.money_list = Ressource(MoneyList())
 
         self.ttl = TTL(ttl)

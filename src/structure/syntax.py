@@ -179,6 +179,9 @@ class CheeseSyntaxReader():
             self.transaction.set_list_sign(self.list_sign, verify=False)
 
         self.look()
+        print(self.lexical.get_text())
+        print(self.lexical.SEPARATOR)
+        print(self.get_lookahead())
         self.check(self.lexical.SEPARATOR)
         self.shift()
 

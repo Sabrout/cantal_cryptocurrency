@@ -175,5 +175,10 @@ class CheeseStack():
     def __setitem__(self, parent_smell, cheese):
         self.push(cheese)
 
-    def calculate_money(self):
-        print()
+    def calculate_money(self, member):
+        money_list = member.money_list
+        for i in self:
+            for j in i.data:
+                print(j)
+
+
