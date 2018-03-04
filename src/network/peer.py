@@ -14,6 +14,7 @@ class Peer():
         """
         The peer will have a server and a client
         """
+
         self.queue_response = queue.Queue()
         self.queue_receive = queue.Queue()
         self.queue_ping = queue.Queue()
@@ -52,3 +53,4 @@ class Peer():
         """
         message = Message.create(Message.PING, Message.REQUEST)
         self.ping.queue_ping.put((IP, port, message))
+

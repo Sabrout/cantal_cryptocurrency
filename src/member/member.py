@@ -6,6 +6,7 @@ from src.structure.transaction_list import TransactionList
 from src.structure.ressource import Ressource
 from src.network.message import Message
 from src.member.ttl import TTL
+from src.member.money_list import MoneyList
 from threading import Thread
 import random
 import time
@@ -26,7 +27,9 @@ class Member(Peer):
         self.transaction_list = TransactionList()
         self.transaction_list = Ressource(self.transaction_list)
 
-        self.money_list = Ressource(list())
+
+        self.money_list = Ressource(MoneyList())
+
 
         self.ttl = Ressource(ttl)
 
@@ -84,7 +87,6 @@ class Member(Peer):
             self.produce_response(IP=ip, port=port ,close=False, message=response)
 
 
-
     def process_transaction_request(self):
         last = self.transaction_list.read(self.transaction_list.ressource.get_last)
 
@@ -108,7 +110,8 @@ class Member(Peer):
 
     def process_member_list_size(self, size, sleep):
         def handle_thread():
-            if len(self.member_list) < size:
+            size_member = self.member_list.read(self.member_list.ressource.__len__)
+            if size_member < size:
                 message = Message(Message.LIST, Message.REQUEST, self.port)
                 self.produce_response(ip=self.ip_tracker, port=self.port_tracker, message=message)
 
@@ -121,9 +124,11 @@ class Member(Peer):
     def process_member_list_ping(self, sleep):
         def handle_thread():
             member_list = self.member_list.ressource
-            (ip, port) = self.member_list.read(member_list.get_random)
+            member = self.member_list.read(member_list.get_random)
 
-            self.produce_ping(ip, port)
+            if member is not None:
+                (ip, port) = member
+                self.produce_ping(ip, port)
 
             time.sleep(sleep)
 
@@ -144,21 +149,55 @@ class Member(Peer):
         t = Thread(target=handle_thread)
         return t
 
-    def process_cheese_stack(self):
+    def process_transaction_list(self, sleep):
         def handle_thread():
+            message = Message()
+            message.set_packet(Message.TRANSACTION)
+            message.set_packet_type(Message.REQUEST)
 
+            self.send(message)
+
+            time.sleep(sleep)
+            handle_thread()
         t = Thread(target=handle_thread)
         return t
 
     def send(self, message):
-        i = random.randint(0, len(self.member_list))
-        (ip, port) = self.member_list[i]
+        member_list = self.member_list.ressource
+        (ip, port) = self.member_list.read(member_list.get_random)
         self.produce_response(ip=ip, port=port, message=message)
+
+    def broadcast(self, message):
+        member_list = self.member_list.ressource
+        member_list = self.member_list.read(member_list.get_list)
+        for (ip, port) in member_list:
+            self.produce_response(ip=ip, port=port, message=message)
+
+    def init(self):
+        self.process_member_list_size(0, 5).start()
+        self.process_member_list_ping(5).start()
+        self.process_member_list_pong().start()
 
     def main(self):
         def handle_thread():
             self.process_message(self.consume_receive())
             handle_thread()
-
         t = Thread(target=handle_thread)
         return t
+
+    def mine(self, ntimes):
+        def handle_thread():
+            self.create_temp_cheese.mine(ntimes)
+            handle_thread()
+        t = Thread(target=handle_thread)
+        return t
+
+
+if __name__ == "__main__":
+    port = 9001
+    ip_tracker = "192.168.0.30"
+    port_tracker = 9990
+    member = Member(9001, "192.168.0.30", 9990)
+    member.init()
+    member.main().start()
+    print("Debug: Member connected to "+str(ip_tracker)+":"+str(port_tracker))

@@ -18,7 +18,7 @@ class Cheese:
         """
         cheese = Cheese(smell, parent_smell, nonce, data)
         return cheese
-    
+
     def set_smell(self, smell):
         """
         The smell of a cheese is the hash of the parent smell + data + nonce
@@ -49,15 +49,16 @@ class Cheese:
                 return False
         return True
 
-    def mine(self):
+    def mine(self, ntimes):
         """
-        Mining a cheese by generating random nonces
+        Mining a cheese by generating random nonces (ntimes trying)
         """
-        self.nonce = int(str(random.random()).replace(",", ""))
-        self.compute_smell()
-        if self.verify_policy():
-            return True
-        return self.mine()
+        for i in range(ntimes):
+            self.nonce = int(str(random.random()).replace(",", ""))
+            self.compute_smell()
+            if self.verify_policy():
+                return True
+        return False
 
     def compute_smell(self):
         """
@@ -82,3 +83,11 @@ class Cheese:
         if not(self.data.verify()):
             return False
         return True
+
+    def create_temp_cheese(member):
+        transactions = None
+        cheese = Cheese()
+        cheese.set_parent_smell(member.cheese_stack.last.smell)
+        cheese.set_data(transactions)
+        return cheese
+

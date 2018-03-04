@@ -29,6 +29,7 @@ class Client():
         """
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.connect((IP, port))
+        print("je set mon client: "+str(self.socket))
 
     def set_socket(self, socket):
         self.socket = socket
@@ -46,6 +47,7 @@ class Client():
         """
         We close the socket
         """
+        # print(self)
         self.socket.close()
 
     def consume_response(self):
@@ -56,19 +58,22 @@ class Client():
         def handle_thread():
             IP, port, server_socket, close, message = self.queue_response.get()
             if(server_socket is None):
+                print("I consume it !!!!!!!!!!")
                 self.set_client(IP, port)
             else:
                 self.set_socket(server_socket)
 
             self.send(message)
 
-            if(server_socket not in self.list_server and not(close)):
+            if(server_socket is not None and server_socket not in self.list_server and not(close)):
+                print("bizarre")
                 server = Server(self.queue_receive, self.list_server, server_socket=self.socket)
                 self.list_server.append(server_socket)
 
             if(close):
+                print("je devrais pas faire ca")
                 self.close()
-                
+            print("I'm here: "+str(self.socket))
             handle_thread()
 
         t = Thread(target=handle_thread)

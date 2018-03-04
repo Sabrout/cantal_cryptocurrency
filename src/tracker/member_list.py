@@ -13,7 +13,9 @@ class MemberList():
 
     def remove_member(self, member):
         try:
-            self.list.__delitem__(member)
+            # print(self.list)
+            del self.list[member]
+            # print(self.list)
         except ValueError:
             raise Exception('Error: Member not found')
 
@@ -40,6 +42,23 @@ class MemberList():
         num = math.floor((4 * math.log1p(len(self.list) + 2.5)) - 4)
         sublist = random.sample(list(self.list), num)
         return sublist
+
+    def get_list(self):
+        return self.list.keys()
+
+    def __len__(self):
+        return len(self.list)
+
+    def __getitem__(self, item):
+        member_list = self.list.keys()
+        return member_list[item]
+
+    def get_random(self):
+        member_list = self.list.keys()
+        if len(member_list) > 0:
+            i = random.randint(0, len(member_list)-1)
+            return list[i]
+        return None
 
 
 # def main():
