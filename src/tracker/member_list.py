@@ -46,6 +46,19 @@ class MemberList():
     def get_list(self):
         return self.list.keys()
 
+    def __len__(self):
+        return len(self.list)
+
+    def __getitem__(self, item):
+        list = list(self.list)
+        return list[item]
+
+    def get_random(self):
+        list = list(self.list)
+        i = random.randint(0, len(list)-1)
+        return list[i]
+
+
 # def main():
 #     list = MemberList()
 #     list.add_member(('172.0.0.0', '8080'))

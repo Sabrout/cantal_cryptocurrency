@@ -165,6 +165,12 @@ class Member(Peer):
         def handle_thread():
             self.process_message(self.consume_receive())
             handle_thread()
+        t = Thread(target=handle_thread)
+        return t
 
+    def mine(self, ntimes):
+        def handle_thread():
+            self.create_temp_cheese.mine(ntimes)
+            handle_thread()
         t = Thread(target=handle_thread)
         return t
