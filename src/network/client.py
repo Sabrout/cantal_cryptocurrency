@@ -29,8 +29,10 @@ class Client():
         """
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.settimeout(3)
-        self.socket.connect((IP, port))
-        print("je set mon client: "+str(self.socket))
+        try:
+            self.socket.connect((IP, port))
+        except ConnectionRefusedError:
+            print("Debug: "+str(IP)+":"+str(port)+" Connection refused")
 
     def set_socket(self, socket):
         self.socket = socket

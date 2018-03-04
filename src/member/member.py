@@ -11,6 +11,7 @@ from threading import Thread
 from threading import Event
 import random
 import time
+import os
 
 
 class Member(Peer):
@@ -22,10 +23,11 @@ class Member(Peer):
         self.port_tracker = port_tracker
 
         self.member_list = MemberList()
-        self.cheese_stack = CheeseStack()
+        self.cheese_stack = CheeseStack.load()
+        self.cheese_stack.load(os.getcwd())
         self.member_list = Ressource(self.member_list)
         self.cheese_stack = Ressource(self.cheese_stack)
-
+        
         self.transaction_list = TransactionList()
         self.transaction_list = Ressource(self.transaction_list)
 
@@ -37,7 +39,8 @@ class Member(Peer):
 
     def process_message(self, tuple):
         (IP, socket, message) = tuple
-
+        print(message.get_packet())
+        print(message.get_packet_type())
         # Handling messages
         if(message.get_packet() == Message.LIST):
             if(message.get_packet_type() == Message.RESPONSE):
@@ -71,6 +74,8 @@ class Member(Peer):
         print("I set the flag to true")
         self.event.set()
         print("I already set it to true")
+
+
 
     def process_transaction_error(self, message):
         print(message.data)
@@ -136,6 +141,7 @@ class Member(Peer):
                 print("I set the flag to false")
                 self.event.clear()
                 print("I already set it false")
+
                 print("size: "+str(size_member))
                 message = Message.create(Message.LIST, Message.REQUEST, self.port)
                 self.produce_response(IP=self.ip_tracker, port=self.port_tracker, message=message)
@@ -187,8 +193,9 @@ class Member(Peer):
         t = Thread(target=handle_thread)
         return t
 
-    def update_cheese_stack(self):
+    def update_cheese_stack(self, event):
         def handle_thread():
+            event.wait()
             member_list = self.member_list.ressource
             print("je wait")
             self.event.wait()
@@ -209,7 +216,7 @@ class Member(Peer):
                 handle_thread()
         t = Thread(target=handle_thread)
         return t
-        
+
     def send(self, message):
         member_list = self.member_list.ressource
         (ip, port) = self.member_list.read(member_list.get_random)
@@ -222,13 +229,14 @@ class Member(Peer):
             self.produce_response(ip=ip, port=port, message=message)
 
     def init(self):
-        self.process_member_list_size(1, 5).start()
+        event = Event()
+        self.process_member_list_size(1, 5, event).start()
         self.process_member_list_ping(5).start()
         self.process_member_list_pong().start()
-        self.update_cheese_stack().start()
+        self.update_cheese_stack(event).start()
+        print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
 
-    def main(self):
-        
+    def main(self):        
         def handle_thread():
             print("je suis dans le main")
             self.process_message(self.consume_receive())
@@ -246,7 +254,7 @@ class Member(Peer):
 
 if __name__ == "__main__":
     port = 9001
-    ip_tracker = "192.168.0.27"
+    ip_tracker = "192.168.0.29"
     port_tracker = 9990
     try:
         member = Member(9001, ip_tracker, port_tracker)
@@ -255,7 +263,8 @@ if __name__ == "__main__":
         member.main().start()
         print("APRES MAIN START")
     except (KeyboardInterrupt, SystemExit):
+        print("PUNTAIINNN MMAIS JE PETE DES CALBES")
         member.client.close()
         member.server.close()
-    
+
     print("Debug: Member connected to "+str(ip_tracker)+":"+str(port_tracker))
