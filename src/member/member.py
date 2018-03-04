@@ -84,15 +84,14 @@ class Member(Peer):
         if(cheese.verify(cheese) is True):
             self.cheese_stack.add(cheese)
         else:
-            return None
+            self.procces_cheese_error(message)
 
     def process_cheese_error(self, message):
         if(self.ttl.read(self.ttl.is_zero) is True):
             print(message.get_data())
         else:
             self.ttl.write(self.ttl.decrement)
-            (ip, port) = self.member_list.read(member_list.get_random)
-            self.produce_response(IP=ip, port=port ,close=False, message=response)
+            print("ttl : "+ str(self.ttl.read(self.ttl.get_ttl)))
 
 
     def process_transaction_request(self):
@@ -152,7 +151,7 @@ class Member(Peer):
             if(not(pong)):
                 member_list = self.member_list.ressource
                 self.member_list.write(member_list.remove_list, (ip, port))
-                message = Message(Message.MEMBER, Message.REPORT, (ip, port))
+                message = Message.create(Message.MEMBER, Message.REPORT, (ip, port))
                 self.produce_response(ip=self.ip_tracker, port=self.port_tracker, message=message)
 
             handle_thread()
@@ -172,6 +171,15 @@ class Member(Peer):
         t = Thread(target=handle_thread)
         return t
 
+    def update_cheese_stack(self):
+        while(self.ttl.read(self.ttl.is_zero) is False):
+            last_cheese = self.cheese_stack.last()
+            last_smell = last_cheese.smell
+
+            message = Message.create(CHEESE, REQUEST, last_smell)
+            self.send(message)
+            
+        
     def send(self, message):
         member_list = self.member_list.ressource
         (ip, port) = self.member_list.read(member_list.get_random)
