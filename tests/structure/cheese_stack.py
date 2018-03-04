@@ -20,8 +20,8 @@ class CheeseStackTest(unittest.TestCase):
         member.set_public_key('A7998F247BD965694FF227FA325C81169A07471A8B6808D3E002A486C4E65975')
         money = MoneyList()
         money.add_money(('063E418310654DACA9B72F05F5FDF8E2063E418310654DACA9B72F05F5FDF8E2', 0))
-        money.add_money(('063E418310654DACA9B72F05F5FDF8E2063E418310654DACA9B72F05F5FDF8E2', 0))
-        money.add_money(('A3260757EA531E9DC2E79939165795CB532547CFFA53914200E1322D99BC09E1', 1))
+        money.add_money(('A3260757EA531E9DC2E79939165795CB532547CFFA53914200E1322D99BC09E1', 0))
+        money.add_money(('16BED6368B8B1542CD6EB87F5BC20DC830B41A2258DDE40438A75FA701D24E9A', 0))
         member.money_list = money
 
         # Creating Transactions
@@ -30,7 +30,7 @@ class CheeseStackTest(unittest.TestCase):
         list_amount = list()
         list_amount.append('1000')
         list_amount.append('2000')
-        list_amount.append('3000')
+        list_amount.append('1')
 
         # Generating list_input
         list_input = list()
@@ -40,8 +40,8 @@ class CheeseStackTest(unittest.TestCase):
         list_wallet = list()
         list_wallet.append('063E418310654DACA9B72F05F5FDF8E2E063E418310654DACA9B72F05F5FDF8E')
         # Last 2 keys are for receiver 0 and receiver 1
-        list_wallet.append('8D6D35CC70BA14FBE1DBCA3057791135E8D6D35CC70BA14FBE1DBCA305779113')
         list_wallet.append('A7998F247BD965694FF227FA325C81169A07471A8B6808D3E002A486C4E65975')
+        list_wallet.append('8D6D35CC70BA14FBE1DBCA3057791135E8D6D35CC70BA14FBE1DBCA305779113')
 
         transaction1 = Transaction(list_input, list_wallet, list_amount)
 
@@ -49,11 +49,11 @@ class CheeseStackTest(unittest.TestCase):
         list_amount = list()
         list_amount.append('1000')
         list_amount.append('2000')
-        list_amount.append('3000')
+        list_amount.append('2')
 
         # Generating list_input (Hash)
         list_input = list()
-        list_input.append(('A3260757EA531E9DC2E79939165795CB532547CFFA53914200E1322D99BC09E1', 1))
+        list_input.append(('A3260757EA531E9DC2E79939165795CB532547CFFA53914200E1322D99BC09E1', 0))
 
         # Generating list_wallet
         list_wallet = list()
@@ -68,39 +68,20 @@ class CheeseStackTest(unittest.TestCase):
         list_amount = list()
         list_amount.append('1000')
         list_amount.append('2000')
-        list_amount.append('3000')
+        list_amount.append('3')
 
         # Generating list_input
         list_input = list()
-        list_input.append(('063E418310654DACA9B72F05F5FDF8E2063E418310654DACA9B72F05F5FDF8E2', 0))
+        list_input.append(('16BED6368B8B1542CD6EB87F5BC20DC830B41A2258DDE40438A75FA701D24E9A', 0))
 
         # Generating list_wallet
         list_wallet = list()
         list_wallet.append('063E418310654DACA9B72F05F5FDF8E2E063E418310654DACA9B72F05F5FDF8E')
         # Last 2 keys are for receiver 0 and receiver 1
-        list_wallet.append('8D6D35CC70BA14FBE1DBCA3057791135E8D6D35CC70BA14FBE1DBCA305779113')
         list_wallet.append('A7998F247BD965694FF227FA325C81169A07471A8B6808D3E002A486C4E65975')
+        list_wallet.append('8D6D35CC70BA14FBE1DBCA3057791135E8D6D35CC70BA14FBE1DBCA305779113')
 
         transaction3 = Transaction(list_input, list_wallet, list_amount)
-
-        # TRANSACTION #1
-        list_amount = list()
-        list_amount.append('1000')
-        list_amount.append('2000')
-        list_amount.append('3000')
-
-        # Generating list_input
-        list_input = list()
-        list_input.append(('063E418310654DACA9B72F05F5FDF8E2063E418310654DACA9B72F05F5FDF8E2', 0))
-
-        # Generating list_wallet
-        list_wallet = list()
-        list_wallet.append('063E418310654DACA9B72F05F5FDF8E2E063E418310654DACA9B72F05F5FDF8E')
-        # Last 2 keys are for receiver 0 and receiver 1
-        list_wallet.append('A7998F247BD965694FF227FA325C81169A07471A8B6808D3E002A486C4E65975')
-        list_wallet.append('5EFC60B80FA21BAA18D66C9A9C33C51EE8D6D35CC70BA14FBE1DBCA305779113')
-
-        transaction1 = Transaction(list_input, list_wallet, list_amount)
 
         # TRANSACTION #4
         list_amount = list()
@@ -110,14 +91,14 @@ class CheeseStackTest(unittest.TestCase):
 
         # Generating list_input
         list_input = list()
-        list_input.append(('063E418310654DACA9B72F05F5FDF8E2063E418310654DACA9B72F05F5FDF8E2', 0))
+        list_input.append(('A70262F5AF8C89DFD407969552B13D0716F148C944A6677227E4C7379C1E22A9', 0))
 
         # Generating list_wallet
         list_wallet = list()
         list_wallet.append('063E418310654DACA9B72F05F5FDF8E2E063E418310654DACA9B72F05F5FDF8E')
         # Last 2 keys are for receiver 0 and receiver 1
-        list_wallet.append('8D6D35CC70BA14FBE1DBCA3057791135E8D6D35CC70BA14FBE1DBCA305779113')
         list_wallet.append('A7998F247BD965694FF227FA325C81169A07471A8B6808D3E002A486C4E65975')
+        list_wallet.append('5EFC60B80FA21BAA18D66C9A9C33C51EE8D6D35CC70BA14FBE1DBCA305779113')
 
         transaction4 = Transaction(list_input, list_wallet, list_amount)
 
@@ -129,14 +110,14 @@ class CheeseStackTest(unittest.TestCase):
 
         # Generating list_input
         list_input = list()
-        list_input.append(('063E418310654DACA9B72F05F5FDF8E2063E418310654DACA9B72F05F5FDF8E2', 0))
+        list_input.append(('222D8EDAE628406634DA72367D2B0A9B0A86915E8CC4261AE6E118299C2A3F3E', 0))
 
         # Generating list_wallet
         list_wallet = list()
         list_wallet.append('063E418310654DACA9B72F05F5FDF8E2E063E418310654DACA9B72F05F5FDF8E')
         # Last 2 keys are for receiver 0 and receiver 1
+        list_wallet.append('8D6D35CC70BA14FBE1DBCA3057791135E8D6D35CC70BA14FBE1DBCA305779113')
         list_wallet.append('A7998F247BD965694FF227FA325C81169A07471A8B6808D3E002A486C4E65975')
-        list_wallet.append('5EFC60B80FA21BAA18D66C9A9C33C51EE8D6D35CC70BA14FBE1DBCA305779113')
 
         transaction5 = Transaction(list_input, list_wallet, list_amount)
 
@@ -165,4 +146,6 @@ class CheeseStackTest(unittest.TestCase):
 
         # Calculating Money :)
         collected_money = stack.calculate_money(member)
+        print('_____________')
         print(collected_money)
+        print('_____________')
