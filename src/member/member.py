@@ -46,7 +46,7 @@ class Member(Peer):
         if(message.get_packet() == Message.TRANSACTION):
             if(message.get_packet_type() == Message.REQUEST):
                 response = self.process_transaction_request()
-                self.produce_response(socket=socket, close=True, message=response)
+                self.produce_response(socket=socket, message=response)
             if(message.get_packet_type() == Message.RESPONSE):
                 self.process_transaction_response(message)
             if(message.get_packet_type() == Message.ERROR):
@@ -54,7 +54,8 @@ class Member(Peer):
         if(message.get_packet() == Message.CHEESE):
             if(message.get_packet_type() == Message.REQUEST):
                 response = self.process_cheese_request(message)
-                self.produce_response(socket=socket, close=True, message=response)
+                print("sockettte: "+str(socket))
+                self.produce_response(socket=socket, message=response)
             if(message.get_packet_type() == Message.RESPONSE):
                 self.process_cheese_response(message)
                 # Maybe we have to send back a message if the received cheese is bad
@@ -106,7 +107,7 @@ class Member(Peer):
             print(message.get_data())
         else:
             self.ttl.write(ttl.decrement)
-            print("ttl : "+ str(self.ttl.read(self.ttl.get_ttl)))
+            print("ttl : "+ str(self.ttl.read(ttl.get_ttl)))
 
 
     def process_transaction_request(self):
@@ -250,7 +251,7 @@ class Member(Peer):
 
 if __name__ == "__main__":
     port = 9001
-    ip_tracker = "192.168.0.27"
+    ip_tracker = "192.168.0.29"
     port_tracker = 9990
     try:
         member = Member(9001, ip_tracker, port_tracker)

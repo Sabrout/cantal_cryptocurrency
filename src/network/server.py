@@ -53,10 +53,7 @@ class Server:
         end_message = False
         message = b""
         while(True):
-            try:
-                m = socket.recv(number_bytes)
-            except Exception:
-                return None
+            m = socket.recv(number_bytes)
 
             # If we receive nothing
             if(len(m) == 0):
@@ -74,6 +71,7 @@ class Server:
             else:
                 message += m
 
+        print("petit message recu: "+str(message))
         # if encoding is true we decode the binary message
         if(encoding):
             return(message.decode("utf-8"))

@@ -47,8 +47,9 @@ class Client():
         try:
             self.socket.sendall(string)
         except BrokenPipeError:
-            print("Debug: Broken pipe")
-
+            print("Debug: Can't send to the server")
+        except OSError:
+            print("Debug: Can't send to the server")
 
     def close(self):
         """

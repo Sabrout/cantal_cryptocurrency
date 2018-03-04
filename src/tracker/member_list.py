@@ -28,7 +28,7 @@ class MemberList():
             (ip, port) = i
             print("Member: {}:{}".format(ip, port))
 
-    def get_sublist(self):
+    def get_sublist(self, remove_ip_port=None):
         # Getting number of members to get a ratio for the sublist
         if len(self.list) < 1:
             # Base Case
@@ -39,6 +39,12 @@ class MemberList():
         # it depends on the function f(x)=4ln(x+2.5)-4
         num = math.floor((4 * math.log1p(len(self.list) + 2.5)) - 4)
         sublist = random.sample(list(self.list), num)
+
+        if(remove_ip_port is not None):
+            try:
+                sublist.remove(remove_ip_port)
+            except ValueError:
+                return sublist
         return sublist
 
     def get_list(self):
