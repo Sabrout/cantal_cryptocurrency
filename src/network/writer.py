@@ -17,7 +17,7 @@ class MessageWriter():
         The function will write a network message
         according to the Message object
         """
-
+        print("Message: "+str(self.message.packet)+" "+str(self.message.packet_type))
         # We will write the message according to the packet and the packet_type
         if(self.message.packet == Message.LIST
            and self.message.packet_type == Message.REQUEST):

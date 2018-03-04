@@ -56,7 +56,7 @@ class Member(Peer):
         if(message.get_packet() == Message.CHEESE):
             if(message.get_packet_type() == Message.REQUEST):
                 response = self.process_cheese_request(message)
-                self.produce_response(socket, close=True, message=response)
+                self.produce_response(socket=socket, close=True, message=response)
             if(message.get_packet_type() == Message.RESPONSE):
                 self.process_cheese_response(message)
                 # Maybe we have to send back a message if the received cheese is bad
@@ -83,13 +83,13 @@ class Member(Peer):
         parent_smell = message.get_data()
         cheese_stack = self.cheese_stack.ressource
         cheese = self.cheese_stack.read(cheese_stack.__getitem__, parent_smell)
-
+        print(cheese)
         if(cheese is not None):
             message = Message.create(Message.CHEESE, Message.RESPONSE, cheese)
         else:
             message = Message.create(Message.CHEESE, Message.ERROR, "Cheese not valid")
 
-        return Message
+        return message
 
     def process_cheese_response(self, message):
         ttl = self.ttl.ressource
@@ -173,7 +173,7 @@ class Member(Peer):
                 member_list = self.member_list.ressource
                 self.member_list.write(member_list.remove_list, (ip, port))
                 message = Message.create(Message.MEMBER, Message.REPORT, (ip, port))
-                self.produce_response(ip=self.ip_tracker, port=self.port_tracker, message=message)
+                self.produce_response(IP=self.ip_tracker, port=self.port_tracker, message=message)
 
             handle_thread()
         t = Thread(target=handle_thread)
@@ -206,7 +206,7 @@ class Member(Peer):
                     print("COUCOU")
                     last_cheese = self.cheese_stack.read(cheese_stack.last)
                     last_smell = last_cheese.smell
-
+                    time.sleep(1)
                     message = Message.create(Message.CHEESE, Message.REQUEST, last_smell)
                     self.send(message)
                 print("PAS COUCOU NORMAL")
@@ -219,13 +219,13 @@ class Member(Peer):
     def send(self, message):
         member_list = self.member_list.ressource
         (ip, port) = self.member_list.read(member_list.get_random)
-        self.produce_response(ip=ip, port=port, message=message)
+        self.produce_response(IP=ip, port=port, message=message)
 
     def broadcast(self, message):
         member_list = self.member_list.ressource
         member_list = self.member_list.read(member_list.get_list)
         for (ip, port) in member_list:
-            self.produce_response(ip=ip, port=port, message=message)
+            self.produce_response(IP=ip, port=port, message=message)
 
     def init(self):
         event = Event()
@@ -253,7 +253,7 @@ class Member(Peer):
 
 if __name__ == "__main__":
     port = 9001
-    ip_tracker = "192.168.0.29"
+    ip_tracker = "192.168.0.27"
     port_tracker = 9990
     try:
         member = Member(9001, ip_tracker, port_tracker)
