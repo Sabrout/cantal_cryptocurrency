@@ -50,13 +50,15 @@ class MemberList():
         return len(self.list)
 
     def __getitem__(self, item):
-        list = list(self.list)
-        return list[item]
+        member_list = self.list.keys()
+        return member_list[item]
 
     def get_random(self):
-        list = list(self.list)
-        i = random.randint(0, len(list)-1)
-        return list[i]
+        member_list = self.list.keys()
+        if len(member_list) > 0:
+            i = random.randint(0, len(member_list)-1)
+            return list[i]
+        return None
 
 
 # def main():

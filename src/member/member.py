@@ -114,9 +114,11 @@ class Member(Peer):
     def process_member_list_ping(self, sleep):
         def handle_thread():
             member_list = self.member_list.ressource
-            (ip, port) = self.member_list.read(member_list.get_random)
+            member = self.member_list.read(member_list.get_random)
 
-            self.produce_ping(ip, port)
+            if member is not None:
+                (ip, port) = member
+                self.produce_ping(ip, port)
 
             time.sleep(sleep)
 
@@ -161,6 +163,11 @@ class Member(Peer):
         for (ip, port) in member_list:
             self.produce_response(ip=ip, port=port, message=message)
 
+    def init(self):
+        self.process_member_list_size(0, 5).start()
+        self.process_member_list_ping(5).start()
+        self.process_member_list_pong().start()
+
     def main(self):
         def handle_thread():
             self.process_message(self.consume_receive())
@@ -174,3 +181,13 @@ class Member(Peer):
             handle_thread()
         t = Thread(target=handle_thread)
         return t
+
+
+if __name__ == "__main__":
+    port = 9001
+    ip_tracker = "192.168.0.30"
+    port_tracker = 9990
+    member = Member(9001, "192.168.0.30", 9990)
+    member.init()
+    member.main().start()
+    print("Debug: Member connected to "+str(ip_tracker)+":"+str(port_tracker))

@@ -18,7 +18,7 @@ class Cheese:
         """
         cheese = Cheese(smell, parent_smell, nonce, data)
         return cheese
-    
+
     def set_smell(self, smell):
         """
         The smell of a cheese is the hash of the parent smell + data + nonce
@@ -85,7 +85,7 @@ class Cheese:
         return True
 
     def create_temp_cheese(member):
-        transactions = ####get qqchoz
+        transactions = None
         cheese = Cheese()
         cheese.set_parent_smell(member.cheese_stack.last.smell)
         cheese.set_data(transactions)
