@@ -136,7 +136,7 @@ class Member(Peer):
 
     def process_cheese_stack(self):
         def handle_thread():
-            print()
+
         t = Thread(target=handle_thread)
         return t
 
