@@ -12,7 +12,7 @@ class Transaction():
         The constructor will set all the lists and will verify the content
         """
         self.list_sign = list()
-        self.used_output = [None, None]
+        self.used_output = [0, 0]
 
         if(list_input is not None):
             # Checking format of list_input

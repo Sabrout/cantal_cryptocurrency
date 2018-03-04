@@ -6,6 +6,7 @@ from src.member.member import Member
 class CheeseStackTest(unittest.TestCase):
 
     def test_stack(self):
+
         cheese = CheeseStack.load()
         print(cheese)
 
