@@ -24,7 +24,6 @@ class Member(Peer):
 
         self.member_list = MemberList()
         self.cheese_stack = CheeseStack.load()
-        self.cheese_stack.load(os.getcwd())
         self.member_list = Ressource(self.member_list)
         self.cheese_stack = Ressource(self.cheese_stack)
         
@@ -193,9 +192,9 @@ class Member(Peer):
         t = Thread(target=handle_thread)
         return t
 
-    def update_cheese_stack(self, event):
+    def update_cheese_stack(self):
         def handle_thread():
-            event.wait()
+            self.event.wait()
             member_list = self.member_list.ressource
             print("je wait")
             self.event.wait()
@@ -230,10 +229,10 @@ class Member(Peer):
 
     def init(self):
         event = Event()
-        self.process_member_list_size(1, 5, event).start()
+        self.process_member_list_size(1, 5).start()
         self.process_member_list_ping(5).start()
         self.process_member_list_pong().start()
-        self.update_cheese_stack(event).start()
+        self.update_cheese_stack().start()
         print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
 
     def main(self):        
