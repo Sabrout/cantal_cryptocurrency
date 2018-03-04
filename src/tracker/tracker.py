@@ -29,6 +29,7 @@ class Tracker(Peer):
                     raise Exception('Error: Invalid Port')
                 self.list.add_member((ip, port))
                 self.produce_response(IP=ip, port=port, message=response)
+                self.list.print_list()
 
 
             # List ERROR
@@ -65,6 +66,7 @@ class Tracker(Peer):
         We create a thread where we accept the connection
         """
         def handle_thread():
+            print("coucou")
             self.process_message(self.consume_receive())
             handle_thread()
 
@@ -82,8 +84,8 @@ class Tracker(Peer):
             list.add_member((ip, port))
         return list
 
-# if __name__ == "__main__":
-#     tracker = Tracker(9990)
-#     host = tracker.server.get_host_name()
-#     port = tracker.server.get_port()
-#     print("Debug: Tracker opened at "+str(host)+":"+str(port))
+if __name__ == "__main__":
+    tracker = Tracker(9990)
+    host = tracker.server.get_host_name()
+    port = tracker.server.get_port()
+    print("Debug: Tracker opened at "+str(host)+":"+str(port))
