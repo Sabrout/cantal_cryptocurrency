@@ -147,5 +147,6 @@ class CheeseStackTest(unittest.TestCase):
         # Calculating Money :)
         collected_money = stack.calculate_money(member)
         print('_____________')
+        print('Collected Money:')
         print(collected_money)
         print('_____________')
