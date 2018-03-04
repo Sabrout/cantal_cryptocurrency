@@ -5,6 +5,7 @@ from src.structure.transaction import Transaction
 from src.structure.transaction_list import TransactionList
 from src.structure.ressource import Ressource
 from src.network.message import Message
+from src.member.money_list import MoneyList
 from threading import Thread
 import random
 import time
@@ -25,7 +26,9 @@ class Member(Peer):
         self.transaction_list = TransactionList()
         self.transaction_list = Ressource(self.transaction_list)
 
-        self.money_list = Ressource(list())
+
+        self.money_list = Ressource(MoneyList())
+
 
     def process_message(self, tuple):
         (IP, socket, message) = tuple

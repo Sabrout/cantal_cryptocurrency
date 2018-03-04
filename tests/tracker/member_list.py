@@ -1,20 +1,9 @@
 import unittest
-import random
+from src.tracker.tracker import Tracker
 from src.tracker.member_list import MemberList
 
 
 class MemberListTest(unittest.TestCase):
-
-    @staticmethod
-    def populate(size):
-        list = MemberList()
-        for i in range(size):
-            ip = str(random.randint(1, 255)) + '.'\
-                 + str(random.randint(1, 255)) + '.'\
-                 + str(random.randint(1, 255)) + '.' + str(random.randint(1, 255))
-            port = random.randint(1, 9999)
-            list.add_member((ip, port))
-        return list
 
     def test_add_member_pos(self):
         list = MemberList()
@@ -36,7 +25,7 @@ class MemberListTest(unittest.TestCase):
         sublist_size = 0
         is_sublist_flag = True
         for i in range(1, 500, 5):
-            list = MemberListTest.populate(i)
+            list = Tracker.populate(i)
             sublist = list.get_sublist()
             # Updating the size of the sublist
             sublist_size = max(sublist_size, len(sublist))
