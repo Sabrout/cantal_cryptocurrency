@@ -8,12 +8,14 @@ from src.network.message import Message
 from src.member.ttl import TTL
 from src.member.money_list import MoneyList
 from threading import Thread
+from threading import Event
 import random
 import time
 
 
 class Member(Peer):
-    def __init__(self, port, ip_tracker, port_tracker, ttl=0):
+    def __init__(self, port, ip_tracker, port_tracker, ttl=5):
+        self.event = Event()
         Peer.__init__(self, port)
         self.port = port
         self.ip_tracker = ip_tracker
@@ -66,6 +68,9 @@ class Member(Peer):
             member_list = self.member_list.ressource
             print((ip,port))
             self.member_list.write(member_list.add_member, (ip, port))
+        print("I set the flag to true")
+        self.event.set()
+        print("I already set it to true")
 
     def process_transaction_error(self, message):
         print(message.data)
@@ -128,6 +133,9 @@ class Member(Peer):
             size_member = self.member_list.read(self.member_list.ressource.__len__)
             print("list_size")
             if size_member < size:
+                print("I set the flag to false")
+                self.event.clear()
+                print("I already set it false")
                 print("size: "+str(size_member))
                 message = Message.create(Message.LIST, Message.REQUEST, self.port)
                 self.produce_response(IP=self.ip_tracker, port=self.port_tracker, message=message)
@@ -182,19 +190,24 @@ class Member(Peer):
     def update_cheese_stack(self):
         def handle_thread():
             member_list = self.member_list.ressource
+            print("je wait")
+            self.event.wait()
+            print("j'ai fini de wait")
             if(self.member_list.read(member_list.__len__) != 0):
                 ttl = self.ttl.ressource
                 cheese_stack = self.cheese_stack.ressource
                 while(self.ttl.read(ttl.is_zero) is False):
+                    print("COUCOU")
                     last_cheese = self.cheese_stack.read(cheese_stack.last)
                     last_smell = last_cheese.smell
 
                     message = Message.create(Message.CHEESE, Message.REQUEST, last_smell)
                     self.send(message)
+                print("PAS COUCOU NORMAL")
             else:
-                time.sleep(1)
+                print("ELSE")
                 handle_thread()
-        t = Thread(target=handle_thread())
+        t = Thread(target=handle_thread)
         return t
         
     def send(self, message):
@@ -215,7 +228,9 @@ class Member(Peer):
         self.update_cheese_stack().start()
 
     def main(self):
+        
         def handle_thread():
+            print("je suis dans le main")
             self.process_message(self.consume_receive())
             handle_thread()
         t = Thread(target=handle_thread)
@@ -236,7 +251,9 @@ if __name__ == "__main__":
     try:
         member = Member(9001, ip_tracker, port_tracker)
         member.init()
+        print("AVANT START")
         member.main().start()
+        print("APRES MAIN START")
     except (KeyboardInterrupt, SystemExit):
         member.client.close()
         member.server.close()
