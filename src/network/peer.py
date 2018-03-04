@@ -17,6 +17,8 @@ class Peer():
 
         self.queue_response = queue.Queue()
         self.queue_receive = queue.Queue()
+        self.queue_ping = queue.Queue()
+
         self.list_socket = []
 
         self.server = Server(self.queue_receive, self.list_socket, port=port)

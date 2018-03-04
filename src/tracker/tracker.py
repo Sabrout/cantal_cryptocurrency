@@ -8,7 +8,7 @@ import random
 class Tracker(Peer):
     def __init__(self, port):
         Peer.__init__(self, port)
-        self.list = MemberList()
+
         self.main().start()
 
     def process_message(self, tuple):
@@ -30,6 +30,7 @@ class Tracker(Peer):
                 self.list.add_member((ip, port))
                 self.produce_response(IP=ip, port=port, message=response)
 
+
             # List ERROR
             if message.get_packet_type() == Message.ERROR:
                 try:
@@ -50,12 +51,14 @@ class Tracker(Peer):
                 print('sstep 2')
             except ValueError:
                 raise Exception('Error: Invalid Port')
+
             self.list.remove_member(ip_port)
             print(self.list.print_list())
             print('sstep 3')
             return
 
         print('Error: No Message Type Detected\n')
+
 
     def main(self):
         """
