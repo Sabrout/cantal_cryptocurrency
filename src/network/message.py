@@ -1,3 +1,7 @@
+from src.structure.cheese import Cheese
+from src.structure.transaction import Transaction
+from src.structure.transaction_list import TransactionList
+
 class Message():
     """
     The message represents all possible
@@ -83,10 +87,37 @@ class Message():
         """
         Set the data
         """
-        self.data = data
+        if(is_instance(data, Cheese)):
+            self.data = self.format_cheese(data)
+        elif(is_instance(data, Transaction)):
+            self.data = self.format_transaction(data)
+        else:
+            self.data = data
 
     def get_data(self):
         """
         Get the data
         """
         return self.data
+        
+    def format_transaction(self, transaction):
+        format_transaction = {}
+        format_transaction["input"] = transaction.list_input
+        format_transaction["wallet"] = transaction.list_wallet
+        format_transaction["amount"] = transaction.list_amount
+        format_transaction["signature"] = transaction.list_sign
+        return format_transaction
+        
+    def format_list_transaction(self, list_transaction):
+        format_transactions = []
+        for transaction in list_transaction:
+            format_transaction = self.format_transaction(transaction)
+            format_transactions.append(format_transaction)
+        return format_transactions    
+
+        
+    def format_cheese(self, cheese):
+        format_cheese = {}
+        format_cheese["transactions"] = format_list_transaction(cheese.data)
+        format_cheese["nonce"] = cheese.nonce
+        

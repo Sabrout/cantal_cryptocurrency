@@ -81,7 +81,7 @@ class Member(Peer):
         parent_smell = message.get_data()
         cheese_stack = self.cheese_stack.ressource
         cheese = self.cheese_stack.read(cheese_stack.__getitem__, parent_smell)
-
+        print(cheese)
         if(cheese is not None):
             message = Message.create(Message.CHEESE, Message.RESPONSE, cheese)
         else:
@@ -250,7 +250,7 @@ class Member(Peer):
 
 if __name__ == "__main__":
     port = 9001
-    ip_tracker = "192.168.0.29"
+    ip_tracker = "192.168.0.27"
     port_tracker = 9990
     try:
         member = Member(9001, ip_tracker, port_tracker)
