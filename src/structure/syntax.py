@@ -344,19 +344,26 @@ class CheeseSyntaxReader():
         """
         Parse the used outputs
         """
-        self.look()
-        self.check(self.lexical.HASH)
-        first_output = self.lexical.get_text()
-        self.shift()
+
+        first_output = self.output()
 
         self.look()
         self.check(self.lexical.SEPARATOR)
         self.shift()
 
-        self.look()
-        self.check(self.lexical.HASH)
-        second_output = self.lexical.get_text()
-        self.shift()
+        second_output = self.output()
 
         # Add the used outputs to the transaction
         self.transaction.set_used_output(first_output, second_output)
+
+    def output(self):
+        self.look()
+        if(self.get_lookahead == self.lexical.HASH):
+            self.shift()
+            return self.lexical.get_text()
+        elif(self.get_lookahead == self.lexical.DIGIT):
+            self.shift()
+            return int(self.lexical.get_text())
+        else:
+            self.check(self.lexical.HASH)
+        self.shift()
