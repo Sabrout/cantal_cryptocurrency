@@ -17,31 +17,25 @@ class Tracker(Peer):
         if message.get_packet() == Message.LIST:
             # List REQUEST
             # Creating a RESPONSE message
-            response = Message()
-            response.set_packet(Message.LIST)
-            response.set_packet_type(Message.RESPONSE)
-            response.set_data(self.list.get_sublist())
+
             if message.get_packet_type() == Message.REQUEST:
                 # Adding member to list
-                try:
-                    port = int(message.get_data())
-                except ValueError:
-                    raise Exception('Error: Invalid Port')
-                self.list.add_member((ip, port))
-                self.produce_response(IP=ip, port=port, message=response)
+                port = int(message.get_data())
 
+                self.list.add_member((ip, port))
+
+                response = Message()
+                response.set_packet(Message.LIST)
+                response.set_packet_type(Message.RESPONSE)
+                response.set_data(self.list.get_sublist())
+                self.produce_response(IP=ip, port=port, message=response)
 
             # List ERROR
-            if message.get_packet_type() == Message.ERROR:
-                try:
-                    port = int(message.get_data())
-                except ValueError:
-                    raise Exception('Error: Invalid Port')
-                self.produce_response(IP=ip, port=port, message=response)
-            return
+            elif message.get_packet_type() == Message.ERROR:
+                print(message.get_data())
 
         # Member REPORT
-        if (message.get_packet_type() == Message.REPORT and
+        elif (message.get_packet_type() == Message.REPORT and
             message.get_packet() == Message.MEMBER):
             # NOOOOTTTTT FINISHEEEDDDD
             # Removing member
@@ -50,12 +44,10 @@ class Tracker(Peer):
                 ip_port = message.get_data()
                 print('sstep 2')
             except ValueError:
-                raise Exception('Error: Invalid Port')
+                raise Exception('Error: Invalid IP Port')
 
             self.list.remove_member(ip_port)
             print(self.list.print_list())
-            print('sstep 3')
-            return
 
         print('Error: No Message Type Detected\n')
 
@@ -81,6 +73,7 @@ class Tracker(Peer):
             port = random.randint(1, 9999)
             list.add_member((ip, port))
         return list
+
 
 if __name__ == "__main__":
     tracker = Tracker(9990)

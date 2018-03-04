@@ -89,6 +89,7 @@ class CheeseStack():
         """
         :return: The last cheese
         """
+        print(len(self.blockchain) - 1)
         return self.blockchain[len(self.blockchain) - 1]
 
     def verify(self, cheese):
@@ -161,7 +162,7 @@ class CheeseStack():
         if isinstance(parent_smell, int):
             i = parent_smell
         else:
-            i = self.index[parent_smell]+1
+            i = self.block_index[parent_smell]+1
         try:
             return self.blockchain[i]
         except(IndexError):

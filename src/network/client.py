@@ -44,13 +44,16 @@ class Client():
         writer = MessageWriter(message)
         string = writer.write()
         string = string.encode()
-        self.socket.sendall(string)
+        try:
+            self.socket.sendall(string)
+        except BrokenPipeError:
+            print("Debug: Broken pipe")
+
 
     def close(self):
         """
         We close the socket
         """
-        # print(self)
         self.socket.close()
 
     def consume_response(self):

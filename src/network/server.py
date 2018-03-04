@@ -23,7 +23,6 @@ class Server:
             self.queue_receive = queue_receive
             self.list_server = list_server
 
-            print("je te print: "+str(self.server_socket))
             self.thread_accept = self.accept()
             self.thread_accept.start()
         else:
@@ -87,6 +86,7 @@ class Server:
         and transform it in a message object
         """
         message = self.recv(socket, True)
+        print("petit message: "+str(message))
         if(message is None):
             return None
         reader = SyntaxReader(message)
@@ -98,7 +98,6 @@ class Server:
         """
         def handle_thread():
             message = self.read(socket)
-
             if(message is not None):
                 IP = socket.getpeername()[0]
                 self.queue_receive.put((IP, socket, message))
