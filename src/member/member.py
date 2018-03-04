@@ -39,6 +39,7 @@ class Member(Peer):
         # Handling messages
         if(message.get_packet() == Message.LIST):
             if(message.get_packet_type() == Message.RESPONSE):
+                print("tada")
                 self.process_list_response(message)
         if(message.get_packet() == Message.TRANSACTION):
             if(message.get_packet_type() == Message.REQUEST):
@@ -59,8 +60,11 @@ class Member(Peer):
                 self.process_cheese_error(message)
 
     def process_list_response(self, message):
+        print("-----------------------")
+        print("jean recoi un putain")
         for (ip, port) in message.get_data():
             member_list = self.member_list.ressource
+            print((ip,port))
             self.member_list.write(member_list.add_member, (ip, port))
 
     def process_transaction_error(self, message):
@@ -227,10 +231,14 @@ class Member(Peer):
 
 if __name__ == "__main__":
     port = 9001
-    ip_tracker = "192.168.0.29"
+    ip_tracker = "192.168.0.27"
     port_tracker = 9990
-    member = Member(9001, ip_tracker, port_tracker)
-    member.init()
-    member.main().start()
+    try:
+        member = Member(9001, ip_tracker, port_tracker)
+        member.init()
+        member.main().start()
+    except (KeyboardInterrupt, SystemExit):
+        member.client.close()
+        member.server.close()
     
     print("Debug: Member connected to "+str(ip_tracker)+":"+str(port_tracker))
