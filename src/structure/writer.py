@@ -57,6 +57,8 @@ class CheeseStackWriter():
         self.write_amount_list(transaction)
         self.file.write(",")
         self.write_sign_list(transaction)
+        self.file.write(",")
+        self.write_used_output(transaction)
 
     def write_input_list(self, transaction):
         """
@@ -99,3 +101,7 @@ class CheeseStackWriter():
             self.file.write(sign+"-")
         sign = transaction.list_sign[len(transaction.list_sign)-1]
         self.file.write(sign)
+
+    def write_used_output(self, transaction):
+        self.file.write(transaction.used_output[0] +
+                        ","+transaction.used_output[1])

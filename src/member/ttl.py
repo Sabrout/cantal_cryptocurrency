@@ -18,4 +18,4 @@ class TTL():
 
     def get_ttl(self):
         return self.ttl
-    
+
