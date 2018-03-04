@@ -29,6 +29,8 @@ class Member(Peer):
         self.transaction_list = Ressource(self.transaction_list)
 
         self.money_list = Ressource(MoneyList())
+        # Public key should fe filled using Crypto
+        self.public_key = 0
 
         self.ttl = TTL(ttl)
         self.ttl = Ressource(self.ttl)
