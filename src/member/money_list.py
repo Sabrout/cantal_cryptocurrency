@@ -2,75 +2,118 @@ import os
 
 
 class MoneyList():
-    hash_size = 64
+    HASH_SIZE = 64
 
-    def __init__(self):
-        self.list = list()
-        path = os.path.normpath(os.path.join(os.getcwd(), "money.list"))
-        if not(os.path.exists(path)):
-            writer = open('money.list', 'w')
-            writer.close()
-        else:
+    def __init__(self, cheese_stack, path=os.getcwd()):
+        self.cheese_stack = cheese_stack
+        self.money_list = list()
+        path = os.path.normpath(os.path.join(path, "money.list"))
+        self.path = path
+        if os.path.exists(path):
             self.read_money()
 
     def verify(self, money):
-        (hash, output) = money
-        if len(hash) != self.hash_size:
+        (cheese_hash, transaction_hash, output) = money
+        if len(cheese_hash) != MoneyList.HASH_SIZE:
+            raise Exception('Error: Invalid Hash Size')
+        if len(transaction_hash) != MoneyList.HASH_SIZE:
             raise Exception('Error: Invalid Hash Size')
         if not (int(output) == 0 or int(output) == 1):
             raise Exception('Error: Invalid Output Number')
-        return money
 
     def add_money(self, money):
-        money = self.verify(money)
-        self.list.append(money)
-        writer = open('money.list', 'a')
-        writer.write(str(money)+'\n')
+        (cheese_hash, transaction_hash, output) = money
+        self.verify(money)
+        self.money_list.append(money)
+
+        writer = open(self.path, 'a')
+        if writer.tell() != 0:
+            writer.write(",")
+        writer.write(str(cheese_hash)+";"+str(transaction_hash)+";"
+                     + str(output))
         writer.close()
 
     def remove_money(self, money):
-        money = self.verify(money)
-        self.list.remove(money)
-        writer = open('money.list', 'w')
-        for i in self.list:
-            writer.write(str(i) + '\n')
-        writer.close()
+        (cheese_hash, transaction_hash, output) = money
+        self.verify(money)
+        self.money_list.remove(money)
 
-    def save_money(self):
-        writer = open('money.list', 'w')
-        for i in self.list:
-            writer.write(str(i) + '\n')
+        writer = open(self.path, 'w')
+
+        (cheese_hash, transaction_hash, output) = self.money_list[0]
+        writer.write(str(cheese_hash)+";"+str(transaction_hash)+";"
+                     + str(output))
+        for i in self.money_list[1:]:
+            writer.write(","+str(cheese_hash)+";"+str(transaction_hash)+";"
+                         + str(output))
         writer.close()
 
     def read_money(self):
-        path = os.path.normpath(os.path.join(os.getcwd(), "money.list"))
-        if not(os.path.exists(path)):
-            raise Exception('Error: File Not Found')
-        reader = open('money.list', 'r')
-        lines = reader.readlines()
-        reader.close()
-        for i in lines:
-            if i == '' or i == '\n': continue
-            output = i[-3]
-            hash = i[2:(2 + self.hash_size)]
-            self.verify((hash, output))
-            self.list.append((hash, int(output)))
+        STATE_CHEESE = 0
+        STATE_TRANSACTION = 1
+        STATE_OUTPUT = 2
+        STATE_END_MONEY = 3
+        STATE_END = 4
+        STATE_ERROR = 5
 
-    def has_money(self, money):
-        money = self.verify(money)
-        return money in self.list
+        state = STATE_CHEESE
+        hash_cheese = ""
+        hash_transaction = ""
+        output = 0
+        reader = open(self.path, 'r')
+        while(state != STATE_END or state != STATE_ERROR):
+            c = reader.read(1)
+            if(state == STATE_CHEESE and ((c >= 'a' and c <= 'f') or
+                                          (c >= '0' and c <= '9'))):
+                hash_cheese += c
+            elif(state == STATE_TRANSACTION and ((c >= 'a' and c <= 'f') or
+                                                 (c >= '0' and c <= '9'))):
+                hash_transaction += c
+            elif(state == STATE_OUTPUT and (c == '0' or c <= '1')):
+                output = int(c)
+                state = STATE_END_MONEY
+            elif(state == STATE_CHEESE and c == ';'):
+                state = STATE_TRANSACTION
+            elif(state == STATE_TRANSACTION and c == ';'):
+                state = STATE_OUTPUT
+            elif(state == STATE_END_MONEY):
+                money = (hash_cheese, hash_transaction, output)
+                self.verify(money)
+                self.money_list.append(money)
+                if(not(c)):
+                    state = STATE_END
+                elif(c == ","):
+                    hash_cheese = ""
+                    hash_transaction = ""
+                    output = 0
+                    state = STATE_CHEESE
+                else:
+                    state = STATE_ERROR
+            else:
+                state = STATE_ERROR
+        if state == STATE_ERROR:
+            raise Exception('Error: The file is corrupted')
 
-# if __name__ == "__main__":
-#     money_list = MoneyList()
-#     # money_list.add_money(('1234', 0))
-#     # money_list.add_money(('4562', 1))
-#     # money_list.add_money(('1234', 1))
-#     # money_list.add_money(('1235', 0))
-#
-#     # print(len(money_list.list))
-#     for i in money_list.list:
-#         print(i)
-#
-#     print(money_list.has_money(('4562', 1)))
+    def get_amount(self, money):
+        (cheese_hash, transaction_hash, output) = money
+        cheese = self.cheese_stack.get_cheese(cheese_hash, parent=False)
+        transaction = cheese[transaction_hash]
 
+        if output == 0:
+            return transaction.list_amount[-1]
+        else:
+            amount = sum(transaction.list_amount[:-1])
+            amount -= transaction.list_amount[-1]
+            return amount
 
+    def compute_money(self, amount=None):
+        amount_output = 0
+        list_output = list()
+        for (cheese_hash, transaction_hash, output) in self.money_list:
+            amount_output += self.get_amount((cheese_hash, transaction_hash,
+                                              output))
+            list_output.append((transaction_hash, output))
+            if(amount is not None):
+                if(amount_output > amount):
+                    return (amount_output, list_output)
+        return (amount_output, list_output)

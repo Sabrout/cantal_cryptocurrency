@@ -177,3 +177,40 @@ class Transaction():
                                  self.hash)):
                 return False
         return True
+
+    def create_miner(cheese_stack):
+        crypto = Crypto()
+        public_key_miner = crypto.get_public()
+        transaction = Transaction()
+        wallet_bank = "0000000000000000000000000000000000000000000000"
+        wallet_bank += "00000000000000000000000000000000000000000000000000"
+        sign_bank = wallet_bank
+        (amount_bank, transaction_input) = cheese_stack.find_output_bank()
+        list_wallet = [wallet_bank, public_key_miner,
+                       wallet_bank]
+        list_amount = [amount_bank, 1]
+        transaction = Transaction()
+        transaction.set_list_amount(list_amount)
+        transaction.set_list_input(transaction_input)
+        transaction.set_list_wallet(list_wallet)
+        transaction.compute_hash()
+        transaction.set_list_wallet([sign_bank])
+        return transaction
+
+    def create_user(money_list, amount, public_key_receiver):
+        crypto = Crypto()
+        public_key_sender = crypto.get_public()
+        (amount_output, list_input) = money_list.compute_money()
+        if(amount_output < amount):
+            return None
+        list_wallet = [public_key_sender, public_key_receiver,
+                       public_key_sender]
+        list_amount = [amount_output, amount]
+        transaction = Transaction()
+        transaction.set_list_amount(list_amount)
+        transaction.set_list_input(list_input)
+        transaction.set_list_wallet(list_wallet)
+        transaction.compute_hash()
+        sign = crypto.sign(transaction.hash)
+        transaction.set_list_wallet([sign])
+        return transaction

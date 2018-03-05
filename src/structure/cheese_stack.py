@@ -155,18 +155,23 @@ class CheeseStack():
 
         return True
 
-    def __getitem__(self, parent_smell):
+    def get_cheese(self, smell, parent=True):
         """
         If we have an int then we have the sequence number of the cheese
         """
-        if isinstance(parent_smell, int):
-            i = parent_smell
+        if isinstance(smell, int):
+            i = smell
+        elif(parent == True):
+            i = self.block_index[smell]+1
         else:
-            i = self.block_index[parent_smell]+1
+            i = self.block_index[smell]
         try:
             return self.blockchain[i]
         except(IndexError):
             return None
+
+    def __getitem__(self, smell):
+        return get_cheese.get_cheese(smell)
 
     def __len__(self):
         """
@@ -177,31 +182,11 @@ class CheeseStack():
     def __setitem__(self, parent_smell, cheese):
         self.push(cheese)
 
-    def calculate_money(self, member):
-        money = 0
-        money_list = member.money_list
-        for cheese in self.blockchain:
+    def find_output_bank(self):
+        for i in range(0, len(self), step=-1):
+            cheese = self[i]
             for transaction in cheese.data:
-                # for transaction in trans_list:
-                if transaction.list_wallet[-2] == member.public_key:
-                    for input in transaction.list_input:
-                        if input in member.money_list.list:
-                            if input[1] == 0:
-                                money+= int(transaction.list_amount[-1])
-                            else:
-                                print('Error: Output Number Mismatch')
-                if transaction.list_wallet[-1] == member.public_key:
-                    for input in transaction.list_input:
-                        if input in member.money_list.list:
-                            if input[1] == 1:
-                                money+= int(transaction.list_amount[0]) + int(transaction.list_amount[1]) \
-                                    - int(transaction.list_amount[-1])
-                            else:
-                                print('Error: Output Number Mismatch')
-        return money
-
-
-
-
-
-
+                if(transaction.verify_miner and
+                   transaction.list_used_output[1] == 0):
+                    return (transaction.list_amount[0]-1, [(transaction.hash, 1)])
+        return None
