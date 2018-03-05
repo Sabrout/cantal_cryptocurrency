@@ -38,28 +38,28 @@ class Server:
     def get_port(self):
         return self.port
 
-    def close_connection(self):
+    def close_connection(self, socket_conn):
         """
         We close the socket
         """
-        print("I close the connection:"+str(self.socket))
-        self.socket.close()
+        print("I close the connection:"+str(socket_conn))
+        socket_conn.close()
         try:
-            self.list_server.remove(self.socket)
+            self.list_server.remove(socket_conn)
         except ValueError:
             return None
 
     def close(self):
         self.server_socket.close()
 
-    def recv(self, socket, encoding=True, number_bytes=1):
+    def recv(self, socket_conn, encoding=True, number_bytes=1):
         """
         We receive a message finishing by \r\n
         """
         end_message = False
         message = b""
         while(True):
-            m = socket.recv(number_bytes)
+            m = socket_conn.recv(number_bytes)
 
             # If we receive nothing
             if(len(m) == 0):
@@ -77,34 +77,34 @@ class Server:
             else:
                 message += m
 
-        print(str((self.socket.getsockname(), self.socket.getpeername()))+" -----> "+str(message))
+        print(str((socket_conn.getsockname(), socket_conn.getpeername()))+" -----> "+str(message))
         # if encoding is true we decode the binary message
         if(encoding):
             return(message.decode("utf-8"))
         else:
             return message
 
-    def read(self, socket):
+    def read(self, socket_conn):
         """
         The function read a message i.e they receive a packet
         and transform it in a message object
         """
-        message = self.recv(socket)
+        message = self.recv(socket_conn)
         if(message is None):
-            self.close_connection()
+            self.close_connection(socket_conn)
             return None
         reader = SyntaxReader(message)
         return reader.parse()
 
-    def produce_receive(self, socket):
+    def produce_receive(self, socket_conn):
         """
         We function read a message and put it in the queue
         """
         def handle_thread():
-            message = self.read(socket)
+            message = self.read(socket_conn)
             if(message is not None):
-                IP = socket.getpeername()[0]
-                self.queue_receive.put((IP, socket, message))
+                IP = socket_conn.getpeername()[0]
+                self.queue_receive.put((IP, socket_conn, message))
                 handle_thread()
 
         t = Thread(target=handle_thread)
