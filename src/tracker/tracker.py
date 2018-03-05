@@ -13,8 +13,6 @@ class Tracker(Peer):
 
     def process_message(self, tuple):
         (ip, socket, message) = tuple
-        print(message.get_packet())
-        print(message.get_packet_type())
         # Handling Messages
         if message.get_packet() == Message.LIST:
             # List REQUEST
@@ -30,7 +28,7 @@ class Tracker(Peer):
                 response.set_packet(Message.LIST)
                 response.set_packet_type(Message.RESPONSE)
                 response.set_data(self.list.get_sublist())
-                self.produce_response(IP=ip, port=port, message=response)
+                self.produce_response(socket=socket, message=response, close=True)
 
             # List ERROR
             elif message.get_packet_type() == Message.ERROR:

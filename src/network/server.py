@@ -9,7 +9,7 @@ class Server:
     """
     This class represents a network server
     """
-    def __init__(self, queue_receive, list_server, server_socket=None, port=None):
+    def __init__(self, queue_receive, list_server, socket_conn=None, port=None):
         """
         The constructor will set up the server
         """
@@ -27,9 +27,10 @@ class Server:
             self.thread_accept = self.accept()
             self.thread_accept.start()
         else:
+            self.socket = socket_conn
             self.queue_receive = queue_receive
             self.list_server = list_server
-            self.produce_receive(server_socket).start()
+            self.produce_receive(self.socket).start()
 
     def get_host_name(self):
         return self.host_name
@@ -37,17 +38,21 @@ class Server:
     def get_port(self):
         return self.port
 
-    def close(self):
+    def close_connection(self):
         """
         We close the socket
         """
-        self.server_socket.close()
+        print("I close the connection:"+str(self.socket))
+        self.socket.close()
         try:
-            self.list_server.remove(self.server_socket)
+            self.list_server.remove(self.socket)
         except ValueError:
             return None
 
-    def recv(self, socket, encoding, number_bytes=1):
+    def close(self):
+        self.server_socket.close()
+
+    def recv(self, socket, encoding=True, number_bytes=1):
         """
         We receive a message finishing by \r\n
         """
@@ -72,7 +77,7 @@ class Server:
             else:
                 message += m
 
-        print("petit message recu: "+str(message))
+        print(str((self.socket.getsockname(), self.socket.getpeername()))+" -----> "+str(message))
         # if encoding is true we decode the binary message
         if(encoding):
             return(message.decode("utf-8"))
@@ -84,9 +89,9 @@ class Server:
         The function read a message i.e they receive a packet
         and transform it in a message object
         """
-        message = self.recv(socket, True)
-        print("petit message: "+str(message))
+        message = self.recv(socket)
         if(message is None):
+            self.close_connection()
             return None
         reader = SyntaxReader(message)
         return reader.parse()
@@ -101,8 +106,6 @@ class Server:
                 IP = socket.getpeername()[0]
                 self.queue_receive.put((IP, socket, message))
                 handle_thread()
-            else:
-                socket.close()
 
         t = Thread(target=handle_thread)
         return t
@@ -113,13 +116,14 @@ class Server:
         """
         def handle_thread():
             try:
-                socket, _ = self.server_socket.accept()
-                self.produce_receive(socket).start()
-                handle_thread()
-            except ConnectionAbortedError:
-                self.close()
-            except OSError:
-                self.close()
+                self.socket, _ = self.server_socket.accept()
+                print("We accepted: "+str(self.socket))
+                self.produce_receive(self.socket).start()
+            except ConnectionAbortedError as e1:
+                print("Debug: "+str(e1))
+            #  except OSError as e2:
+                #  print("Debug: "+str(e2))
+            handle_thread()
 
         t = Thread(target=handle_thread)
         return t

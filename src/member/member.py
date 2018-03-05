@@ -36,12 +36,10 @@ class Member(Peer):
 
     def process_message(self, tuple):
         (IP, socket, message) = tuple
-        print(message.get_packet())
-        print(message.get_packet_type())
+
         # Handling messages
         if(message.get_packet() == Message.LIST):
             if(message.get_packet_type() == Message.RESPONSE):
-                print("tada")
                 self.process_list_response(message)
         if(message.get_packet() == Message.TRANSACTION):
             if(message.get_packet_type() == Message.REQUEST):
@@ -54,7 +52,6 @@ class Member(Peer):
         if(message.get_packet() == Message.CHEESE):
             if(message.get_packet_type() == Message.REQUEST):
                 response = self.process_cheese_request(message)
-                print("sockettte: "+str(socket))
                 self.produce_response(socket=socket, message=response)
             if(message.get_packet_type() == Message.RESPONSE):
                 self.process_cheese_response(message)
@@ -63,16 +60,10 @@ class Member(Peer):
                 self.process_cheese_error(message)
 
     def process_list_response(self, message):
-        print("-----------------------")
-        print("jean recoi un putain")
         for (ip, port) in message.get_data():
             member_list = self.member_list.ressource
-            print((ip,port))
             self.member_list.write(member_list.add_member, (ip, port))
-        print("I set the flag to true")
         self.event.set()
-        print("I already set it to true")
-
 
 
     def process_transaction_error(self, message):
@@ -82,13 +73,10 @@ class Member(Peer):
         parent_smell = message.get_data()
         cheese_stack = self.cheese_stack.ressource
         cheese = self.cheese_stack.read(cheese_stack.__getitem__, parent_smell)
-        print(cheese)
         if(cheese is not None):
             message = Message.create(Message.CHEESE, Message.RESPONSE, cheese)
         else:
-            print("Une erreur")
-            #  message = Message.create(Message.CHEESE, Message.ERROR, "Cheese not valid")
-
+            message = Message.create(Message.CHEESE, Message.ERROR, None)
         return message
 
     def process_cheese_response(self, message):
@@ -135,13 +123,9 @@ class Member(Peer):
     def process_member_list_size(self, size, sleep):
         def handle_thread():
             size_member = self.member_list.read(self.member_list.ressource.__len__)
-            print("list_size")
             if size_member < size:
-                print("I set the flag to false")
                 self.event.clear()
-                print("I already set it false")
 
-                print("size: "+str(size_member))
                 message = Message.create(Message.LIST, Message.REQUEST, self.port)
                 self.produce_response(IP=self.ip_tracker, port=self.port_tracker, message=message)
 
@@ -196,22 +180,17 @@ class Member(Peer):
         def handle_thread():
             self.event.wait()
             member_list = self.member_list.ressource
-            print("je wait")
             self.event.wait()
-            print("j'ai fini de wait")
             if(self.member_list.read(member_list.__len__) != 0):
                 ttl = self.ttl.ressource
                 cheese_stack = self.cheese_stack.ressource
                 while(self.ttl.read(ttl.is_zero) is False):
-                    print("COUCOU")
                     last_cheese = self.cheese_stack.read(cheese_stack.last)
                     last_smell = last_cheese.smell
                     time.sleep(1)
                     message = Message.create(Message.CHEESE, Message.REQUEST, last_smell)
                     self.send(message)
-                print("PAS COUCOU NORMAL")
             else:
-                print("ELSE")
                 handle_thread()
         t = Thread(target=handle_thread)
         return t
@@ -236,7 +215,6 @@ class Member(Peer):
 
     def main(self):
         def handle_thread():
-            print("je suis dans le main")
             self.process_message(self.consume_receive())
             handle_thread()
         t = Thread(target=handle_thread)
@@ -252,16 +230,13 @@ class Member(Peer):
 
 if __name__ == "__main__":
     port = 9001
-    ip_tracker = "127.0.1.1"
+    ip_tracker = "192.168.1.48"
     port_tracker = 9990
     try:
         member = Member(9001, ip_tracker, port_tracker)
         member.init()
-        print("AVANT START")
         member.main().start()
-        print("APRES MAIN START")
     except (KeyboardInterrupt, SystemExit):
-        print("PUNTAIINNN MMAIS JE PETE DES CALBES")
         member.client.close()
         member.server.close()
 

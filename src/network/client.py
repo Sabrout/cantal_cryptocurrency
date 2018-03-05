@@ -28,9 +28,9 @@ class Client():
         We create the client with an IP and a port
         """
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.settimeout(3)
         try:
             self.socket.connect((IP, port))
+            print("Debug ("+str(IP)+":"+str(port)+"): Connected")
         except ConnectionRefusedError as e:
             print("Debug ("+str(IP)+":"+str(port)+"): "+str(e))
             return False
@@ -46,13 +46,14 @@ class Client():
         writer = MessageWriter(message)
         string = writer.write()
         string = string.encode()
+        print(str(string)+" -----> "+str((self.socket.getsockname(), self.socket.getpeername())))
         self.socket.sendall(string)
 
     def close(self):
         """
         We close the socket
         """
-        self.socket.shutdown(self.socket.SHUT_WR)
+        self.socket.shutdown(socket.SHUT_WR)
 
     def consume_response(self):
         """
@@ -68,21 +69,14 @@ class Client():
             else:
                 self.set_socket(server_socket)
 
-            print("server_socket: "+str(server_socket))
-            print(self.list_server)
             if(self.socket is not None and self.socket not in self.list_server):
-                print("je l'append: "+str(self.socket))
-                server = Server(self.queue_receive, self.list_server, server_socket=self.socket)
+                server = Server(self.queue_receive, self.list_server, socket_conn=self.socket)
                 self.list_server.append(self.socket)
 
-            print("C'est partit")
             self.send(message)
-            print("Niquel")
 
             if(close):
-                print("je devrais pas faire ca")
                 self.close()
-            print("I'm here: "+str(self.socket))
             handle_thread()
 
         t = Thread(target=handle_thread)
