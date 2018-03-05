@@ -55,7 +55,7 @@ class Client():
         """
         We close the socket
         """
-        self.socket.close()
+        self.socket.shutdown(self.socket.SHUT_WR)
 
     def consume_response(self):
         """
@@ -74,8 +74,7 @@ class Client():
             self.send(message)
             print("Niquel")
 
-            if(server_socket is not None and server_socket not in self.list_server and not(close)):
-                print("bizarre")
+            if(server_socket is not None and server_socket not in self.list_server):
                 server = Server(self.queue_receive, self.list_server, server_socket=self.socket)
                 self.list_server.append(server_socket)
 

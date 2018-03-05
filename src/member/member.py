@@ -86,7 +86,8 @@ class Member(Peer):
         if(cheese is not None):
             message = Message.create(Message.CHEESE, Message.RESPONSE, cheese)
         else:
-            message = Message.create(Message.CHEESE, Message.ERROR, "Cheese not valid")
+            print("Une erreur")
+            #  message = Message.create(Message.CHEESE, Message.ERROR, "Cheese not valid")
 
         return message
 
@@ -251,7 +252,7 @@ class Member(Peer):
 
 if __name__ == "__main__":
     port = 9001
-    ip_tracker = "192.168.0.29"
+    ip_tracker = "192.168.0.30"
     port_tracker = 9990
     try:
         member = Member(9001, ip_tracker, port_tracker)
