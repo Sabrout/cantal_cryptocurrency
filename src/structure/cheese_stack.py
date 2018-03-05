@@ -176,3 +176,32 @@ class CheeseStack():
 
     def __setitem__(self, parent_smell, cheese):
         self.push(cheese)
+
+    def calculate_money(self, member):
+        money = 0
+        money_list = member.money_list
+        for cheese in self.blockchain:
+            for transaction in cheese.data:
+                # for transaction in trans_list:
+                if transaction.list_wallet[-2] == member.public_key:
+                    for input in transaction.list_input:
+                        if input in member.money_list.list:
+                            if input[1] == 0:
+                                money+= int(transaction.list_amount[-1])
+                            else:
+                                print('Error: Output Number Mismatch')
+                if transaction.list_wallet[-1] == member.public_key:
+                    for input in transaction.list_input:
+                        if input in member.money_list.list:
+                            if input[1] == 1:
+                                money+= int(transaction.list_amount[0]) + int(transaction.list_amount[1]) \
+                                    - int(transaction.list_amount[-1])
+                            else:
+                                print('Error: Output Number Mismatch')
+        return money
+
+
+
+
+
+
