@@ -13,6 +13,8 @@ class Tracker(Peer):
 
     def process_message(self, tuple):
         (ip, socket, message) = tuple
+        print(message.get_packet())
+        print(message.get_packet_type())
         # Handling Messages
         if message.get_packet() == Message.LIST:
             # List REQUEST
@@ -42,14 +44,13 @@ class Tracker(Peer):
             print('sstep 1')
             try:
                 ip_port = message.get_data()
-                print('sstep 2')
             except ValueError:
                 raise Exception('Error: Invalid IP Port')
 
             self.list.remove_member(ip_port)
             print(self.list.print_list())
-
-        print('Error: No Message Type Detected\n')
+        else:
+            print('Error: No Message Type Detected\n')
 
 
     def main(self):

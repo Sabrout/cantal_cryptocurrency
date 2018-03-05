@@ -31,8 +31,10 @@ class Client():
         self.socket.settimeout(3)
         try:
             self.socket.connect((IP, port))
-        except ConnectionRefusedError:
-            print("Debug: "+str(IP)+":"+str(port)+" Connection refused")
+        except ConnectionRefusedError as e:
+            print("Debug ("+str(IP)+":"+str(port)+"): "+str(e))
+            return False
+        return True
 
     def set_socket(self, socket):
         self.socket = socket
@@ -44,12 +46,9 @@ class Client():
         writer = MessageWriter(message)
         string = writer.write()
         string = string.encode()
-        try:
-            self.socket.sendall(string)
-        except BrokenPipeError:
-            print("Debug: Can't send to the server")
-        except OSError:
-            print("Debug: Can't send to the server")
+        print(self.socket)
+        self.socket.sendall(string)
+
 
     def close(self):
         """
@@ -65,18 +64,22 @@ class Client():
         def handle_thread():
             IP, port, server_socket, close, message = self.queue_response.get()
             if(server_socket is None):
-                print("I consume it !!!!!!!!!!")
-                self.set_client(IP, port)
+                result_set = self.set_client(IP, port)
+                if(not(result_set)):
+                    handle_thread()
             else:
                 self.set_socket(server_socket)
+
+            print("server_socket: "+str(server_socket))
+            print(self.list_server)
+            if(self.socket is not None and self.socket not in self.list_server):
+                print("je l'append: "+str(self.socket))
+                server = Server(self.queue_receive, self.list_server, server_socket=self.socket)
+                self.list_server.append(self.socket)
 
             print("C'est partit")
             self.send(message)
             print("Niquel")
-
-            if(server_socket is not None and server_socket not in self.list_server):
-                server = Server(self.queue_receive, self.list_server, server_socket=self.socket)
-                self.list_server.append(server_socket)
 
             if(close):
                 print("je devrais pas faire ca")
