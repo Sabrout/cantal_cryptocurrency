@@ -252,7 +252,7 @@ class Member(Peer):
 
 if __name__ == "__main__":
     port = 9001
-    ip_tracker = "192.168.0.30"
+    ip_tracker = "127.0.1.1"
     port_tracker = 9990
     try:
         member = Member(9001, ip_tracker, port_tracker)
