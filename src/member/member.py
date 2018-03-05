@@ -4,9 +4,11 @@ from src.structure.cheese_stack import CheeseStack
 from src.structure.transaction import Transaction
 from src.structure.transaction_list import TransactionList
 from src.structure.ressource import Ressource
+from src.structure.crypto import Crypto
 from src.network.message import Message
 from src.member.ttl import TTL
 from src.member.money_list import MoneyList
+from src.member.gui import GUI
 from threading import Thread
 from threading import Event
 import time
@@ -28,12 +30,14 @@ class Member(Peer):
         self.transaction_list = TransactionList()
         self.transaction_list = Ressource(self.transaction_list)
 
-        self.money_list = MoneyList()
-        # Public key should fe filled using Crypto
-        self.public_key = ''
+        self.money_list = MoneyList(self.cheese_stack)
+
+        self.crypto = Crypto()
 
         self.ttl = TTL(ttl)
         self.ttl = Ressource(self.ttl)
+
+        self.gui = GUI(self)
 
     def process_message(self, tuple):
         (IP, socket, message) = tuple
@@ -208,7 +212,6 @@ class Member(Peer):
             self.produce_response(IP=ip, port=port, message=message)
 
     def init(self):
-        event = Event()
         self.process_member_list_size(1, 5).start()
         self.process_member_list_ping(5).start()
         self.process_member_list_pong().start()
@@ -244,6 +247,7 @@ if __name__ == "__main__":
         member = Member(9001, ip_tracker, port_tracker)
         member.init()
         member.main().start()
+        member.gui.mainloop()
     except (KeyboardInterrupt, SystemExit):
         member.client.close()
         member.server.close()

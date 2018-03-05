@@ -61,8 +61,9 @@ class MoneyList():
         hash_transaction = ""
         output = 0
         reader = open(self.path, 'r')
-        while(state != STATE_END or state != STATE_ERROR):
+        while(state != STATE_END and state != STATE_ERROR):
             c = reader.read(1)
+            print(len(c))
             if(state == STATE_CHEESE and ((c >= 'a' and c <= 'f') or
                                           (c >= '0' and c <= '9'))):
                 hash_cheese += c
@@ -80,7 +81,7 @@ class MoneyList():
                 money = (hash_cheese, hash_transaction, output)
                 self.verify(money)
                 self.money_list.append(money)
-                if(not(c)):
+                if(len(c) == 0):
                     state = STATE_END
                 elif(c == ","):
                     hash_cheese = ""

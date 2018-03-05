@@ -171,7 +171,7 @@ class CheeseStack():
             return None
 
     def __getitem__(self, smell):
-        return get_cheese.get_cheese(smell)
+        return self.get_cheese(smell)
 
     def __len__(self):
         """

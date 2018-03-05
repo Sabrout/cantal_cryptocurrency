@@ -1,7 +1,11 @@
 import tkinter
+from src.structure.transaction import Transaction
+
 
 class GUI():
-    def __init__(self):
+    def __init__(self, member):
+        self.member = member
+        (self.amount, _) = member.money_list.compute_money()
         self.window = tkinter.Tk()
 
         self.frame_information = tkinter.Frame(self.window)
@@ -16,18 +20,19 @@ class GUI():
         self.frame_transaction_right = tkinter.Frame(self.frame_transaction)
         self.frame_transaction_right.pack(side=tkinter.RIGHT)
 
-
         # Frame information
         self.amount_text = tkinter.StringVar()
-        self.amount_text.set("90")
+        self.amount_text.set(self.amount)
 
         self.wallet_text = tkinter.StringVar()
-        self.wallet_text.set("APOJDOPJPZADOZAFEHFUIEHIFHEUIFPHAEFUIEHFEIUPAHFEIUFEFIUGAFIUGAGAEF")
+        self.wallet_text.set(self.member.crypto.get_public())
 
-        self.amount = tkinter.Label(self.frame_information, textvariable=self.amount_text)
+        self.amount = tkinter.Label(self.frame_information,
+                                    textvariable=self.amount_text)
         self.amount.pack(side=tkinter.TOP)
 
-        self.wallet = tkinter.Label(self.frame_information, textvariable=self.wallet_text)
+        self.wallet = tkinter.Label(self.frame_information,
+                                    textvariable=self.wallet_text)
         self.wallet.pack(side=tkinter.BOTTOM)
 
         # Frame transaction
@@ -35,18 +40,27 @@ class GUI():
         self.entry_amount.pack(side=tkinter.LEFT)
 
         self.to_text = tkinter.StringVar()
-        self.to_text.set("to")
-        self.to = tkinter.Label(self.frame_transaction_left, textvariable=self.to_text)
+        self.to_text.set("CheeseCoin to")
+        self.to = tkinter.Label(self.frame_transaction_left,
+                                textvariable=self.to_text)
         self.to.pack(side=tkinter.RIGHT)
 
         self.entry_receiver = tkinter.Entry(self.frame_transaction_right, bd=5)
         self.entry_receiver.pack(side=tkinter.LEFT)
 
-        self.apply = tkinter.Button(self.frame_transaction_right, text='apply')
+        self.apply = tkinter.Button(self.frame_transaction_right,
+                                    text='Apply',
+                                    command=self.create_transaction)
         self.apply.pack(side=tkinter.RIGHT)
 
-        print("coucouc")
-        self.window.mainloop()
+    def create_transaction(self):
+        amount = int(self.entry_amount.get())
+        transaction_user = Transaction.create_user(self.member.money_list,
+                                                   amount,
+                                                   self.entry_receiver.get())
+        transaction_list = self.member.transaction_list.ressource
+        self.member.transaction_list.write(transaction_list.add,
+                                           transaction_user)
 
-if __name__ == "__main__":
-    GUI()
+    def mainloop(self):
+        self.window.mainloop()
