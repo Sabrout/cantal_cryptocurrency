@@ -27,7 +27,7 @@ class Tracker(Peer):
                 response = Message()
                 response.set_packet(Message.LIST)
                 response.set_packet_type(Message.RESPONSE)
-                response.set_data(self.list.get_sublist(remove_ip_port=(ip,port)))
+                response.set_data(self.list.get_sublist())
                 self.produce_response(IP=ip, port=port, message=response)
 
             # List ERROR

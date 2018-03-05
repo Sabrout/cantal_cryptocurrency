@@ -44,12 +44,7 @@ class Client():
         writer = MessageWriter(message)
         string = writer.write()
         string = string.encode()
-        try:
-            self.socket.sendall(string)
-        except BrokenPipeError:
-            print("Debug: Can't send to the server")
-        except OSError:
-            print("Debug: Can't send to the server")
+        self.socket.sendall(string)
 
     def close(self):
         """
