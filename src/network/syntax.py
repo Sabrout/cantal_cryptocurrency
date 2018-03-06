@@ -404,7 +404,6 @@ class SyntaxReader():
         data["nonce"] = nonce
         self.shift()
 
-
     def cheese_error(self):
         self.look()
         self.check(self.lexical.ERROR)

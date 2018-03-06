@@ -90,4 +90,3 @@ class Cheese:
         cheese.set_parent_smell(member.cheese_stack.last.smell)
         cheese.set_data(transactions)
         return cheese
-

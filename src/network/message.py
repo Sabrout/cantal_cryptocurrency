@@ -1,6 +1,6 @@
 from src.structure.cheese import Cheese
 from src.structure.transaction import Transaction
-from src.structure.transaction_list import TransactionList
+
 
 class Message():
     """
@@ -101,6 +101,9 @@ class Message():
         return self.data
 
     def format_transaction(self, transaction):
+        """
+        We convert an object Transaction to a Message
+        """
         format_transaction = {}
         format_transaction["input"] = transaction.list_input
         format_transaction["wallet"] = transaction.list_wallet
@@ -109,6 +112,9 @@ class Message():
         return format_transaction
 
     def format_list_transaction(self, list_transaction):
+        """
+        We convert an object Transaction List to a Message
+        """
         format_transactions = []
         for transaction in list_transaction:
             format_transaction = self.format_transaction(transaction)
@@ -116,6 +122,10 @@ class Message():
         return format_transactions
 
     def format_cheese(self, cheese):
+        """
+        We convert an object Cheese List to a Message
+        """
         format_cheese = {}
-        format_cheese["transactions"] = format_list_transaction(cheese.data)
+        data = cheese.data
+        format_cheese["transactions"] = self.format_list_transaction(data)
         format_cheese["nonce"] = cheese.nonce

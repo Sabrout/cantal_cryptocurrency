@@ -22,11 +22,14 @@ class Peer():
         self.list_socket = []
 
         self.server = Server(self.queue_receive, self.list_socket, port=port)
-        self.client = Client(self.queue_receive, self.queue_response, self.list_socket)
+        self.client = Client(self.queue_receive,
+                             self.queue_response,
+                             self.list_socket)
 
         self.ping = Ping()
 
-    def produce_response(self, IP=None, port=None, socket=None, close=False, message=None):
+    def produce_response(self, IP=None, port=None,
+                         socket=None, close=False, message=None):
         """
         The peer will produce a message response in the queue
         """
@@ -42,7 +45,7 @@ class Peer():
 
     def consume_pong(self):
         """
-        We get the response of the pong
+        We get the response of the ping
         """
         ip, port, message = self.ping.queue_pong.get()
         return ip, port, message.get_data()

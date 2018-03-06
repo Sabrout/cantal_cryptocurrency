@@ -2,24 +2,21 @@ from threading import Thread
 from src.network.writer import MessageWriter
 from src.network.server import Server
 import socket
-import queue
 
 
 class Client():
     """
     This class represents a network client
     """
-
     def __init__(self, queue_receive, queue_response, list_server):
         """
-        The constructor will instanciate a client with the IP and the Port if
-        the information is available
+        The constructor will instanciate a client
         """
 
         self.queue_response = queue_response
-        self.queue_receive  = queue_receive
+        self.queue_receive = queue_receive
         self.list_server = list_server
-        # We set the queue for the client (i.e the client with consume the
+        # We set the queue for the client (i.e the client will consume the
         # queue)
         self.consume_response().start()
 
@@ -37,6 +34,9 @@ class Client():
         return True
 
     def set_socket(self, socket):
+        """
+        We set a socket
+        """
         self.socket = socket
 
     def send(self, message):
@@ -46,7 +46,8 @@ class Client():
         writer = MessageWriter(message)
         string = writer.write()
         string = string.encode()
-        print(str(string)+" -----> "+str((self.socket.getsockname(), self.socket.getpeername())))
+        print(str(string)+" -----> "+str((self.socket.getsockname(),
+                                          self.socket.getpeername())))
         self.socket.sendall(string)
 
     def close(self):
@@ -62,6 +63,7 @@ class Client():
         """
         def handle_thread():
             IP, port, server_socket, close, message = self.queue_response.get()
+            # We set the client
             if(server_socket is None):
                 result_set = self.set_client(IP, port)
                 if(not(result_set)):
@@ -69,12 +71,17 @@ class Client():
             else:
                 self.set_socket(server_socket)
 
-            if(self.socket is not None and self.socket not in self.list_server):
-                server = Server(self.queue_receive, self.list_server, socket_conn=self.socket)
+            # We create a server if he isn't already in the server list
+            if(self.socket is not None and
+               self.socket not in self.list_server):
+                Server(self.queue_receive, self.list_server,
+                       socket_conn=self.socket)
                 self.list_server.append(self.socket)
 
+            # We send the message
             self.send(message)
 
+            # We close the socket if it is necessary
             if(close):
                 self.close()
             handle_thread()

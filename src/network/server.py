@@ -1,23 +1,24 @@
 from threading import Thread
 from src.network.syntax import SyntaxReader
 import socket
-import queue
-import threading
 
 
 class Server:
     """
     This class represents a network server
     """
-    def __init__(self, queue_receive, list_server, socket_conn=None, port=None):
+    def __init__(self, queue_receive, list_server,
+                 socket_conn=None, port=None):
         """
         The constructor will set up the server
         """
         if(port is not None):
             self.host_name = socket.gethostbyname(socket.gethostname())
             self.port = port
-            self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            self.server_socket = socket.socket(socket.AF_INET,
+                                               socket.SOCK_STREAM)
+            self.server_socket.setsockopt(socket.SOL_SOCKET,
+                                          socket.SO_REUSEADDR, 1)
             self.server_socket.bind((self.host_name, port))
             self.server_socket.listen()
 
@@ -77,7 +78,8 @@ class Server:
             else:
                 message += m
 
-        print(str((socket_conn.getsockname(), socket_conn.getpeername()))+" -----> "+str(message))
+        print(str((socket_conn.getsockname(),
+                   socket_conn.getpeername()))+" -----> "+str(message))
         # if encoding is true we decode the binary message
         if(encoding):
             return(message.decode("utf-8"))
