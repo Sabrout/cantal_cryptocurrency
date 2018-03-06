@@ -2,7 +2,9 @@ from src.tracker.member_list import MemberList
 from src.network.peer import Peer
 from src.network.message import Message
 from threading import Thread
+from src.structure.ressource import Ressource
 import random
+import time
 
 
 class Tracker(Peer):
@@ -44,17 +46,12 @@ class Tracker(Peer):
         # Member REPORT
         elif (message.get_packet_type() == Message.REPORT and
             message.get_packet() == Message.MEMBER):
-            # NOOOOTTTTT FINISHEEEDDDD
-            # Removing member
-            print('sstep 1')
             try:
                 ip_port = message.get_data()
             except ValueError:
                 raise Exception('Error: Invalid IP Port')
-
-            member_list = self.member_list.ressource
-            self.member_list.write(member_list.remove_member, ip_port)
-            print(self.member_list.read(member_list.print_list))
+            (ip, port) = ip_port
+            self.produce_ping(ip, port)
         else:
             print('Error: No Message Type Detected\n')
 
