@@ -199,6 +199,9 @@ class SyntaxReader():
         elif(self.get_lookahead() == self.lexical.RESPONSE):
             self.message.set_packet_type(Message.RESPONSE)
             self.transaction_response()
+        elif(self.get_lookahead() == self.lexical.BROADCAST):
+            self.message.set_packet_type(Message.BROADCAST)
+            self.transaction_broadcast()
         elif(self.get_lookahead() == self.lexical.ERROR):
             self.message.set_packet_type(Message.ERROR)
             self.transaction_error()
@@ -215,6 +218,16 @@ class SyntaxReader():
     def transaction_response(self):
         self.look()
         self.check(self.lexical.RESPONSE)
+        self.shift()
+
+        data = {"input": [], "wallet": [], "amount": [], "signature": []}
+        self.message.set_data(data)
+
+        self.transaction()
+
+    def transaction_broadcast(self):
+        self.look()
+        self.check(self.lexical.BROADCAST)
         self.shift()
 
         data = {"input": [], "wallet": [], "amount": [], "signature": []}
