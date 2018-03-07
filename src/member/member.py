@@ -17,6 +17,9 @@ import time
 class Member(Peer):
     def __init__(self, port, ip_tracker, port_tracker, ttl=5):
         self.event = Event()
+        self.mining = Event()
+        self.mining_cheese = self.create_mining_cheese()
+        self.mining.set()
         Peer.__init__(self, port)
         self.port = port
         self.ip_tracker = ip_tracker
@@ -92,6 +95,9 @@ class Member(Peer):
         if(cheese.verify(cheese) is True):
             cheese_stack = self.cheese_stack.ressource
             self.cheese_stack.write(cheese_stack.add, cheese)
+            self.mining.clear()
+            self.mining_cheese = self.create_mining_cheese()
+            self.mining.set()
         else:
             self.procces_cheese_error(message)
 
@@ -224,9 +230,28 @@ class Member(Peer):
         t = Thread(target=handle_thread)
         return t
 
+    def create_mining_cheese(self):
+        cheese_stack = self.cheese_stack.ressource
+        last_cheese = self.cheese_stack.read(cheese_stack.last)
+        parent_smell = last_cheese.smell
+        transaction_list = self.transaction_list.ressource
+        
+        mining_cheese = Cheese(parent_smell = parent_smell, data = transaction_list)
+
+        return mining_cheese
+        
+        
     def mine(self, ntimes):
         def handle_thread():
-            self.create_temp_cheese.mine(ntimes)
+            self.mining.wait()
+            if(self.mining_cheese.mine(ntimes) is True):
+                #self.mining.clear()  -> Not good I think
+                ### Broadcast
+                ### Add to my cheese stack
+                transaction_list = self.transaction_list.ressource
+                self.transaction_list.write(self.remove_all, transaction_list)
+                self.mining_cheese = self.create_mining_cheese()
+                # self.mining.set() -> Related to the "clear"
             handle_thread()
         t = Thread(target=handle_thread)
         return t

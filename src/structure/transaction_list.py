@@ -23,6 +23,20 @@ class TransactionList():
         else:
             raise Exception("Error: not a transaction")
 
+    def remove(self, transaction):
+        if isinstance(transaction, Transaction):
+            self.transaction_list.remove(transaction)
+            del self.transaction_index[transaction.hash]
+        else:
+            raise Exception("Error: not a transaction")
+
+    def remove_all(self, transaction_list):
+        if(isinstance(transaction_list, TransactionList)):
+            for transaction in transaction_list:
+                self.remove(transaction)
+        else:
+            raise Exception("Error: not a transaction list")
+        
     def get(self, item):
         """
         This function will return a transaction
@@ -30,6 +44,7 @@ class TransactionList():
         if isinstance(item, str):
             item = self.transaction_index[item]
         return self.transaction_list[item]
+
 
     def verify(self):
         """

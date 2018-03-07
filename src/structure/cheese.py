@@ -49,11 +49,11 @@ class Cheese:
                 return False
         return True
 
-    def mine(self, ntimes):
+    def mine(self, n_times):
         """
         Mining a cheese by generating random nonces (ntimes trying)
         """
-        for i in range(ntimes):
+        for i in range(n_times):
             self.nonce = int(str(random.random()).replace(",", ""))
             self.compute_smell()
             if self.verify_policy():
@@ -83,11 +83,3 @@ class Cheese:
         if not(self.data.verify()):
             return False
         return True
-
-    def create_temp_cheese(member):
-        transactions = None
-        cheese = Cheese()
-        cheese.set_parent_smell(member.cheese_stack.last.smell)
-        cheese.set_data(transactions)
-        return cheese
-
