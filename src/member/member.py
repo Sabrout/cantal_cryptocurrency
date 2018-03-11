@@ -393,7 +393,6 @@ class Member(Peer):
                 mining_cheese = self.mining_cheese.ressource
                 if(self.mining_cheese.write(mining_cheese.mine,
                                             ntimes) is True):
-                    print("OK")
                     # If we can add the cheese to the stack,
                     cheese_stack = self.cheese_stack.ressource
                     if(self.cheese_stack.write(cheese_stack.add,
@@ -411,10 +410,7 @@ class Member(Peer):
 
                         # We create a new cheese to mine
                         self.mining_cheese = self.create_mining_cheese()
-                    else:
-                        print("On pas add")
-                else:
-                    print("FAIL")
+
                 time.sleep(sleep)
         t = Thread(target=handle_thread)
         return t

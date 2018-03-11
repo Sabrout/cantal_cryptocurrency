@@ -61,7 +61,10 @@ class Server:
         end_message = False
         message = b""
         while(True):
-            m = socket_conn.recv(number_bytes)
+            try:
+                m = socket_conn.recv(number_bytes)
+            except OSError:
+                m = ""
 
             # If we receive nothing
             if(len(m) == 0):
