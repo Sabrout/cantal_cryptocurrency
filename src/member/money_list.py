@@ -1,3 +1,4 @@
+from src.structure.crypto import Crypto
 import os
 
 
@@ -32,15 +33,33 @@ class MoneyList():
         if not (int(output) == 0 or int(output) == 1):
             raise Exception('Error: Invalid Output Number')
 
+    def add(self, cheese):
+        """
+        We add our money from a cheese
+        """
+        print("We try to see if "+str(cheese.smell))
+        crypto = Crypto()
+        public_key = crypto.get_public()
+        transaction_list = cheese.data
+        for transaction in transaction_list:
+            if (transaction.list_wallet[-1] == public_key):
+                print("I add: "+str((cheese.smell, transaction.hash, 1)))
+                self.add_money((cheese.smell, transaction.hash, 1))
+            if (transaction.list_wallet[-2] == public_key):
+                print("I add: "+str((cheese.smell, transaction.hash, 0)))
+                self.add_money((cheese.smell, transaction.hash, 0))
+
     def add_money(self, money):
         """
         We add the money to the list
         """
         (cheese_hash, transaction_hash, output) = money
+        print("we will add money")
         # We verify the money
         self.verify(money)
         # We add the money to the list
         self.money_list.append(money)
+        print("we merde add money")
 
         # We write the money
         writer = open(self.path, 'a')
@@ -129,9 +148,10 @@ class MoneyList():
         # We get the money
         (cheese_hash, transaction_hash, output) = money
         # We get the cheese
-        cheese = self.cheese_stack.get_cheese(cheese_hash, parent=False)
+        cheese_stack = self.cheese_stack.ressource
+        cheese = cheese_stack.get_cheese(cheese_hash, parent=False)
         # We get the transaction
-        transaction = cheese[transaction_hash]
+        transaction = cheese.data.get(transaction_hash)
 
         # We get the amount
         if output == 0:

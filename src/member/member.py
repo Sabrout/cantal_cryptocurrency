@@ -1,6 +1,7 @@
 from src.network.peer import Peer
 from src.tracker.member_list import MemberList
 from src.structure.cheese_stack import CheeseStack
+from src.structure.cheese import Cheese
 from src.structure.transaction import Transaction
 from src.structure.transaction_list import TransactionList
 from src.structure.ressource import Ressource
@@ -11,15 +12,23 @@ from src.member.money_list import MoneyList
 from src.member.gui import GUI
 from threading import Thread
 from threading import Event
+from copy import deepcopy
 import time
+import signal
+import sys
 
 
 class Member(Peer):
     """
     Member is the class which represent the member
     """
-    def __init__(self, port, ip_tracker, port_tracker, ttl=5):
-        self.event = Event()
+    def __init__(self, port, ip_tracker, port_tracker, ttl=5, miner=False):
+        signal.signal(signal.SIGINT, self.halt)
+
+        self.event_member_list = Event()
+        self.event_mining = Event()
+        self.event_mining.set()
+
         Peer.__init__(self, port)
         self.port = port
         self.ip_tracker = ip_tracker
@@ -42,6 +51,12 @@ class Member(Peer):
 
         self.gui = GUI(self)
 
+        self.miner = miner
+        if(self.miner):
+            self.mining_cheese = Cheese()
+            self.mining_cheese = Ressource(self.mining_cheese)
+            self.create_mining_cheese()
+
     def process_message(self, tuple):
         """
         We will process the data
@@ -58,7 +73,9 @@ class Member(Peer):
                 # If we have a transaction request, we can send the last
                 # request we receive
                 response = self.process_transaction_request()
-                self.produce_response(socket=socket, message=response)
+                self.produce_response(socket=socket,
+                                      message=response,
+                                      close=True)
             if(message.get_packet_type() == Message.RESPONSE):
                 # If we have a transaction response, we store the transaction
                 self.process_transaction_response(message)
@@ -69,7 +86,9 @@ class Member(Peer):
             if(message.get_packet_type() == Message.REQUEST):
                 # We want to request a cheese
                 response = self.process_cheese_request(message)
-                self.produce_response(socket=socket, message=response)
+                self.produce_response(socket=socket,
+                                      message=response,
+                                      close=True)
             if(message.get_packet_type() == Message.RESPONSE):
                 # We want to store the new cheese if we can
                 self.process_cheese_response(message)
@@ -87,7 +106,7 @@ class Member(Peer):
             # we will add the member
             member_list = self.member_list.ressource
             self.member_list.write(member_list.add_member, (ip, port))
-        self.event.set()
+        self.event_member_list.set()
 
     def process_transaction_error(self, message):
         """
@@ -125,11 +144,22 @@ class Member(Peer):
         # We get the cheese
         cheese = message.get_data()
 
-        # If the cheese is verified
-        if(cheese.verify(cheese)):
-            # We add it to the cheese stack
-            cheese_stack = self.cheese_stack.ressource
-            self.cheese_stack.write(cheese_stack.add, cheese)
+        # We add it to the cheese stack if it's verified
+        cheese_stack = self.cheese_stack.ressource
+        if(self.cheese_stack.write(cheese_stack.add, cheese)):
+
+            # We update the transaction list
+            transaction_list = self.transaction_list.ressource
+            self.transaction_list.write(transaction_list.remove_all,
+                                        cheese.data)
+
+            # We add the money
+            self.money_list.add(cheese)
+
+            # We create the new cheese to mine
+            self.event_mining.clear()
+            self.mining_cheese = self.create_mining_cheese()
+            self.event_mining.set()
         else:
             # Otherwise we process an error
             self.procces_cheese_error(message)
@@ -171,7 +201,7 @@ class Member(Peer):
         transaction.compute_hash()
         # We verify it
         transaction.set_list_sign(data["signature"])
-        if(not(transaction.verify())):
+        if(not(transaction.verify()) or transaction.verify_miner()):
             # If it's not verify we can ignore the message
             return None
 
@@ -186,24 +216,23 @@ class Member(Peer):
         We will ask a new list of members
         """
         def handle_thread():
-            member_list = self.member_list.ressource
-            size_member = self.member_list.read(member_list.__len__)
-            if size_member < size:
-                self.event.clear()
+            while(True):
+                member_list = self.member_list.ressource
+                size_member = self.member_list.read(member_list.__len__)
+                if size_member < size:
+                    self.event_member_list.clear()
 
-                # We create a message to send to the tracker
-                message = Message.create(Message.LIST,
-                                         Message.REQUEST,
-                                         self.port)
-                # and we send it
-                self.produce_response(IP=self.ip_tracker,
-                                      port=self.port_tracker,
-                                      message=message)
+                    # We create a message to send to the tracker
+                    message = Message.create(Message.LIST,
+                                             Message.REQUEST,
+                                             self.port)
+                    # and we send it
+                    self.produce_response(IP=self.ip_tracker,
+                                          port=self.port_tracker,
+                                          message=message)
 
-            # We ask test the list every sleep seconds
-            time.sleep(sleep)
-
-            handle_thread()
+                # We ask test the list every sleep seconds
+                time.sleep(sleep)
         t = Thread(target=handle_thread)
         return t
 
@@ -212,20 +241,19 @@ class Member(Peer):
         We will ping the peers
         """
         def handle_thread():
-            # We get the member list
-            member_list = self.member_list.ressource
-            # We get a member randomly
-            member = self.member_list.read(member_list.get_random)
+            while(True):
+                # We get the member list
+                member_list = self.member_list.ressource
+                # We get a member randomly
+                member = self.member_list.read(member_list.get_random)
 
-            # We ping the member
-            if member is not None:
-                (ip, port) = member
-                self.produce_ping(ip, port)
+                # We ping the member
+                if member is not None:
+                    (ip, port) = member
+                    self.produce_ping(ip, port)
 
-            # and we do this operation every sleep seconds
-            time.sleep(sleep)
-
-            handle_thread()
+                # and we do this operation every sleep seconds
+                time.sleep(sleep)
         t = Thread(target=handle_thread)
         return t
 
@@ -234,50 +262,58 @@ class Member(Peer):
         We receive the response of the ping (i.e the pong)
         """
         def handle_thread():
-            # We get the response of a pong
-            ip, port, pong = self.consume_pong()
-            if(not(pong)):
-                # We get the member list
-                member_list = self.member_list.ressource
-                # We remove the member from our list
-                self.member_list.write(member_list.remove_list, (ip, port))
-                # and we report to the tracker that a member is not connected
-                message = Message.create(Message.MEMBER,
-                                         Message.REPORT,
-                                         (ip, port))
-                self.produce_response(IP=self.ip_tracker,
-                                      port=self.port_tracker,
-                                      message=message)
-
-            handle_thread()
+            while(True):
+                # We get the response of a pong
+                ip, port, pong = self.consume_pong()
+                if(not(pong)):
+                    # We get the member list
+                    member_list = self.member_list.ressource
+                    # We remove the member from our list
+                    self.member_list.write(member_list.remove_member,
+                                           (ip, port))
+                    # and we report to the tracker that
+                    # a member is not connected
+                    message = Message.create(Message.MEMBER,
+                                             Message.REPORT,
+                                             (ip, port))
+                    self.produce_response(IP=self.ip_tracker,
+                                          port=self.port_tracker,
+                                          message=message)
         t = Thread(target=handle_thread)
         return t
 
-    def update_cheese_stack(self):
+    def update_cheese_stack(self, sleep=1):
         """
         We update the cheese stack
         """
         def handle_thread():
-            # Get the member list
-            self.event.wait()
-            member_list = self.member_list.ressource
-            self.event.wait()
-            # If the member list is not empty then
-            if(self.member_list.read(member_list.__len__) != 0):
-                ttl = self.ttl.ressource
-                cheese_stack = self.cheese_stack.ressource
-                # If the ttl is not dead,
-                while(not(self.ttl.read(ttl.is_zero))):
-                    # We get the last cheese
-                    last_cheese = self.cheese_stack.read(cheese_stack.last)
-                    last_smell = last_cheese.smell
-                    # and we will ask if there is a new cheese
-                    message = Message.create(Message.CHEESE,
-                                             Message.REQUEST,
-                                             last_smell)
-                    self.send(message)
-            else:
-                handle_thread()
+            update = True
+
+            while(update):
+                # Get the member list
+                self.event_member_list.wait()
+
+                member_list = self.member_list.ressource
+                # If the member list is not empty then
+                if(self.member_list.read(member_list.__len__) != 0):
+                    ttl = self.ttl.ressource
+                    cheese_stack = self.cheese_stack.ressource
+                    # If the ttl is not dead,
+                    while(not(self.ttl.read(ttl.is_zero))):
+                        # We get the last cheese
+                        last_cheese = self.cheese_stack.read(cheese_stack.last)
+                        last_smell = last_cheese.smell
+
+                        # We send the request every sleep seconds
+                        time.sleep(sleep)
+
+                        # and we will ask if there is a new cheese
+                        message = Message.create(Message.CHEESE,
+                                                 Message.REQUEST,
+                                                 last_smell)
+                        self.send(message)
+                else:
+                    update = False
         t = Thread(target=handle_thread)
         return t
 
@@ -302,51 +338,104 @@ class Member(Peer):
         """
         We initialize the threads
         """
-        self.process_member_list_size(1, 5).start()
-        self.process_member_list_ping(5).start()
-        self.process_member_list_pong().start()
-        self.update_cheese_stack().start()
+        self.list_thread.append(self.process_member_list_size(1, 5))
+        self.list_thread[-1].start()
+        self.list_thread.append(self.process_member_list_ping(5))
+        self.list_thread[-1].start()
+        self.list_thread.append(self.process_member_list_pong())
+        self.list_thread[-1].start()
+        self.list_thread.append(self.update_cheese_stack())
+        self.list_thread[-1].start()
+        if(self.miner):
+            self.list_thread.append(self.mine(ntimes=10))
+            self.list_thread[-1].start()
 
     def main(self):
         """
         We process the messages
         """
         def handle_thread():
-            self.process_message(self.consume_receive())
-            handle_thread()
+            while(True):
+                self.process_message(self.consume_receive())
         t = Thread(target=handle_thread)
         return t
 
-    def mine(self, ntimes):
+    def create_mining_cheese(self):
+        """
+        We update the data in the mining cheese
+        """
+        # We get the transaction list
+        transaction_list = deepcopy(self.transaction_list.ressource)
+        if(not(transaction_list.verify_miner())):
+            transaction_miner = Transaction.create_miner(self.cheese_stack.ressource)
+            transaction_list.add(transaction_miner)
+
+        # We get the last cheese
+        cheese_stack = self.cheese_stack.ressource
+        last_cheese = self.cheese_stack.read(cheese_stack.last)
+
+        # We get the required smell
+        parent_smell = last_cheese.smell
+
+        # We get the mining cheese
+        mining_cheese = self.mining_cheese.ressource
+        # We set the new parameters
+        self.mining_cheese.write(mining_cheese.set_parent_smell, parent_smell)
+        self.mining_cheese.write(mining_cheese.set_data, transaction_list)
+
+    def mine(self, ntimes=1, sleep=1):
         """
         We mine the cheese
         """
         def handle_thread():
-            self.create_temp_cheese.mine(ntimes)
-            handle_thread()
+            while(True):
+                self.event_mining.wait()
+                mining_cheese = self.mining_cheese.ressource
+                if(self.mining_cheese.write(mining_cheese.mine,
+                                            ntimes) is True):
+                    print("OK")
+                    # If we can add the cheese to the stack,
+                    cheese_stack = self.cheese_stack.ressource
+                    if(self.cheese_stack.write(cheese_stack.add,
+                                               mining_cheese)):
+
+                        # We remove the transactions from our list
+                        transaction_list = self.transaction_list.ressource
+                        self.transaction_list.write(transaction_list.remove_all,
+                                                    mining_cheese.data)
+
+                        self.cheese_stack.write(cheese_stack.save)
+
+                        # We add the money
+                        self.money_list.add(mining_cheese)
+
+                        # We create a new cheese to mine
+                        self.mining_cheese = self.create_mining_cheese()
+                    else:
+                        print("On pas add")
+                else:
+                    print("FAIL")
+                time.sleep(sleep)
         t = Thread(target=handle_thread)
         return t
 
-    def create(port, ip_tracker, port_tracker):
+    def create(port, ip_tracker, port_tracker, miner=False):
         # We create the member
         try:
-            member = Member(port, ip_tracker, port_tracker)
+            member = Member(port, ip_tracker, port_tracker, miner=miner)
             member.init()
-            member.main().start()
+            member.list_thread.append(member.main())
+            member.list_thread[-1].start()
             member.gui.mainloop()
         except (KeyboardInterrupt, SystemExit):
             member.client.close()
             member.server.close()
-
-    def add_money_to_list(self, money):
-        money_list = self.money_list.ressource
-        self.money_list.write(money_list.add_money, money)
 
 
 if __name__ == "__main__":
     port = 9001
     ip_tracker = "192.168.1.48"
     port_tracker = 9990
-    Member.create(port, ip_tracker, port_tracker)
+    Member.create(port, ip_tracker, port_tracker, miner=True)
 
     print("Debug: Member connected to "+str(ip_tracker)+":"+str(port_tracker))

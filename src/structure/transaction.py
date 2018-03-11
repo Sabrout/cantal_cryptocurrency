@@ -167,6 +167,9 @@ class Transaction():
         iff all signatures are valid (we don't have now the history
         of transactions)
         """
+        sign_bank = "0000000000000000000000000000000000000000000000"
+        sign_bank += "00000000000000000000000000000000000000000000000000"
+
         total_amount = sum(self.list_amount[:-1])
         if self.list_amount[len(self.list_amount)-1] > total_amount:
             return False
@@ -175,8 +178,10 @@ class Transaction():
             return False
 
         for i in range(0, len(self.list_sign)):
-            if not(Crypto.verify(self.list_wallet[i], self.list_sign[i],
-                                 self.hash)):
+
+            if (self.list_wallet[i] != sign_bank and
+                not(Crypto.verify(self.list_wallet[i],
+                                  self.list_sign[i], self.hash))):
                 return False
         return True
 
@@ -187,7 +192,11 @@ class Transaction():
         wallet_bank = "0000000000000000000000000000000000000000000000"
         wallet_bank += "00000000000000000000000000000000000000000000000000"
         sign_bank = wallet_bank
-        (amount_bank, transaction_input) = cheese_stack.find_output_bank()
+        output_bank = cheese_stack.find_output_bank()
+        print("We found the bank: "+str(output_bank))
+        if(output_bank is None):
+            return None
+        (amount_bank, transaction_input) = output_bank
         list_wallet = [wallet_bank, public_key_miner,
                        wallet_bank]
         list_amount = [amount_bank, 1]
@@ -196,7 +205,7 @@ class Transaction():
         transaction.set_list_input(transaction_input)
         transaction.set_list_wallet(list_wallet)
         transaction.compute_hash()
-        transaction.set_list_wallet([sign_bank])
+        transaction.set_list_sign([sign_bank])
         return transaction
 
     def create_user(money_list, amount, public_key_receiver):

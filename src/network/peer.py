@@ -3,7 +3,8 @@ from src.network.client import Client
 from src.network.ping import Ping
 from src.network.message import Message
 import queue
-
+import signal
+import sys
 
 class Peer():
     """
@@ -14,19 +15,34 @@ class Peer():
         """
         The peer will have a server and a client
         """
+        signal.signal(signal.SIGINT, self.halt)
 
         self.queue_response = queue.Queue()
         self.queue_receive = queue.Queue()
         self.queue_ping = queue.Queue()
 
         self.list_socket = []
+        self.list_thread = []
 
-        self.server = Server(self.queue_receive, self.list_socket, port=port)
+        self.server = Server(self.queue_receive, self.list_socket, self.list_thread, port=port)
         self.client = Client(self.queue_receive,
                              self.queue_response,
-                             self.list_socket)
+                             self.list_socket, self.list_thread)
 
         self.ping = Ping()
+
+    def halt(self):
+        self.halt_thread()
+        self.halt_conn()
+        sys.exit(0)
+
+    def halt_thread(self):
+        for t in self.list_thread:
+            t.join()
+
+    def halt_conn(self):
+        self.client.close()
+        self.server.close()
 
     def produce_response(self, IP=None, port=None,
                          socket=None, close=False, message=None):

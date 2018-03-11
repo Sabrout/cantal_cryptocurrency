@@ -7,8 +7,7 @@ class Server:
     """
     This class represents a network server
     """
-    def __init__(self, queue_receive, list_server,
-                 socket_conn=None, port=None):
+    def __init__(self, queue_receive, list_server, list_thread, socket_conn=None, port=None):
         """
         The constructor will set up the server
         """
@@ -24,14 +23,17 @@ class Server:
 
             self.queue_receive = queue_receive
             self.list_server = list_server
+            self.list_thread = list_thread
 
-            self.thread_accept = self.accept()
-            self.thread_accept.start()
+            self.list_thread.append(self.accept())
+            self.list_thread[-1].start()
         else:
             self.socket = socket_conn
             self.queue_receive = queue_receive
             self.list_server = list_server
-            self.produce_receive(self.socket).start()
+            self.list_thread = list_thread
+            self.list_thread.append(self.produce_receive(self.socket))
+            self.list_thread[-1].start()
 
     def get_host_name(self):
         return self.host_name
@@ -43,7 +45,6 @@ class Server:
         """
         We close the socket
         """
-        print("I close the connection:"+str(socket_conn))
         socket_conn.close()
         try:
             self.list_server.remove(socket_conn)
@@ -119,8 +120,8 @@ class Server:
         def handle_thread():
             try:
                 self.socket, _ = self.server_socket.accept()
-                print("We accepted: "+str(self.socket))
-                self.produce_receive(self.socket).start()
+                self.list_thread.append(self.produce_receive(self.socket))
+                self.list_thread[-1].start()
             except ConnectionAbortedError as e1:
                 print("Debug: "+str(e1))
             #  except OSError as e2:

@@ -7,14 +7,19 @@ import random
 import time
 
 
+
 class Tracker(Peer):
     def __init__(self, port):
         Peer.__init__(self, port)
         self.member_list = MemberList()
         self.member_list = Ressource(self.member_list)
-        self.main().start()
-        self.process_member_list_ping(5).start()
-        self.process_member_list_pong().start()
+
+        self.list_thread.append(self.main())
+        self.list_thread[-1].start()
+        self.list_thread.append(self.process_member_list_ping(5))
+        self.list_thread[-1].start()
+        self.list_thread.append(self.process_member_list_pong())
+        self.list_thread[-1].start()
 
     def process_message(self, tuple):
         (ip, socket, message) = tuple
@@ -61,9 +66,8 @@ class Tracker(Peer):
         We create a thread where we accept the connection
         """
         def handle_thread():
-            self.process_message(self.consume_receive())
-            handle_thread()
-
+            while(True):
+                self.process_message(self.consume_receive())
         t = Thread(target=handle_thread)
         return t
 
@@ -80,29 +84,26 @@ class Tracker(Peer):
 
     def process_member_list_ping(self, sleep):
         def handle_thread():
-            member_list = self.member_list.ressource
-            member = self.member_list.read(member_list.get_random)
+            while(True):
+                member_list = self.member_list.ressource
+                member = self.member_list.read(member_list.get_random)
 
-            if member is not None:
-                (ip, port) = member
-                self.produce_ping(ip, port)
+                if member is not None:
+                    (ip, port) = member
+                    self.produce_ping(ip, port)
 
-            time.sleep(sleep)
-
-            handle_thread()
+                time.sleep(sleep)
 
         t = Thread(target = handle_thread)
         return t
 
     def process_member_list_pong(self):
         def handle_thread():
-            ip, port, pong = self.consume_pong()
-            if(not(pong)):
-                member_list = self.member_list.ressource
-                self.member_list.write(member_list.remove_list, (ip, port))
-
-            handle_thread()
-
+            while(True):
+                ip, port, pong = self.consume_pong()
+                if(not(pong)):
+                    member_list = self.member_list.ressource
+                    self.member_list.write(member_list.remove_member, (ip, port))
         t = Thread(target = handle_thread)
         return t
 

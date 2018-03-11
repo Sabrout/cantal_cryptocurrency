@@ -23,6 +23,19 @@ class TransactionList():
         else:
             raise Exception("Error: not a transaction")
 
+    def remove(self, transaction_hash):
+        for transaction in self.transaction_list:
+            if transaction.hash == transaction_hash:
+                self.transaction_list.remove(transaction)
+                del self.transaction_index[transaction_hash]
+
+    def remove_all(self, transaction_list):
+        if(isinstance(transaction_list, TransactionList)):
+            for transaction in transaction_list:
+                self.remove(transaction.hash)
+        else:
+            raise Exception("Error: not a transaction list")
+
     def get(self, item):
         """
         This function will return a transaction
@@ -45,10 +58,9 @@ class TransactionList():
         index_input = {}
 
         for transaction in self.transaction_list:
-
             # We verify if an input of a transaction is already in the
             # transaction's list
-            for input in transaction.input_list:
+            for input in transaction.list_input:
                 if(input in index_input):
                     return False
                 else:
@@ -67,6 +79,15 @@ class TransactionList():
                 if(not(transaction.verify())):
                     return False
         return True
+
+    def verify_miner(self):
+        """
+        We verify if we have a miner's transaction in the list
+        """
+        for transaction in self.transaction_list:
+            if(transaction.verify_miner()):
+                return True
+        return False
 
     def get_last(self):
         length = len(self.transaction_list)

@@ -8,7 +8,7 @@ class Client():
     """
     This class represents a network client
     """
-    def __init__(self, queue_receive, queue_response, list_server):
+    def __init__(self, queue_receive, queue_response, list_server, list_thread):
         """
         The constructor will instanciate a client
         """
@@ -16,9 +16,11 @@ class Client():
         self.queue_response = queue_response
         self.queue_receive = queue_receive
         self.list_server = list_server
+        self.list_thread = list_thread
         # We set the queue for the client (i.e the client will consume the
         # queue)
-        self.consume_response().start()
+        self.list_thread.append(self.consume_response())
+        self.list_thread[-1].start()
 
     def set_client(self, IP, port):
         """
@@ -75,7 +77,7 @@ class Client():
             if(self.socket is not None and
                self.socket not in self.list_server):
                 Server(self.queue_receive, self.list_server,
-                       socket_conn=self.socket)
+                       self.list_thread, socket_conn=self.socket)
                 self.list_server.append(self.socket)
 
             # We send the message
