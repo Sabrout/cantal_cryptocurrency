@@ -222,10 +222,11 @@ class CheeseStack():
                 if(transaction.verify_miner):
                     if(transaction.used_output[0] == 0
                        and transaction.list_amount[1] != 0
-                       and transaction.list_amount[1] == wallet_bank):
+                       and transaction.list_wallet[1] == wallet_bank):
                         return (transaction.list_amount[1],
                                 [(transaction.hash, 0)])
                     else:
-                        return (transaction.list_amount[0]-1,
+                        return (transaction.list_amount[0]-
+                                transaction.list_amount[1],
                                 [(transaction.hash, 1)])
         return None
