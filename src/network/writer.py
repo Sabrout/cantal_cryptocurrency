@@ -147,16 +147,14 @@ class MessageWriter():
         string = "CHEESE BROADCAST"
         data = self.message.get_data()
         string += " "+str(data["hash"])
-        string += self.write_transaction_list(string)
+        string = self.write_transaction_list(string)
         string += " "+str(data["nonce"])+"\r\n"
         return string
-
 
     def write_cheese_error(self):
         """
         The function write the message of a CHEESE ERROR
         """
-
         string = "CHEESE ERROR\r\n"
         return string
 
@@ -170,9 +168,11 @@ class MessageWriter():
         original_data = self.message.get_data()
         transaction_list = original_data["transactions"]
         for transaction in transaction_list:
+            print("Before: "+str(string))
             self.message.set_data(transaction)
             string = self.write_transaction(string)
 
+        print("After: "+str(string))
         self.message.set_data(original_data)
         return string
 

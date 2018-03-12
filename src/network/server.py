@@ -99,7 +99,7 @@ class Server:
         if(self.event_halt.is_set()):
             return None
 
-        print("Debug: "+str(self.socket.getsockname())+" <----- "+str(message))
+        print("Debug: "+str(socket_conn.getsockname())+" <----- "+str(message))
         # if encoding is true we decode the binary message
         if(encoding):
             return(message.decode("utf-8"))
