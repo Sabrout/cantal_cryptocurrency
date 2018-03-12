@@ -147,6 +147,7 @@ class CheeseStack():
                     money = sum(input_transaction.list_amount[:-1])
                     money -= input_transaction.list_amount[-1]
 
+                print("Je print la money: "+str(money))
                 # We add for A the money that
                 # he received in the previous transactions
                 if wallet in previous_amount:
@@ -164,6 +165,7 @@ class CheeseStack():
             # money in the transaction). We also check if the amounts
             # in the input transaction correspond to
             # the amount in the current transaction
+            print(previous_amount)
             for i in range(0, len(transaction.list_wallet[:-2])):
                 wallet = transaction.list_wallet[i]
                 if wallet not in previous_amount:
@@ -215,10 +217,11 @@ class CheeseStack():
                 if(transaction.verify_miner):
                     if(transaction.used_output[0] == 0
                        and transaction.list_amount[1] != 0
-                       and transaction.list_amount[1] == wallet_bank):
+                       and transaction.list_wallet[1] == wallet_bank):
                         return (transaction.list_amount[1],
                                 [(transaction.hash, 0)])
                     else:
-                        return (transaction.list_amount[0]-1,
+                        return (transaction.list_amount[0] -
+                                transaction.list_amount[1],
                                 [(transaction.hash, 1)])
         return None
