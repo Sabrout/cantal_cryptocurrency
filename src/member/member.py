@@ -365,9 +365,10 @@ class Member(Peer):
         We update the data in the mining cheese
         """
         # We get the transaction list
-        transaction_list = deepcopy(self.transaction_list.ressource)
+        tl = self.transaction_list.ressource
+        transaction_list = self.transaction_list.read(tl.deepcopy)
         if(not(transaction_list.verify_miner())):
-            transaction_miner = Transaction.create_miner(self.cheese_stack.ressource)
+            transaction_miner = Transaction.create_miner(self.cheese_stack)
             transaction_list.add(transaction_miner)
 
         # We get the last cheese

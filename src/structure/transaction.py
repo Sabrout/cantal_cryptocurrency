@@ -185,14 +185,15 @@ class Transaction():
                 return False
         return True
 
-    def create_miner(cheese_stack):
+    def create_miner(cheese_stack_ress):
+        cheese_stack = cheese_stack_ress.ressource
         crypto = Crypto()
         public_key_miner = crypto.get_public()
         transaction = Transaction()
         wallet_bank = "0000000000000000000000000000000000000000000000"
         wallet_bank += "00000000000000000000000000000000000000000000000000"
         sign_bank = wallet_bank
-        output_bank = cheese_stack.find_output_bank()
+        output_bank = cheese_stack_ress.read(cheese_stack.find_output_bank)
         print("We found the bank: "+str(output_bank))
         if(output_bank is None):
             return None
