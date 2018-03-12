@@ -50,16 +50,23 @@ class Client():
         writer = MessageWriter(message)
         string = writer.write()
         string = string.encode()
-        print(str(string)+" -----> "+str((self.socket.getsockname(),
-                                          self.socket.getpeername())))
-        self.socket.sendall(string)
+
+        try:
+            self.socket.sendall(string)
+            print(str(string)+" -----> "+str((self.socket.getsockname(),
+                                              self.socket.getpeername())))
+        except socket.error as e:
+            self.close()
 
     def close(self):
         """
         We close the socket
         """
         if(self.socket is not None):
-            self.socket.shutdown(socket.SHUT_WR)
+            try:
+                self.socket.shutdown(socket.SHUT_WR)
+            except socket.error as e:
+                pass
 
     def consume_response(self):
         """
@@ -67,40 +74,40 @@ class Client():
         and send the response
         """
         def handle_thread():
-            reponse = None
-            while(not(self.event_halt.is_set()) and reponse is None):
-                try:
-                    response = self.queue_response.get(block=False)
-                except queue.Empty:
-                    pass
+            while(not(self.event_halt.is_set())):
+                response = None
+                while(not(self.event_halt.is_set()) and (response is None)):
+                    try:
+                        response = self.queue_response.get(block=False)
+                    except queue.Empty:
+                        response = None
 
-            if(self.event_halt.is_set()):
-                self.close()
-                return None
+                if(self.event_halt.is_set()):
+                    self.close()
+                    return None
 
-            IP, port, server_socket, close, message = response
-            # We set the client
-            if(server_socket is None):
-                result_set = self.set_client(IP, port)
-                if(not(result_set)):
-                    handle_thread()
-            else:
-                self.set_socket(server_socket)
+                IP, port, server_socket, close, message = response
+                # We set the client
+                if(server_socket is None):
+                    result_set = self.set_client(IP, port)
+                    if(not(result_set)):
+                        handle_thread()
+                else:
+                    self.set_socket(server_socket)
 
-            # We create a server if he isn't already in the server list
-            if(self.socket is not None and
-               self.socket not in self.list_server):
-                Server(self.queue_receive, self.list_server,
-                       self.list_thread, self.event_halt, socket_conn=self.socket)
-                self.list_server.append(self.socket)
+                # We create a server if he isn't already in the server list
+                if(self.socket is not None and
+                    self.socket not in self.list_server):
+                    Server(self.queue_receive, self.list_server,
+                           self.list_thread, self.event_halt, socket_conn=self.socket)
+                    self.list_server.append(self.socket)
 
-            # We send the message
-            self.send(message)
+                # We send the message
+                self.send(message)
 
-            # We close the socket if it is necessary
-            if(close):
-                self.close()
-            handle_thread()
+                # We close the socket if it is necessary
+                if(close):
+                    self.close()
 
         t = Thread(target=handle_thread)
         return t

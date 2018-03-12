@@ -62,9 +62,10 @@ class Server:
         """
         We receive a message finishing by \r\n
         """
+        end = False
         end_message = False
         message = b""
-        while(not(self.event_halt.is_set())):
+        while(not(self.event_halt.is_set()) and not(end)):
             try:
                 m = socket_conn.recv(number_bytes)
             except socket.error as e:
@@ -85,7 +86,7 @@ class Server:
             # This is the end of a message
             elif(m == b"\n" and end_message):
                 message += m
-                break
+                end = True
             elif(m == b"\r"):
                 message += m
                 end_message = True
@@ -122,8 +123,10 @@ class Server:
         We function read a message and put it in the queue
         """
         def handle_thread():
-            message = self.read(socket_conn)
-            while(not(self.event_halt.is_set()) and message is not None):
+            while(not(self.event_halt.is_set())):
+                message = self.read(socket_conn)
+                if(message is None):
+                    return None
                 IP = socket_conn.getpeername()[0]
                 self.queue_receive.put((IP, socket_conn, message))
         t = Thread(target=handle_thread)

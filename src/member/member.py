@@ -398,13 +398,12 @@ class Member(Peer):
         """
         def handle_thread():
             while(not(self.event_halt.is_set())):
-                self.event_mining.wait()
 
                 while(not(self.event_mining.is_set())
                       and not(self.event_halt.is_set())):
                     pass
 
-                if(not(self.event_halt.is_set())):
+                if(self.event_halt.is_set()):
                     return None
 
                 mining_cheese = self.mining_cheese.ressource
@@ -443,7 +442,7 @@ class Member(Peer):
 
 if __name__ == "__main__":
     port = 9001
-    ip_tracker = "192.168.1.48"
+    ip_tracker = "192.168.43.251"
     port_tracker = 9990
     Member.create(port, ip_tracker, port_tracker, miner=True)
 
