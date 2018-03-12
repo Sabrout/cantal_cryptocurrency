@@ -1,13 +1,14 @@
 from threading import Thread
 from src.network.syntax import SyntaxReader
 import socket
+import errno
 
 
 class Server:
     """
     This class represents a network server
     """
-    def __init__(self, queue_receive, list_server, list_thread, socket_conn=None, port=None):
+    def __init__(self, queue_receive, list_server, list_thread, event_halt, socket_conn=None, port=None):
         """
         The constructor will set up the server
         """
@@ -18,18 +19,21 @@ class Server:
                                                socket.SOCK_STREAM)
             self.server_socket.setsockopt(socket.SOL_SOCKET,
                                           socket.SO_REUSEADDR, 1)
+            self.server_socket.setblocking(False)
             self.server_socket.bind((self.host_name, port))
             self.server_socket.listen()
 
             self.queue_receive = queue_receive
             self.list_server = list_server
             self.list_thread = list_thread
+            self.event_halt = event_halt
 
             self.list_thread.append(self.accept())
             self.list_thread[-1].start()
         else:
             self.socket = socket_conn
             self.queue_receive = queue_receive
+            self.event_halt = event_halt
             self.list_server = list_server
             self.list_thread = list_thread
             self.list_thread.append(self.produce_receive(self.socket))
@@ -58,22 +62,31 @@ class Server:
         """
         We receive a message finishing by \r\n
         """
+        end = False
         end_message = False
         message = b""
-        while(True):
+        while(not(self.event_halt.is_set()) and not(end)):
             try:
                 m = socket_conn.recv(number_bytes)
-            except OSError:
-                m = ""
+            except socket.error as e:
+                error = e.args[0]
+                if error == errno.EAGAIN or error == errno.EWOULDBLOCK:
+                    m = None
+                else:
+                    m = ""
+
+            # If we recv nothing, we will recv again
+            if(m is None):
+                pass
 
             # If we receive nothing
-            if(len(m) == 0):
+            elif(len(m) == 0):
                 return None
 
             # This is the end of a message
             elif(m == b"\n" and end_message):
                 message += m
-                break
+                end = True
             elif(m == b"\r"):
                 message += m
                 end_message = True
@@ -81,6 +94,9 @@ class Server:
             # We are still receiving the message
             else:
                 message += m
+
+        if(self.event_halt.is_set()):
+            return None
 
         print(str((socket_conn.getsockname(),
                    socket_conn.getpeername()))+" -----> "+str(message))
@@ -107,12 +123,12 @@ class Server:
         We function read a message and put it in the queue
         """
         def handle_thread():
-            message = self.read(socket_conn)
-            if(message is not None):
+            while(not(self.event_halt.is_set())):
+                message = self.read(socket_conn)
+                if(message is None):
+                    return None
                 IP = socket_conn.getpeername()[0]
                 self.queue_receive.put((IP, socket_conn, message))
-                handle_thread()
-
         t = Thread(target=handle_thread)
         return t
 
@@ -121,15 +137,17 @@ class Server:
         We create a thread where we accept the connection
         """
         def handle_thread():
-            try:
-                self.socket, _ = self.server_socket.accept()
-                self.list_thread.append(self.produce_receive(self.socket))
-                self.list_thread[-1].start()
-            except ConnectionAbortedError as e1:
-                print("Debug: "+str(e1))
-            #  except OSError as e2:
-                #  print("Debug: "+str(e2))
-            handle_thread()
+            while(not(self.event_halt.is_set())):
+                try:
+                    self.socket, _ = self.server_socket.accept()
+                    self.list_thread.append(self.produce_receive(self.socket))
+                    self.list_thread[-1].start()
+                except socket.error as e:
+                    error = e.args[0]
+                    if error == errno.EAGAIN or error == errno.EWOULDBLOCK:
+                        pass
+                    else:
+                        print("Debug: "+str(e1))
 
         t = Thread(target=handle_thread)
         return t
