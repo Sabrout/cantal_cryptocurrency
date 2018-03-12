@@ -70,7 +70,6 @@ class CheeseStack():
         Set a cheese in the blockchain
         """
         if(not(self.verify(cheese))):
-            print("I'm not verify ! Yahou !")
             return False
 
         self.blockchain.append(cheese)
@@ -118,7 +117,6 @@ class CheeseStack():
             raise Exception("Error: bad parent smell")
 
         if(not(cheese.verify())):
-            print("My cheese is not verify")
             return False
 
         for transaction in cheese.data:
@@ -139,18 +137,13 @@ class CheeseStack():
                 # the total sums of amount minus
                 # the one which have an output=0 to get
                 # how much A (of output = 1) received.
-                print((hash, output))
-                print(output-2)
                 wallet = input_transaction.list_wallet[output-2]
-                print(wallet)
-                print("list_wallet:"+str(input_transaction.list_wallet))
                 if output == 0:
                     money = input_transaction.list_amount[-1]
                 else:
                     money = sum(input_transaction.list_amount[:-1])
                     money -= input_transaction.list_amount[-1]
 
-                print("Je print la money: "+str(money))
                 # We add for A the money that
                 # he received in the previous transactions
                 if wallet in previous_amount:
@@ -161,7 +154,6 @@ class CheeseStack():
             # We just check if the number of senders is equal to the number of
             # keys in previous_amounts
             if len(transaction.list_wallet[:-2]) != len(previous_amount):
-                print("Verify empty transaction list ?")
                 return False
 
             # We then check that the persons we verified
@@ -169,20 +161,12 @@ class CheeseStack():
             # money in the transaction). We also check if the amounts
             # in the input transaction correspond to
             # the amount in the current transaction
-            print(previous_amount)
             for i in range(0, len(transaction.list_wallet[:-2])):
                 wallet = transaction.list_wallet[i]
-                print("My last wallet to verify : "+ str(wallet))
                 if wallet not in previous_amount:
-                    print(wallet)
-                    print(previous_amount)
-                    print("voila3")
                     return False
                 else:
-                    print("prev_amount: " + str(previous_amount[wallet]))
-                    print("tr_list["+str(i)+"]: "+str(transaction.list_amount[i]))
                     if previous_amount[wallet] != transaction.list_amount[i]:
-                        print("voila4")
                         return False
 
         return True

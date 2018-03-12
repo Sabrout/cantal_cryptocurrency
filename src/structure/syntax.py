@@ -122,7 +122,6 @@ class CheeseSyntaxReader():
 
         self.transaction()
         self.parsed_transaction.compute_hash()
-        print("We append the transaction: "+str(self.parsed_transaction.hash))
         self.parsed_list_transaction.add(self.parsed_transaction)
 
         self.list_transaction_next()
@@ -177,12 +176,10 @@ class CheeseSyntaxReader():
         if len(self.cheese_stack) != 0:
             self.parsed_transaction.set_list_sign(self.parsed_list_sign)
         else:
-            self.parsed_transaction.set_list_sign(self.parsed_list_sign, verify=False)
+            self.parsed_transaction.set_list_sign(self.parsed_list_sign,
+                                                  verify=False)
 
         self.look()
-        print(self.lexical.get_text())
-        print(self.lexical.SEPARATOR)
-        print(self.get_lookahead())
         self.check(self.lexical.SEPARATOR)
         self.shift()
 

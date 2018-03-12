@@ -194,7 +194,6 @@ class Transaction():
         wallet_bank += "00000000000000000000000000000000000000000000000000"
         sign_bank = wallet_bank
         output_bank = cheese_stack_ress.read(cheese_stack.find_output_bank)
-        print("We found the bank: "+str(output_bank))
         if(output_bank is None):
             return None
         (amount_bank, transaction_input) = output_bank
@@ -207,7 +206,6 @@ class Transaction():
         transaction.set_list_wallet(list_wallet)
         transaction.compute_hash()
         transaction.set_list_sign([sign_bank])
-        print("I create this: "+str(transaction))
         return transaction
 
     def create_user(money_list, amount, public_key_receiver):

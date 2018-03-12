@@ -129,3 +129,4 @@ class Message():
         data = cheese.data
         format_cheese["transactions"] = self.format_list_transaction(data)
         format_cheese["nonce"] = cheese.nonce
+        format_cheese["hash"] = cheese.smell

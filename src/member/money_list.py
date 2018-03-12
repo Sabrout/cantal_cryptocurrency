@@ -37,16 +37,13 @@ class MoneyList():
         """
         We add our money from a cheese
         """
-        print("We try to see if "+str(cheese.smell))
         crypto = Crypto()
         public_key = crypto.get_public()
         transaction_list = cheese.data
         for transaction in transaction_list:
             if (transaction.list_wallet[-1] == public_key):
-                print("I add: "+str((cheese.smell, transaction.hash, 1)))
                 self.add_money((cheese.smell, transaction.hash, 1))
             if (transaction.list_wallet[-2] == public_key):
-                print("I add: "+str((cheese.smell, transaction.hash, 0)))
                 self.add_money((cheese.smell, transaction.hash, 0))
 
     def add_money(self, money):
@@ -54,12 +51,10 @@ class MoneyList():
         We add the money to the list
         """
         (cheese_hash, transaction_hash, output) = money
-        print("we will add money")
         # We verify the money
         self.verify(money)
         # We add the money to the list
         self.money_list.append(money)
-        print("we merde add money")
 
         # We write the money
         writer = open(self.path, 'a')
