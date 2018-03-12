@@ -374,11 +374,12 @@ class Member(Peer):
         We update the data in the mining cheese
         """
         # We get the transaction list
-        transaction_list = deepcopy(self.transaction_list.ressource)
+        tl = self.transaction_list.ressource
+        transaction_list = self.transaction_list.read(tl.deepcopy)
         if(not(transaction_list.verify_miner())):
-            transaction_miner = Transaction.create_miner(self.cheese_stack.ressource)
+            transaction_miner = Transaction.create_miner(self.cheese_stack)
             transaction_list.add(transaction_miner)
-
+        print("This is my transaction list: "+str(transaction_list))
         # We get the last cheese
         cheese_stack = self.cheese_stack.ressource
         last_cheese = self.cheese_stack.read(cheese_stack.last)
@@ -407,13 +408,15 @@ class Member(Peer):
                     return None
 
                 mining_cheese = self.mining_cheese.ressource
+                print("I'm mining")
                 if(self.mining_cheese.write(mining_cheese.mine,
                                             ntimes) is True):
+                    print("I found a nounce !!!!")
                     # If we can add the cheese to the stack,
                     cheese_stack = self.cheese_stack.ressource
                     if(self.cheese_stack.write(cheese_stack.add,
                                                mining_cheese)):
-
+                        print("I add it to the cheesestack")
                         # We remove the transactions from our list
                         transaction_list = self.transaction_list.ressource
                         self.transaction_list.write(transaction_list.remove_all,
@@ -425,9 +428,12 @@ class Member(Peer):
                         self.money_list.add(mining_cheese)
 
                         # We create a new cheese to mine
-                        self.mining_cheese = self.create_mining_cheese()
+                        self.mining_cheese = Cheese()
+                        self.mining_cheese = Ressource(self.mining_cheese)
+                        self.create_mining_cheese()
 
                 time.sleep(sleep)
+                print("I start to mining again")
         t = Thread(target=handle_thread)
         return t
 
@@ -442,7 +448,7 @@ class Member(Peer):
 
 if __name__ == "__main__":
     port = 9001
-    ip_tracker = "192.168.43.251"
+    ip_tracker = "192.168.43.221"
     port_tracker = 9990
     Member.create(port, ip_tracker, port_tracker, miner=True)
 

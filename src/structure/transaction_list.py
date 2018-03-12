@@ -1,4 +1,6 @@
 from src.structure.transaction import Transaction
+from copy import deepcopy
+
 
 
 class TransactionList():
@@ -122,3 +124,6 @@ class TransactionList():
         """
         for transaction in self.transaction_list:
             yield transaction
+
+    def deepcopy(self):
+        return deepcopy(self)
