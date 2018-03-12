@@ -8,7 +8,8 @@ class Server:
     """
     This class represents a network server
     """
-    def __init__(self, queue_receive, list_server, list_thread, event_halt, socket_conn=None, port=None):
+    def __init__(self, queue_receive, list_server, list_thread, event_halt,
+                 socket_conn=None, port=None):
         """
         The constructor will set up the server
         """
@@ -98,8 +99,7 @@ class Server:
         if(self.event_halt.is_set()):
             return None
 
-        print(str((socket_conn.getsockname(),
-                   socket_conn.getpeername()))+" -----> "+str(message))
+        print("Debug: "+str(self.socket.getsockname())+" <----- "+str(message))
         # if encoding is true we decode the binary message
         if(encoding):
             return(message.decode("utf-8"))
@@ -147,7 +147,6 @@ class Server:
                     if error == errno.EAGAIN or error == errno.EWOULDBLOCK:
                         pass
                     else:
-                        print("Debug: "+str(e1))
-
+                        print("Debug: "+str(e))
         t = Thread(target=handle_thread)
         return t

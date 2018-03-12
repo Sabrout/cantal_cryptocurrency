@@ -32,7 +32,7 @@ class Client():
         try:
             self.socket.connect((IP, port))
             print("Debug ("+str(IP)+":"+str(port)+"): Connected")
-        except ConnectionRefusedError as e:
+        except socket.error as e:
             print("Debug ("+str(IP)+":"+str(port)+"): "+str(e))
             return False
         return True
@@ -53,9 +53,9 @@ class Client():
 
         try:
             self.socket.sendall(string)
-            print(str(string)+" -----> "+str((self.socket.getsockname(),
-                                              self.socket.getpeername())))
-        except socket.error as e:
+            print("Debug: "+str(self.socket.getpeername())+" <----- "
+                  + str(string))
+        except socket.error:
             self.close()
 
     def close(self):

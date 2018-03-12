@@ -77,7 +77,10 @@ class Member(Peer):
                                       close=True)
             if(message.get_packet_type() == Message.RESPONSE):
                 # If we have a transaction response, we store the transaction
-                self.process_transaction_response(message)
+                self.process_transaction_response_broadcast(message)
+            if(message.get_packet_type() == Message.BROADCAST):
+                # If we have a transaction broadcast, we store the transaction
+                self.process_transaction_response_broadcast(message)
             if(message.get_packet_type() == Message.ERROR):
                 # We can ignore the message
                 self.process_transaction_error(message)
@@ -189,7 +192,7 @@ class Member(Peer):
         message.set_data(last)
         return message
 
-    def process_transaction_response(self, message):
+    def process_transaction_response_broadcast(self, message):
         # Get the transaction and set the transaction
         data = message.get_data()
         transaction = Transaction(data["input"],
@@ -379,7 +382,7 @@ class Member(Peer):
         if(not(transaction_list.verify_miner())):
             transaction_miner = Transaction.create_miner(self.cheese_stack)
             transaction_list.add(transaction_miner)
-        print("This is my transaction list: "+str(transaction_list))
+
         # We get the last cheese
         cheese_stack = self.cheese_stack.ressource
         last_cheese = self.cheese_stack.read(cheese_stack.last)
@@ -408,18 +411,17 @@ class Member(Peer):
                     return None
 
                 mining_cheese = self.mining_cheese.ressource
-                print("I'm mining")
                 if(self.mining_cheese.write(mining_cheese.mine,
                                             ntimes) is True):
-                    print("I found a nounce !!!!")
+
                     # If we can add the cheese to the stack,
                     cheese_stack = self.cheese_stack.ressource
                     if(self.cheese_stack.write(cheese_stack.add,
                                                mining_cheese)):
-                        print("I add it to the cheesestack")
+
                         # We remove the transactions from our list
-                        transaction_list = self.transaction_list.ressource
-                        self.transaction_list.write(transaction_list.remove_all,
+                        trans_list = self.transaction_list.ressource
+                        self.transaction_list.write(trans_list.remove_all,
                                                     mining_cheese.data)
 
                         self.cheese_stack.write(cheese_stack.save)
@@ -427,13 +429,18 @@ class Member(Peer):
                         # We add the money
                         self.money_list.add(mining_cheese)
 
+                        # We broadcast the cheese
+                        message = Message.create(Message.CHEESE,
+                                                 Message.BROADCAST,
+                                                 mining_cheese)
+                        self.broadcast(message)
+
                         # We create a new cheese to mine
                         self.mining_cheese = Cheese()
                         self.mining_cheese = Ressource(self.mining_cheese)
                         self.create_mining_cheese()
 
                 time.sleep(sleep)
-                print("I start to mining again")
         t = Thread(target=handle_thread)
         return t
 
@@ -448,8 +455,9 @@ class Member(Peer):
 
 if __name__ == "__main__":
     port = 9001
-    ip_tracker = "192.168.43.221"
+    ip_tracker = "192.168.1.48"
     port_tracker = 9990
-    Member.create(port, ip_tracker, port_tracker, miner=True)
 
     print("Debug: Member connected to "+str(ip_tracker)+":"+str(port_tracker))
+    print("Debug: Public Key is "+str(Crypto().get_public()))
+    Member.create(port, ip_tracker, port_tracker, miner=True)

@@ -1,5 +1,8 @@
 import tkinter
+from threading import Thread
 from src.structure.transaction import Transaction
+from src.network.message import Message
+import time
 
 
 class GUI():
@@ -54,7 +57,7 @@ class GUI():
 
         # We create a text
         self.to_text = tkinter.StringVar()
-        self.to_text.set("CheeseCoin to")
+        self.to_text.set("CantalCoin to")
         self.to = tkinter.Label(self.frame_transaction_left,
                                 textvariable=self.to_text)
         self.to.pack(side=tkinter.RIGHT)
@@ -84,8 +87,28 @@ class GUI():
         self.member.transaction_list.write(transaction_list.add,
                                            transaction_user)
 
+        # We broadcast the transaction
+        message = Message.create(Message.TRANSACTION,
+                                 Message.BROADCAST,
+                                 transaction_user)
+        self.member.broadcast(message)
+
+        self.entry_amount.delete(0, 'end')
+        self.entry_receiver.delete(0, 'end')
+
+    def update_money(self, sleep):
+        def handle_thread():
+            while(not(self.member.event_halt.is_set())):
+                (self.amount, _) = self.member.money_list.compute_money()
+                self.amount_text.set(self.amount)
+                time.sleep(sleep)
+        t = Thread(target=handle_thread)
+        return t
+
     def mainloop(self):
         """
         This is the function which will launch the mainloop
         """
+        self.member.list_thread.append(self.update_money(3))
+        self.member.list_thread[-1].start()
         self.window.mainloop()
