@@ -207,6 +207,7 @@ class Transaction():
         transaction.set_list_wallet(list_wallet)
         transaction.compute_hash()
         transaction.set_list_sign([sign_bank])
+        print("I create this: "+str(transaction))
         return transaction
 
     def create_user(money_list, amount, public_key_receiver):
