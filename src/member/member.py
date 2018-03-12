@@ -15,7 +15,6 @@ from threading import Event
 from copy import deepcopy
 import time
 import signal
-import sys
 
 
 class Member(Peer):
@@ -216,7 +215,7 @@ class Member(Peer):
         We will ask a new list of members
         """
         def handle_thread():
-            while(True):
+            while(not(self.event_halt.is_set())):
                 member_list = self.member_list.ressource
                 size_member = self.member_list.read(member_list.__len__)
                 if size_member < size:
@@ -241,7 +240,7 @@ class Member(Peer):
         We will ping the peers
         """
         def handle_thread():
-            while(True):
+            while(not(self.event_halt.is_set())):
                 # We get the member list
                 member_list = self.member_list.ressource
                 # We get a member randomly
@@ -262,9 +261,12 @@ class Member(Peer):
         We receive the response of the ping (i.e the pong)
         """
         def handle_thread():
-            while(True):
+            while(not(self.event_halt.is_set())):
                 # We get the response of a pong
-                ip, port, pong = self.consume_pong()
+                response = self.consume_pong()
+                if(response is None):
+                    return None
+                ip, port, pong = response
                 if(not(pong)):
                     # We get the member list
                     member_list = self.member_list.ressource
@@ -289,9 +291,14 @@ class Member(Peer):
         def handle_thread():
             update = True
 
-            while(update):
+            while(update and not(self.event_halt.is_set())):
                 # Get the member list
-                self.event_member_list.wait()
+                while(not(self.event_member_list.is_set())
+                      and not(self.event_halt.is_set())):
+                    pass
+
+                if(not(self.event_halt.is_set())):
+                    return None
 
                 member_list = self.member_list.ressource
                 # If the member list is not empty then
@@ -355,8 +362,10 @@ class Member(Peer):
         We process the messages
         """
         def handle_thread():
-            while(True):
-                self.process_message(self.consume_receive())
+            while(not(self.event_halt.is_set())):
+                receive = self.consume_receive()
+                if(receive is not None):
+                    self.process_message(receive)
         t = Thread(target=handle_thread)
         return t
 
@@ -388,8 +397,16 @@ class Member(Peer):
         We mine the cheese
         """
         def handle_thread():
-            while(True):
+            while(not(self.event_halt.is_set())):
                 self.event_mining.wait()
+
+                while(not(self.event_mining.is_set())
+                      and not(self.event_halt.is_set())):
+                    pass
+
+                if(not(self.event_halt.is_set())):
+                    return None
+
                 mining_cheese = self.mining_cheese.ressource
                 if(self.mining_cheese.write(mining_cheese.mine,
                                             ntimes) is True):
@@ -417,15 +434,11 @@ class Member(Peer):
 
     def create(port, ip_tracker, port_tracker, miner=False):
         # We create the member
-        try:
-            member = Member(port, ip_tracker, port_tracker, miner=miner)
-            member.init()
-            member.list_thread.append(member.main())
-            member.list_thread[-1].start()
-            member.gui.mainloop()
-        except (KeyboardInterrupt, SystemExit):
-            member.client.close()
-            member.server.close()
+        member = Member(port, ip_tracker, port_tracker, miner=miner)
+        member.init()
+        member.list_thread.append(member.main())
+        member.list_thread[-1].start()
+        member.gui.mainloop()
 
 
 if __name__ == "__main__":

@@ -66,8 +66,10 @@ class Tracker(Peer):
         We create a thread where we accept the connection
         """
         def handle_thread():
-            while(True):
-                self.process_message(self.consume_receive())
+            while(not(self.event_halt.is_set())):
+                message = self.consume_receive()
+                if(message is not None):
+                    self.process_message(message)
         t = Thread(target=handle_thread)
         return t
 
@@ -84,7 +86,7 @@ class Tracker(Peer):
 
     def process_member_list_ping(self, sleep):
         def handle_thread():
-            while(True):
+            while(not(self.event_halt.is_set())):
                 member_list = self.member_list.ressource
                 member = self.member_list.read(member_list.get_random)
 
@@ -99,11 +101,13 @@ class Tracker(Peer):
 
     def process_member_list_pong(self):
         def handle_thread():
-            while(True):
-                ip, port, pong = self.consume_pong()
-                if(not(pong)):
-                    member_list = self.member_list.ressource
-                    self.member_list.write(member_list.remove_member, (ip, port))
+            while(not(self.event_halt.is_set())):
+                message = self.consume_pong()
+                if(message is not None):
+                    ip, port, pong = message
+                    if(not(pong)):
+                        member_list = self.member_list.ressource
+                        self.member_list.write(member_list.remove_member, (ip, port))
         t = Thread(target = handle_thread)
         return t
 
