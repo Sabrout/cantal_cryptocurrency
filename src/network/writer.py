@@ -168,11 +168,9 @@ class MessageWriter():
         original_data = self.message.get_data()
         transaction_list = original_data["transactions"]
         for transaction in transaction_list:
-            print("Before: "+str(string))
             self.message.set_data(transaction)
             string = self.write_transaction(string)
 
-        print("After: "+str(string))
         self.message.set_data(original_data)
         return string
 

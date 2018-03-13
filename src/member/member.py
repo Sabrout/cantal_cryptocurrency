@@ -460,4 +460,4 @@ if __name__ == "__main__":
 
     print("Debug: Member connected to "+str(ip_tracker)+":"+str(port_tracker))
     print("Debug: Public Key is "+str(Crypto().get_public()))
-    Member.create(port, ip_tracker, port_tracker, miner=True)
+    Member.create(port, ip_tracker, port_tracker, miner=False)
