@@ -52,16 +52,15 @@ class SyntaxReader():
         if(self.message.get_packet() == Message.TRANSACTION
            and self.message.get_packet_type() == Message.BROADCAST):
             data = self.format_transaction(self.message.get_data())
-            self.message.set_data(data)
+            self.message.set_data(data, keep=True)
         elif(self.message.get_packet() == Message.TRANSACTION
              and self.message.get_packet_type() == Message.RESPONSE):
             data = self.format_transaction(self.message.get_data())
-            self.message.set_data(data)
+            self.message.set_data(data, keep=True)
         elif(self.message.get_packet() == Message.CHEESE
              and self.message.get_packet_type() == Message.RESPONSE):
             data = self.format_cheese(self.message.get_data())
-            self.message.set_data(data)
-
+            self.message.set_data(data, keep=True)
         return self.message
 
     def format_cheese(self, data):
@@ -73,8 +72,8 @@ class SyntaxReader():
 
     def format_transaction_list(self, data):
         transaction_list = TransactionList()
-        for t in data["transactions"]:
-            transaction = self.format_transaction(data)
+        for t in data:
+            transaction = self.format_transaction(t)
             transaction_list.add(transaction)
         return transaction_list
 
@@ -82,11 +81,12 @@ class SyntaxReader():
         list_input = data["input"]
         list_wallet = data["wallet"]
         list_amount = data["amount"]
-        list_sign = data["sign"]
+        list_sign = data["signature"]
         transaction = Transaction()
         transaction.set_list_input(list_input)
         transaction.set_list_wallet(list_wallet)
         transaction.set_list_amount(list_amount)
+        transaction.compute_hash()
         transaction.set_list_sign(list_sign)
         return transaction
 

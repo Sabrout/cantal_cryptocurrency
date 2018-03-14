@@ -144,9 +144,16 @@ class Member(Peer):
         self.ttl.write(ttl.reset)
         # We get the cheese
         cheese = message.get_data()
-        print(cheese)
-        # We add it to the cheese stack if it's verified
+
+        # We get the ressource
         cheese_stack = self.cheese_stack.ressource
+
+        # We get the previous smell
+        last = self.cheese_stack.read(cheese_stack.last)
+        cheese.set_parent_smell(last.smell)
+        cheese.compute_smell()
+
+        # We add it to the cheese stack if it's verified
         if(self.cheese_stack.write(cheese_stack.add, cheese)):
 
             # We update the transaction list
@@ -163,7 +170,7 @@ class Member(Peer):
             self.event_mining.set()
         else:
             # Otherwise we process an error
-            self.procces_cheese_error(message)
+            self.process_cheese_error(message)
 
     def process_cheese_error(self, message):
         """
@@ -455,9 +462,9 @@ class Member(Peer):
 
 if __name__ == "__main__":
     port = 9001
-    ip_tracker = "192.168.43.27"
+    ip_tracker = "192.168.1.48"
     port_tracker = 9990
 
     print("Debug: Member connected to "+str(ip_tracker)+":"+str(port_tracker))
     print("Debug: Public Key is "+str(Crypto().get_public()))
-    Member.create(port, ip_tracker, port_tracker, miner=False)
+    Member.create(port, ip_tracker, port_tracker, miner=True)
