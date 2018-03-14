@@ -2,6 +2,7 @@ from threading import Thread
 from src.network.syntax import SyntaxReader
 import socket
 import errno
+import re
 
 
 class Server:
@@ -14,7 +15,18 @@ class Server:
         The constructor will set up the server
         """
         if(port is not None):
-            self.host_name = socket.gethostbyname(socket.gethostname())
+            self.host_name = socket.gethostbyname(socket.getfqdn())
+            if(re.match(r"^127", self.host_name) is not None):
+                tmp_socket = socket.socket(socket.AF_INET,
+                                           socket.SOCK_DGRAM)
+                try:
+                    tmp_socket.connect(("8.8.8.8", 80))
+                    self.host_name = tmp_socket.getsockname()[0]
+                except:
+                    self.host_name = "127.0.0.1"
+                finally:
+                    tmp_socket.close()
+                
             self.port = port
             self.server_socket = socket.socket(socket.AF_INET,
                                                socket.SOCK_STREAM)
