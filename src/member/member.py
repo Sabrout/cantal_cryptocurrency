@@ -12,7 +12,6 @@ from src.member.money_list import MoneyList
 from src.member.gui import GUI
 from threading import Thread
 from threading import Event
-from copy import deepcopy
 import time
 import signal
 
@@ -145,7 +144,7 @@ class Member(Peer):
         self.ttl.write(ttl.reset)
         # We get the cheese
         cheese = message.get_data()
-
+        print(cheese)
         # We add it to the cheese stack if it's verified
         cheese_stack = self.cheese_stack.ressource
         if(self.cheese_stack.write(cheese_stack.add, cheese)):
@@ -293,14 +292,14 @@ class Member(Peer):
         """
         def handle_thread():
             update = True
-
             while(update and not(self.event_halt.is_set())):
+                print("we update")
                 # Get the member list
                 while(not(self.event_member_list.is_set())
                       and not(self.event_halt.is_set())):
                     pass
 
-                if(not(self.event_halt.is_set())):
+                if(self.event_halt.is_set()):
                     return None
 
                 member_list = self.member_list.ressource
@@ -322,8 +321,9 @@ class Member(Peer):
                                                  Message.REQUEST,
                                                  last_smell)
                         self.send(message)
-                else:
                     update = False
+                else:
+                    time.sleep(sleep)
         t = Thread(target=handle_thread)
         return t
 
@@ -455,7 +455,7 @@ class Member(Peer):
 
 if __name__ == "__main__":
     port = 9001
-    ip_tracker = "192.168.1.48"
+    ip_tracker = "192.168.43.27"
     port_tracker = 9990
 
     print("Debug: Member connected to "+str(ip_tracker)+":"+str(port_tracker))

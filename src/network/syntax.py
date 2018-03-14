@@ -143,7 +143,6 @@ class SyntaxReader():
         self.look()
         self.check(self.lexical.ERROR)
         self.shift()
-        # Omar Edit
 
         self.look()
         self.check(self.lexical.DIGIT)

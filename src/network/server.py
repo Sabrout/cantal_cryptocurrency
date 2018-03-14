@@ -14,7 +14,7 @@ class Server:
         The constructor will set up the server
         """
         if(port is not None):
-            self.host_name = socket.gethostbyname(socket.gethostname())
+            self.host_name = socket.gethostbyname(socket.getfqdn())
             self.port = port
             self.server_socket = socket.socket(socket.AF_INET,
                                                socket.SOCK_STREAM)
