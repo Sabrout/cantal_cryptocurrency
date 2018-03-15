@@ -455,7 +455,7 @@ class Member(Peer):
 
 if __name__ == "__main__":
     port = 9001
-    ip_tracker = "192.168.1.48"
+    ip_tracker = "192.168.43.27"
     port_tracker = 9990
 
     print("Debug: Member connected to "+str(ip_tracker)+":"+str(port_tracker))
