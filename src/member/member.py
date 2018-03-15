@@ -167,6 +167,9 @@ class Member(Peer):
             self.transaction_list.write(transaction_list.remove_all,
                                         cheese.data)
 
+            # We save the cheese stack
+            self.cheese_stack.write(cheese_stack.save)
+
             # We add the money
             self.money_list.add(cheese)
 

@@ -223,5 +223,5 @@ class Transaction():
         transaction.set_list_wallet(list_wallet)
         transaction.compute_hash()
         sign = crypto.sign(transaction.hash)
-        transaction.set_list_wallet([sign])
+        transaction.set_list_sign([sign])
         return transaction
