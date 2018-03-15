@@ -67,7 +67,7 @@ class CheeseStackWriter():
         for i in range(0, len(transaction.list_input)-1):
             (hash, output) = transaction.list_input[i]
             self.file.write(hash+",")
-            self.file.write(str(output)+",")
+            self.file.write(str(output)+"-")
         (hash, output) = transaction.list_input[len(transaction.list_input)-1]
         self.file.write(hash+",")
         self.file.write(str(output))

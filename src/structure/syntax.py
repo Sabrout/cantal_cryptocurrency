@@ -84,6 +84,8 @@ class CheeseSyntaxReader():
         self.parsed_cheese.set_smell(smell)
         self.shift()
 
+        print("HASSHHHHH: "+str(smell))
+
         self.look()
         self.check(self.lexical.SEPARATOR_CHEESE_ELEM)
         self.shift()
@@ -148,6 +150,8 @@ class CheeseSyntaxReader():
 
         self.list_input()
         self.parsed_transaction.set_list_input(self.parsed_list_input)
+
+        print("list_input= "+str(self.parsed_list_input))
 
         self.look()
         self.check(self.lexical.SEPARATOR)
@@ -246,6 +250,7 @@ class CheeseSyntaxReader():
         self.look()
         self.check(self.lexical.ENCRYPTION)
         public_key = self.lexical.get_text()
+        print(public_key)
         self.shift()
 
         # Add a public_key to the list of wallet
@@ -264,12 +269,16 @@ class CheeseSyntaxReader():
             self.look()
             self.check(self.lexical.ENCRYPTION)
             public_key = self.lexical.get_text()
+            print(public_key)
             self.shift()
 
             # Add a public_key to the list of wallet
             self.parsed_list_wallet.append(public_key)
 
             self.list_wallet_next()
+        else:
+            print("---------------------------------------------------------")
+
 
     def list_amount(self):
         """
