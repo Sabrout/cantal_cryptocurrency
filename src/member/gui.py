@@ -94,7 +94,6 @@ class GUI():
         message.set_data(transaction_user)
         self.member.broadcast(message)
 
-        print("We addddddd "+str(transaction_user.list_input))
         self.entry_amount.delete(0, 'end')
         self.entry_receiver.delete(0, 'end')
 

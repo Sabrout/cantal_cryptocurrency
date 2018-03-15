@@ -61,7 +61,6 @@ class Cheese:
             self.nonce = int(str(self.nonce).replace(".", ""))
             self.compute_smell()
             if self.verify_policy(num_zero=3):
-                print("On la verifie putainnnnnnn")
                 return True
         return False
 
@@ -84,10 +83,9 @@ class Cheese:
         """
         self.compute_smell()
         if not(self.verify_policy(num_zero=3)):
-            print(self.smell)
             print("Debug: the policy is not verified")
             return False
         if not(self.data.verify()):
-            print("Debug: the cheese is not verified")
+            print("Debug: the data in the cheese is not verified")
             return False
         return True
