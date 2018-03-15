@@ -222,7 +222,7 @@ class Member(Peer):
         # We get a list of transactions
         transaction_list = self.transaction_list.ressource
         # We add the transaction in the list
-        self.transaction_list.write(transaction_list.ressource.add,
+        self.transaction_list.write(transaction_list.add,
                                     transaction)
 
     def process_member_list_size(self, size, sleep):
