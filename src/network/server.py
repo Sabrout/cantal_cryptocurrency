@@ -15,7 +15,7 @@ class Server:
         The constructor will set up the server
         """
         if(port is not None):
-            self.host_name = socket.gethostbyname(socket.getfqdn())
+            self.host_name = socket.gethostbyname(socket.gethostname())
 
             if(re.match(r"^127", self.host_name) is not None):
                 tmp_socket = socket.socket(socket.AF_INET,
