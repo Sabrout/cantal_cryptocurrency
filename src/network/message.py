@@ -83,14 +83,17 @@ class Message():
         """
         return self.packet_type
 
-    def set_data(self, data):
+    def set_data(self, data, keep=False):
         """
         Set the data
         """
-        if(isinstance(data, Cheese)):
-            self.data = self.format_cheese(data)
-        elif(isinstance(data, Transaction)):
-            self.data = self.format_transaction(data)
+        if(not(keep)):
+            if(isinstance(data, Cheese)):
+                self.data = self.format_cheese(data)
+            elif(isinstance(data, Transaction)):
+                self.data = self.format_transaction(data)
+            else:
+                self.data = data
         else:
             self.data = data
 

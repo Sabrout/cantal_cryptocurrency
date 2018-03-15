@@ -12,7 +12,6 @@ from src.member.money_list import MoneyList
 from src.member.gui import GUI
 from threading import Thread
 from threading import Event
-from copy import deepcopy
 import time
 import signal
 
@@ -146,8 +145,15 @@ class Member(Peer):
         # We get the cheese
         cheese = message.get_data()
 
-        # We add it to the cheese stack if it's verified
+        # We get the ressource
         cheese_stack = self.cheese_stack.ressource
+
+        # We get the previous smell
+        last = self.cheese_stack.read(cheese_stack.last)
+        cheese.set_parent_smell(last.smell)
+        cheese.compute_smell()
+
+        # We add it to the cheese stack if it's verified
         if(self.cheese_stack.write(cheese_stack.add, cheese)):
 
             # We update the transaction list
@@ -164,7 +170,7 @@ class Member(Peer):
             self.event_mining.set()
         else:
             # Otherwise we process an error
-            self.procces_cheese_error(message)
+            self.process_cheese_error(message)
 
     def process_cheese_error(self, message):
         """
@@ -293,14 +299,14 @@ class Member(Peer):
         """
         def handle_thread():
             update = True
-
             while(update and not(self.event_halt.is_set())):
+                print("we update")
                 # Get the member list
                 while(not(self.event_member_list.is_set())
                       and not(self.event_halt.is_set())):
                     pass
 
-                if(not(self.event_halt.is_set())):
+                if(self.event_halt.is_set()):
                     return None
 
                 member_list = self.member_list.ressource
@@ -322,8 +328,9 @@ class Member(Peer):
                                                  Message.REQUEST,
                                                  last_smell)
                         self.send(message)
-                else:
                     update = False
+                else:
+                    time.sleep(sleep)
         t = Thread(target=handle_thread)
         return t
 
