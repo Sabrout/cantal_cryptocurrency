@@ -14,6 +14,8 @@ from threading import Thread
 from threading import Event
 import time
 import signal
+import getopt
+import sys
 
 
 class Member(Peer):
@@ -367,7 +369,7 @@ class Member(Peer):
             self.list_thread.append(self.mine(ntimes=10))
             self.list_thread[-1].start()
 
-    def main(self):
+    def process(self):
         """
         We process the messages
         """
@@ -455,14 +457,14 @@ class Member(Peer):
         # We create the member
         member = Member(port, ip_tracker, port_tracker, miner=miner)
         member.init()
-        member.list_thread.append(member.main())
+        member.list_thread.append(member.process())
         member.list_thread[-1].start()
         member.gui.mainloop()
 
 
 if __name__ == "__main__":
     port = 9001
-    ip_tracker = "192.168.1.48"
+    ip_tracker = "192.168.43.251"
     port_tracker = 9990
 
     print("Debug: Member connected to "+str(ip_tracker)+":"+str(port_tracker))
