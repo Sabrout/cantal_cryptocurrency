@@ -88,9 +88,10 @@ class GUI():
                                            transaction_user)
 
         # We broadcast the transaction
-        message = Message.create(Message.TRANSACTION,
-                                 Message.BROADCAST,
-                                 transaction_user)
+        message = Message()
+        message.set_packet(Message.TRANSACTION)
+        message.set_packet_type(Message.BROADCAST)
+        message.set_data(transaction_user)
         self.member.broadcast(message)
 
         self.entry_amount.delete(0, 'end')

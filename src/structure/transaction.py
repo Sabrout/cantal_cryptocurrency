@@ -205,13 +205,21 @@ class Transaction():
         transaction.set_list_input(transaction_input)
         transaction.set_list_wallet(list_wallet)
         transaction.compute_hash()
-        transaction.set_list_sign([sign_bank])
+        transaction.set_list_sign([sign_bank], verify=False)
         return transaction
 
     def create_user(money_list, amount, public_key_receiver):
         crypto = Crypto()
         public_key_sender = crypto.get_public()
-        (amount_output, list_input) = money_list.compute_money()
+        (amount_output, list_input) = money_list.compute_money(amount=amount)
+
+        for money in list_input:
+            money_list.remove_money(money)
+
+        list_input = [(transaction_hash, output)
+                      for (cheese_hash, transaction_hash, output)
+                      in list_input]
+
         if(amount_output < amount):
             return None
         list_wallet = [public_key_sender, public_key_receiver,

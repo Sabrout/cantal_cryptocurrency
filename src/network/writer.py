@@ -39,6 +39,9 @@ class MessageWriter():
               and self.message.packet_type == Message.RESPONSE):
             return self.write_transaction_response()
         elif (self.message.packet == Message.TRANSACTION
+              and self.message.packet_type == Message.BROADCAST):
+            return self.write_transaction_broadcast()
+        elif (self.message.packet == Message.TRANSACTION
               and self.message.packet_type == Message.ERROR):
             return self.write_transaction_error()
 
@@ -109,6 +112,15 @@ class MessageWriter():
         """
 
         string = "TRANSACTION RESPONSE"
+        string = self.write_transaction(string)+"\r\n"
+        return string
+
+    def write_transaction_broadcast(self):
+        """
+        The function write the message of a TRANSACTION RESPONSE
+        """
+
+        string = "TRANSACTION BROADCAST"
         string = self.write_transaction(string)+"\r\n"
         return string
 
