@@ -174,10 +174,10 @@ class MoneyList():
             amount_output += self.get_amount((cheese_hash, transaction_hash,
                                               output))
             # and we add the money address to the list
-            list_output.append((transaction_hash, output))
+            list_output.append((cheese_hash, transaction_hash, output))
             # if amount is None then we wanted all the money
             if(amount is not None):
                 # otherwise we wanted up to a certain amount
-                if(amount_output > amount):
+                if(amount_output >= amount):
                     return (amount_output, list_output)
         return (amount_output, list_output)

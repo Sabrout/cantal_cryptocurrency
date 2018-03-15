@@ -167,6 +167,9 @@ class Member(Peer):
             self.transaction_list.write(transaction_list.remove_all,
                                         cheese.data)
 
+            # We save the cheese stack
+            self.cheese_stack.write(cheese_stack.save)
+
             # We add the money
             self.money_list.add(cheese)
 
@@ -207,15 +210,11 @@ class Member(Peer):
 
     def process_transaction_response_broadcast(self, message):
         # Get the transaction and set the transaction
-        data = message.get_data()
-        transaction = Transaction(data["input"],
-                                  data["wallet"],
-                                  data["amount"])
+        transaction = message.get_data()
 
         # We compute the hash
         transaction.compute_hash()
         # We verify it
-        transaction.set_list_sign(data["signature"])
         if(not(transaction.verify()) or transaction.verify_miner()):
             # If it's not verify we can ignore the message
             return None
@@ -438,6 +437,7 @@ class Member(Peer):
                         self.transaction_list.write(trans_list.remove_all,
                                                     mining_cheese.data)
 
+                        # We save the cheese stack
                         self.cheese_stack.write(cheese_stack.save)
 
                         # We add the money
@@ -474,4 +474,4 @@ if __name__ == "__main__":
 
     print("Debug: Member connected to "+str(ip_tracker)+":"+str(port_tracker))
     print("Debug: Public Key is "+str(Crypto().get_public()))
-    Member.create(port, ip_tracker, port_tracker, miner=False)
+    Member.create(port, ip_tracker, port_tracker, miner=True)
