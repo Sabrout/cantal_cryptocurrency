@@ -19,6 +19,11 @@ class TransactionList():
         This function add a transaction if the object is a transaction
         """
         if isinstance(transaction, Transaction):
+            # If the transaction already exists
+            if(transaction.hash in self.transaction_index):
+                print("Ca existe :D")
+                return None
+
             self.transaction_list.append(transaction)
             size = len(self.transaction_list)-1
             self.transaction_index[transaction.hash] = size
@@ -70,6 +75,7 @@ class TransactionList():
 
             # We verify is there are the central bank in the transaction
             if transaction.verify_bank():
+                print(transaction.list_wallet)
                 # If it is in the transaction it can be just the miner's
                 # transaction (without duplicates)
                 if(exist_miner or not(transaction.verify_miner())):
@@ -77,6 +83,7 @@ class TransactionList():
                 else:
                     exist_miner = True
             else:
+                print(transaction.list_wallet)
                 # Otherwise, we verify normaly the transaction
                 if(not(transaction.verify())):
                     return False

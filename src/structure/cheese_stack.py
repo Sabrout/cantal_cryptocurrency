@@ -70,6 +70,7 @@ class CheeseStack():
         Set a cheese in the blockchain
         """
         if(not(self.verify(cheese))):
+            print("We don't add the bordel")
             return False
 
         self.blockchain.append(cheese)
@@ -211,7 +212,8 @@ class CheeseStack():
                        and transaction.list_wallet[1] == wallet_bank):
                         return (transaction.list_amount[1],
                                 [(transaction.hash, 0)])
-                    else:
+                    elif(transaction.used_output[1] == 0
+                         and transaction.list_wallet[2] == wallet_bank):
                         return (transaction.list_amount[0] -
                                 transaction.list_amount[1],
                                 [(transaction.hash, 1)])

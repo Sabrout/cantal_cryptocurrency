@@ -74,13 +74,14 @@ class MoneyList():
 
         # We write the file
         writer = open(self.path, 'w')
-        (cheese_hash, transaction_hash, output) = self.money_list[0]
-        writer.write(str(cheese_hash)+";"+str(transaction_hash)+";"
-                     + str(output))
-        for i in self.money_list[1:]:
-            writer.write(","+str(cheese_hash)+";"+str(transaction_hash)+";"
+        if(len(self.money_list) > 0):
+            (cheese_hash, transaction_hash, output) = self.money_list[0]
+            writer.write(str(cheese_hash)+";"+str(transaction_hash)+";"
                          + str(output))
-        writer.close()
+            for i in self.money_list[1:]:
+                writer.write(","+str(cheese_hash)+";"+str(transaction_hash)+";"
+                             + str(output))
+            writer.close()
 
     def read_money(self):
         """

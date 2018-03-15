@@ -92,8 +92,6 @@ class Message():
                 self.data = self.format_cheese(data)
             elif(isinstance(data, Transaction)):
                 self.data = self.format_transaction(data)
-                print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-                print(self.data)
             else:
                 self.data = data
         else:
