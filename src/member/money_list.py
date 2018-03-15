@@ -144,7 +144,11 @@ class MoneyList():
         (cheese_hash, transaction_hash, output) = money
         # We get the cheese
         cheese_stack = self.cheese_stack.ressource
-        cheese = cheese_stack.get_cheese(cheese_hash, parent=False)
+        try:
+            cheese = cheese_stack.get_cheese(cheese_hash, parent=False)
+        except KeyError:
+            print("Debug: no cheese "+str(cheese_hash))
+            self.remove_money(money)
         # We get the transaction
         transaction = cheese.data.get(transaction_hash)
 
