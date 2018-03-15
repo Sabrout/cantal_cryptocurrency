@@ -16,6 +16,7 @@ import time
 import signal
 import getopt
 import sys
+import os
 
 
 class Member(Peer):
@@ -306,7 +307,6 @@ class Member(Peer):
         def handle_thread():
             update = True
             while(update and not(self.event_halt.is_set())):
-                print("we update")
                 # Get the member list
                 while(not(self.event_member_list.is_set())
                       and not(self.event_halt.is_set())):
@@ -370,7 +370,7 @@ class Member(Peer):
         self.list_thread.append(self.update_cheese_stack())
         self.list_thread[-1].start()
         if(self.miner):
-            self.list_thread.append(self.mine(ntimes=10))
+            self.list_thread.append(self.mine(ntimes=256))
             self.list_thread[-1].start()
 
     def process(self):
@@ -423,10 +423,13 @@ class Member(Peer):
                 if(self.event_halt.is_set()):
                     return None
 
+                print("Debug: we are trying to mine ...")
                 mining_cheese = self.mining_cheese.ressource
+
                 if(self.mining_cheese.write(mining_cheese.mine,
                                             ntimes) is True):
 
+                    print("voila il est la putain "+str(mining_cheese.smell))
                     # If we can add the cheese to the stack,
                     cheese_stack = self.cheese_stack.ressource
                     if(self.cheese_stack.write(cheese_stack.add,
@@ -436,6 +439,9 @@ class Member(Peer):
                         trans_list = self.transaction_list.ressource
                         self.transaction_list.write(trans_list.remove_all,
                                                     mining_cheese.data)
+
+                        print("Debug: We mined a cheese "
+                              + str(self.mining_cheese.ressource.smell))
 
                         # We save the cheese stack
                         self.cheese_stack.write(cheese_stack.save)
@@ -448,11 +454,13 @@ class Member(Peer):
                                                  Message.BROADCAST,
                                                  mining_cheese)
                         self.broadcast(message)
+                    else:
+                        print("Debug: The cheese is not verified")
 
-                        # We create a new cheese to mine
-                        self.mining_cheese = Cheese()
-                        self.mining_cheese = Ressource(self.mining_cheese)
-                        self.create_mining_cheese()
+                # We create a new cheese to mine
+                self.mining_cheese = Cheese()
+                self.mining_cheese = Ressource(self.mining_cheese)
+                self.create_mining_cheese()
 
                 time.sleep(sleep)
         t = Thread(target=handle_thread)
@@ -465,6 +473,24 @@ class Member(Peer):
         member.list_thread.append(member.process())
         member.list_thread[-1].start()
         member.gui.mainloop()
+
+    def main():
+        try:
+            opts, args = getopt.getopt(sys.argv[3:], "hm", ["help", "mine"])
+        except getopt.GetoptError as e:
+            print("Debug: "+str(e))
+            print("Usage: "+str(sys.argv[0])+" ip_tracker port_tracker port")
+            os._exit()
+        #  for o, a in opts:
+            #  if o == '-h':
+#        process_f()
+#        found_f = True
+#      elif ...
+#  if not found_f:
+#      print "-f was not given"
+#      usage()
+#      sys.exit(2)
+#
 
 
 if __name__ == "__main__":

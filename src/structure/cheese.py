@@ -60,7 +60,8 @@ class Cheese:
                 self.nonce *= 10.0
             self.nonce = int(str(self.nonce).replace(".", ""))
             self.compute_smell()
-            if self.verify_policy():
+            if self.verify_policy(num_zero=3):
+                print("On la verifie putainnnnnnn")
                 return True
         return False
 
@@ -82,8 +83,11 @@ class Cheese:
         that world appears only once in transactions
         """
         self.compute_smell()
-        if not(self.verify_policy()):
+        if not(self.verify_policy(num_zero=3)):
+            print(self.smell)
+            print("Debug: the policy is not verified")
             return False
         if not(self.data.verify()):
+            print("Debug: the cheese is not verified")
             return False
         return True
