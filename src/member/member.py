@@ -126,7 +126,11 @@ class Member(Peer):
         # We get the cheese stak
         cheese_stack = self.cheese_stack.ressource
         # We get the requested cheese
-        cheese = self.cheese_stack.read(cheese_stack.__getitem__, parent_smell)
+        try:
+            cheese = self.cheese_stack.read(cheese_stack.__getitem__,
+                                            parent_smell)
+        except KeyError:
+            cheese = None
         # If we have the requested cheese,
         if(cheese is not None):
             # we return the response
@@ -167,9 +171,10 @@ class Member(Peer):
             self.money_list.add(cheese)
 
             # We create the new cheese to mine
-            self.event_mining.clear()
-            self.mining_cheese = self.create_mining_cheese()
-            self.event_mining.set()
+            if(self.miner):
+                self.event_mining.clear()
+                self.mining_cheese = self.create_mining_cheese()
+                self.event_mining.set()
         else:
             # Otherwise we process an error
             self.process_cheese_error(message)

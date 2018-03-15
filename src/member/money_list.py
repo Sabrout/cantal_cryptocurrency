@@ -149,6 +149,8 @@ class MoneyList():
         except KeyError:
             print("Debug: no cheese "+str(cheese_hash))
             self.remove_money(money)
+            return None
+
         # We get the transaction
         transaction = cheese.data.get(transaction_hash)
 
