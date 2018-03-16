@@ -35,9 +35,11 @@ The Protocol
 2. [LIST_ERROR](#LIST_ERROR)
 3. [MEMBER_REPORT](#MEMBER_REPORT)
 4. [TRANSACTION_REQUEST](#TRANSACTION_REQUEST)
+5. [TRANSACTION_BROADCAST](#TRANSACTION_BROADCAST)
 5. [TRANSACTION_ERROR](#TRANSACTION_ERROR)
 6. [CHEESE_REQUEST](#CHEESE_REQUEST)
-7. [CHEESE_ERROR](#CHEESE_ERROR)
+7. [CHEESE_BROADCAST](#TRANSACTION_BROADCAST)
+8. [CHEESE_ERROR](#CHEESE_ERROR)
 
 LIST_REQUEST
 ------------
@@ -132,6 +134,43 @@ __NB__: All lists are indexed in the same way.
 
 The transaction hash is computed with the SHA256 function in hashing the string `HASH_1|OUTPUT_NUMBER_1|...|HASH_N|OUTPUT_NUMBER_N|WALLET_1|...|WALLET_N|WALLET_OUTPUT1|WALLET_OUTPUT2|AMOUNT_1|...|AMOUNT_OUTPUT`
 
+TRANSACTION_BROADCAST
+---------------------
+
+A member can broadcast a transaction to be mine by the others. 
+
+```
+Broadcast: TRANSACTION BROADCAST _TRANSACTION_\r\n
+```
+```
+_TRANSACTION_ -> _LIST_INPUT_ _LIST_WALLET_ _LIST_AMOUNT_ _LIST_SIGN_
+_LIST_INPUT_ -> _HASH_ _OUTPUT_NUMBER_ | _HASH_ _OUTPUT_NUMBER_ _LIST_INPUT_
+_LIST_WALLET_ -> _WALLET_PUB_ | _WALLET_PUB_ _LIST_WALLET_
+_LIST_AMOUNT_ -> _AMOUNT_ | _AMOUNT_ _LIST_AMOUNT_
+_LIST_SIGN_ -> _SIGNATURE_ | _SIGNATURE_ _LIST_SIGN_
+_HASH_: 32 Bytes
+_OUTPUT_NUMBER_: 1 Bytes (0x00 or 0x01)
+_WALLET_PUB_: 33 Bytes
+_AMOUNT_: 4 Bytes
+_SIGNATURE_: 71 Bytes
+```
+
+| Field           | Description |
+| --------        | --------    |
+| `_LIST_INPUT_`   | The list of all the previous transaction's hashes        |
+| `_LIST_WALLET_` | The list of all the public keys involved in this transaction        |
+| `_LIST_AMOUNT_` | The list of all the amounts involved in this transaction     |
+| `_LIST_SIGN_`  | The list of signatures obtained with each creditor's private key and hash of the current transaction     |
+| `_HASH_` | The hash (SHA256) of the previous transaction where the creditor is related |
+| `_OUTPUT_NUMBER_` | The output number point the output out in the previous transaction |
+| `_WALLET_PUB_` | This is the public key which represent the wallet |
+| `_AMOUNT_` | We represent an amount by an integer |
+| `_SIGNATURE_` | The signature is an encryption of the current transaction's hash  |
+__NB__: All lists are indexed in the same way.
+
+The transaction hash is computed with the SHA256 function in hashing the string `HASH_1|OUTPUT_NUMBER_1|...|HASH_N|OUTPUT_NUMBER_N|WALLET_1|...|WALLET_N|WALLET_OUTPUT1|WALLET_OUTPUT2|AMOUNT_1|...|AMOUNT_OUTPUT`
+
+
 TRANSACTION_ERROR
 -----------------
 
@@ -150,7 +189,7 @@ _ERROR_: Nothing or a string without \r and \n
 CHEESE_REQUEST
 --------------
 
-A member can ask a cheese to another member. If a member has the requested cheese in his stack he will respond.
+A member can ask a cheese to another member. The member will respond in any cases.
 
 ```
 Request: CHEESE REQUEST _PARENT_SMELL_\r\n
@@ -169,6 +208,19 @@ _LIST_TRANSACTION_ -> _TRANSACTION_ | _TRANSACTION_ _LIST_TRANSACTION_
 
 The smell is computed with the SHA256 function by hashing the string `
 PARENT_SMELL|TRANSACTION_1_HASH|TRANSACTION_2_HASH|...|NONCE`
+
+CHEESE_BROADCAST
+----------------
+
+A miner can broadcast his mined cheese. The other member will not response to this message.
+```
+Broadcast: CHEESE BROADCAST _PARENT_SMELL_ _LIST_TRANSACTION_ _NONCE_\r\n
+```
+
+| Field | Description |
+| -------- | -------- |
+|`_PARENT_SMELL_`  | The smell (SHA256) of the previous cheese requested |
+|`_NONCE_`  | The nonce found by the miner |
 
 CHEESE_ERROR
 ------------
