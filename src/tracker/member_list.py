@@ -65,32 +65,3 @@ class MemberList():
             i = random.randint(0, size-1)
             return self[i]
         return None
-
-
-# def main():
-#     list = MemberList()
-#     list.add_member(('172.0.0.0', '8080'))
-#     list.add_member(('172.0.0.1', '8081'))
-#     list.add_member(('172.0.0.2', '8082'))
-#     list.add_member(('172.0.0.3', '8083'))
-#     list.add_member(('172.0.0.4', '8084'))
-#     list.add_member(('172.0.0.5', '8085'))
-#     list.add_member(('172.0.0.6', '8086'))
-#
-#     print("---------")
-#     list.print_list()
-#     print("Size: {}".format(len(list.list)))
-#
-#     print("---------")
-#     sublist = list.get_sublist()
-#     for i in sublist:
-#         (ip, port) = i
-#         print("Member: {}:{}".format(ip, port))
-#     print("Size: {}".format(len(sublist)))
-#
-#     print("---------")
-#     print(list.is_member(('172.0.0.9', '8080')))
-#
-#
-# if __name__ == "__main__":
-#     main()

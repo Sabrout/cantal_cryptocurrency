@@ -15,18 +15,23 @@ class Server:
         The constructor will set up the server
         """
         if(port is not None):
+            # We get the host name
             self.host_name = socket.gethostbyname(socket.gethostname())
 
+            # If we have a local adresss
             if(re.match(r"^127", self.host_name) is not None):
+                # We try to get an external IP by sending a packet
                 tmp_socket = socket.socket(socket.AF_INET,
                                            socket.SOCK_DGRAM)
                 try:
                     tmp_socket.connect(("8.8.8.8", 80))
                     self.host_name = tmp_socket.getsockname()[0]
                 finally:
+                    # Otherwise, we take a local IP
                     self.host_name = "127.0.0.1"
                     tmp_socket.close()
 
+            # We set the socket
             self.port = port
             self.server_socket = socket.socket(socket.AF_INET,
                                                socket.SOCK_STREAM)
@@ -34,6 +39,7 @@ class Server:
                                           socket.SO_REUSEADDR, 1)
             self.server_socket.setblocking(False)
             self.server_socket.bind((self.host_name, port))
+            # and we listen
             self.server_socket.listen()
 
             self.queue_receive = queue_receive
@@ -53,9 +59,15 @@ class Server:
             self.list_thread[-1].start()
 
     def get_host_name(self):
+        """
+        Get the host name
+        """
         return self.host_name
 
     def get_port(self):
+        """
+        Get the port
+        """
         return self.port
 
     def close_connection(self, socket_conn):
@@ -69,6 +81,9 @@ class Server:
             return None
 
     def close(self):
+        """
+        We close the server socket
+        """
         self.server_socket.close()
 
     def recv(self, socket_conn, encoding=True, number_bytes=1):

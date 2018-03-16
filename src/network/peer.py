@@ -17,25 +17,34 @@ class Peer():
         """
         The peer will have a server and a client
         """
+        # We will handle the signal to close the program
         signal.signal(signal.SIGINT, self.halt)
         signal.signal(signal.SIGTERM, self.halt)
         self.event_halt = Event()
 
+        # We create the different queue
         self.queue_response = queue.Queue()
         self.queue_receive = queue.Queue()
         self.queue_ping = queue.Queue()
 
+        # We create the list where we will store the active sockets
         self.list_socket = []
+        # We create the list of threads to join them later
         self.list_thread = []
 
-        self.server = Server(self.queue_receive, self.list_socket, self.list_thread, self.event_halt, port=port)
+        # We instanciate the server, the client and the ping
+        self.server = Server(self.queue_receive, self.list_socket,
+                             self.list_thread, self.event_halt, port=port)
         self.client = Client(self.queue_receive,
                              self.queue_response,
-                             self.list_socket, self.list_thread, self.event_halt)
-
+                             self.list_socket, self.list_thread,
+                             self.event_halt)
         self.ping = Ping()
 
     def halt(self, signum, stack):
+        """
+        Halt the programs
+        """
         self.event_halt.set()
         print("Debug: We are cleaning the threads")
         self.halt_thread()
@@ -43,10 +52,16 @@ class Peer():
         os._exit(0)
 
     def halt_thread(self):
+        """
+        Halt the threads
+        """
         for t in self.list_thread:
             t.join()
 
     def halt_conn(self):
+        """
+        Halt the connection
+        """
         self.server.close()
 
     def produce_response(self, IP=None, port=None,

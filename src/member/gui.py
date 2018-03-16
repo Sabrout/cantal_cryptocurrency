@@ -94,15 +94,20 @@ class GUI():
         message.set_data(transaction_user)
         self.member.broadcast(message)
 
-        print("We addddddd "+str(transaction_user.list_input))
         self.entry_amount.delete(0, 'end')
         self.entry_receiver.delete(0, 'end')
 
     def update_money(self, sleep):
+        """
+        We update the money regularly in the GUI
+        """
         def handle_thread():
             while(not(self.member.event_halt.is_set())):
+                # We compute the money available according to the money list
                 (self.amount, _) = self.member.money_list.compute_money()
+                # We print the money in the GUI
                 self.amount_text.set(self.amount)
+                # and we sleep
                 time.sleep(sleep)
         t = Thread(target=handle_thread)
         return t

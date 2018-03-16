@@ -70,7 +70,7 @@ class CheeseStack():
         Set a cheese in the blockchain
         """
         if(not(self.verify(cheese))):
-            print("We don't add the bordel")
+            print("Debug: we don't add the cheese")
             return False
 
         self.blockchain.append(cheese)

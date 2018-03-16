@@ -40,7 +40,9 @@ class MoneyList():
         crypto = Crypto()
         public_key = crypto.get_public()
         transaction_list = cheese.data
+        # For each transaction,
         for transaction in transaction_list:
+            # we verify if the output correspond to our public key
             if (transaction.list_wallet[-1] == public_key):
                 self.add_money((cheese.smell, transaction.hash, 1))
             if (transaction.list_wallet[-2] == public_key):

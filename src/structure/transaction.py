@@ -227,6 +227,7 @@ class Transaction():
         list_amount = [amount_output, amount]
         transaction = Transaction()
         transaction.set_list_amount(list_amount)
+        print("Debug transaction: "+str(list_input))
         transaction.set_list_input(list_input)
         transaction.set_list_wallet(list_wallet)
         transaction.compute_hash()

@@ -95,7 +95,10 @@ class Member(Peer):
                                       close=True)
             if(message.get_packet_type() == Message.RESPONSE):
                 # We want to store the new cheese if we can
-                self.process_cheese_response(message)
+                self.process_cheese_response_broadcast(message)
+            if(message.get_packet_type() == Message.BROADCAST):
+                # We save the new cheese
+                self.procces_cheese_response_broadcast(message)
             if(message.get_packet_type() == Message.ERROR):
                 # If we have a cheese error, it means that there is no
                 # cheese after
@@ -141,7 +144,7 @@ class Member(Peer):
             message = Message.create(Message.CHEESE, Message.ERROR, None)
         return message
 
-    def process_cheese_response(self, message):
+    def process_cheese_response_broadcast(self, message):
         """
         We process the message CHEESE RESPONSE
         """
@@ -429,7 +432,6 @@ class Member(Peer):
                 if(self.mining_cheese.write(mining_cheese.mine,
                                             ntimes) is True):
 
-                    print("voila il est la putain "+str(mining_cheese.smell))
                     # If we can add the cheese to the stack,
                     cheese_stack = self.cheese_stack.ressource
                     if(self.cheese_stack.write(cheese_stack.add,
@@ -454,8 +456,6 @@ class Member(Peer):
                                                  Message.BROADCAST,
                                                  mining_cheese)
                         self.broadcast(message)
-                    else:
-                        print("Debug: The cheese is not verified")
 
                 # We create a new cheese to mine
                 self.mining_cheese = Cheese()
@@ -475,29 +475,34 @@ class Member(Peer):
         member.gui.mainloop()
 
     def main():
+        miner = False
+        if(len(sys.argv) <= 3):
+            print("Usage: "+str(sys.argv[0]), end="")
+            print(" ip_tracker port_tracker port [-m]")
+            os._exit(0)
+
         try:
-            opts, args = getopt.getopt(sys.argv[3:], "hm", ["help", "mine"])
+            opts, args = getopt.getopt(sys.argv[4:], "hm", ["help", "mine"])
         except getopt.GetoptError as e:
             print("Debug: "+str(e))
-            print("Usage: "+str(sys.argv[0])+" ip_tracker port_tracker port")
-            os._exit()
-        #  for o, a in opts:
-            #  if o == '-h':
-#        process_f()
-#        found_f = True
-#      elif ...
-#  if not found_f:
-#      print "-f was not given"
-#      usage()
-#      sys.exit(2)
-#
+            print("Usage: "+str(sys.argv[0]), end="")
+            print(" ip_tracker port_tracker port [-m]")
+            os._exit(0)
+        for o, a in opts:
+            if o in ("-h", "--help"):
+                print("Usage: "+str(sys.argv[0]), end="")
+                print(" ip_tracker port_tracker port [-m]")
+            if o in ("-m", "--miner"):
+                miner = True
+        ip_tracker = sys.argv[1]
+        port_tracker = int(sys.argv[2])
+        port = int(sys.argv[3])
+
+        print("Debug: Member connected to "+str(ip_tracker), end="")
+        print(":"+str(port_tracker))
+        print("Debug: Public Key is "+str(Crypto().get_public()))
+        Member.create(port, ip_tracker, port_tracker, miner=miner)
 
 
 if __name__ == "__main__":
-    port = 9001
-    ip_tracker = "192.168.43.251"
-    port_tracker = 9990
-
-    print("Debug: Member connected to "+str(ip_tracker)+":"+str(port_tracker))
-    print("Debug: Public Key is "+str(Crypto().get_public()))
-    Member.create(port, ip_tracker, port_tracker, miner=False)
+    Member.main()
