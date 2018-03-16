@@ -65,12 +65,16 @@ class MoneyList():
         self.money_list.append(money)
 
         # We write the money
-        writer = open(self.path, 'a')
-        if writer.tell() != 0:
-            writer.write(",")
-        writer.write(str(cheese_hash)+";"+str(transaction_hash)+";"
-                     + str(output))
-        writer.close()
+        writer = open(self.path, 'w')
+        if(len(self.money_list) > 0):
+            (cheese_hash, transaction_hash, output) = self.money_list[0]
+            writer.write(str(cheese_hash)+";"+str(transaction_hash)+";"
+                         + str(output))
+            for money in self.money_list[1:]:
+                (cheese_hash, transaction_hash, output) = money
+                writer.write(","+str(cheese_hash)+";"+str(transaction_hash)+";"
+                             + str(output))
+            writer.close()
 
     def remove_money(self, money):
         """
@@ -86,7 +90,8 @@ class MoneyList():
             (cheese_hash, transaction_hash, output) = self.money_list[0]
             writer.write(str(cheese_hash)+";"+str(transaction_hash)+";"
                          + str(output))
-            for i in self.money_list[1:]:
+            for money in self.money_list[1:]:
+                (cheese_hash, transaction_hash, output) = money
                 writer.write(","+str(cheese_hash)+";"+str(transaction_hash)+";"
                              + str(output))
             writer.close()
@@ -175,7 +180,6 @@ class MoneyList():
         """
         We compute the money up to a certain amount
         """
-        print("Ma money: "+str(self.money_list))
         amount_output = 0
         list_output = list()
         # For each money address

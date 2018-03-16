@@ -98,7 +98,7 @@ class Member(Peer):
                 self.process_cheese_response_broadcast(message)
             if(message.get_packet_type() == Message.BROADCAST):
                 # We save the new cheese
-                self.procces_cheese_response_broadcast(message)
+                self.process_cheese_response_broadcast(message)
             if(message.get_packet_type() == Message.ERROR):
                 # If we have a cheese error, it means that there is no
                 # cheese after

@@ -61,6 +61,10 @@ class SyntaxReader():
              and self.message.get_packet_type() == Message.RESPONSE):
             data = self.format_cheese(self.message.get_data())
             self.message.set_data(data, keep=True)
+        elif(self.message.get_packet() == Message.CHEESE
+             and self.message.get_packet_type() == Message.BROADCAST):
+            data = self.format_cheese(self.message.get_data())
+            self.message.set_data(data, keep=True)
         return self.message
 
     def format_cheese(self, data):

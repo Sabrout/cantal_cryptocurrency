@@ -39,7 +39,8 @@ class Tracker(Peer):
                 response.set_packet_type(Message.RESPONSE)
 
                 member_list = self.member_list.ressource
-                sublist = self.member_list.read(member_list.get_sublist)
+                #  sublist = self.member_list.read(member_list.get_sublist)
+                sublist = self.member_list.read(member_list.get_sublist, (ip, port))
                 response.set_data(sublist)
                 self.produce_response(socket=socket, message=response, close=True)
 

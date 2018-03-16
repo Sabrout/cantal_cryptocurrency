@@ -38,6 +38,7 @@ class MemberList():
         if len(self.list) == 1:
             # Base Case
             return self.list
+
         # it depends on the function f(x)=4ln(x+2.5)-4
         num = math.floor((4 * math.log1p(len(self.list) + 2.5)) - 4)
         sublist = random.sample(list(self.list), num)
