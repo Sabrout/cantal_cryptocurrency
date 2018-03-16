@@ -39,10 +39,10 @@ class Tracker(Peer):
                 response.set_packet_type(Message.RESPONSE)
 
                 member_list = self.member_list.ressource
-                #  sublist = self.member_list.read(member_list.get_sublist)
-                sublist = self.member_list.read(member_list.get_sublist, (ip, port))
+                sublist = self.member_list.read(member_list.get_sublist)
                 response.set_data(sublist)
-                self.produce_response(socket=socket, message=response, close=True)
+                self.produce_response(socket=socket,
+                                      message=response, close=True)
 
             # List ERROR
             elif message.get_packet_type() == Message.ERROR:
@@ -50,7 +50,7 @@ class Tracker(Peer):
 
         # Member REPORT
         elif (message.get_packet_type() == Message.REPORT and
-            message.get_packet() == Message.MEMBER):
+              message.get_packet() == Message.MEMBER):
             try:
                 ip_port = message.get_data()
             except ValueError:
@@ -59,7 +59,6 @@ class Tracker(Peer):
             self.produce_ping(ip, port)
         else:
             print('Error: No Message Type Detected\n')
-
 
     def main(self):
         """
@@ -77,9 +76,10 @@ class Tracker(Peer):
     def populate(size):
         list = MemberList()
         for i in range(size):
-            ip = str(random.randint(1, 255)) + '.'\
-                 + str(random.randint(1, 255)) + '.'\
-                 + str(random.randint(1, 255)) + '.' + str(random.randint(1, 255))
+            ip = str(random.randint(1, 255)) + '.'
+            ip += str(random.randint(1, 255)) + '.'
+            ip += str(random.randint(1, 255)) + '.'
+            ip += str(random.randint(1, 255))
             port = random.randint(1, 9999)
             list.add_member((ip, port))
         return list
@@ -95,8 +95,7 @@ class Tracker(Peer):
                     self.produce_ping(ip, port)
 
                 time.sleep(sleep)
-
-        t = Thread(target = handle_thread)
+        t = Thread(target=handle_thread)
         return t
 
     def process_member_list_pong(self):
@@ -107,8 +106,9 @@ class Tracker(Peer):
                     ip, port, pong = message
                     if(not(pong)):
                         member_list = self.member_list.ressource
-                        self.member_list.write(member_list.remove_member, (ip, port))
-        t = Thread(target = handle_thread)
+                        self.member_list.write(member_list.remove_member,
+                                               (ip, port))
+        t = Thread(target=handle_thread)
         return t
 
 
