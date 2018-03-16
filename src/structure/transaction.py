@@ -12,7 +12,7 @@ class Transaction():
         The constructor will set all the lists and will verify the content
         """
         self.list_sign = list()
-        self.used_output = [None, None]
+        self.used_output = [0, 0]
 
         if(list_input is not None):
             # Checking format of list_input
@@ -58,7 +58,10 @@ class Transaction():
         """
         # Checking format of list_wallet
         for wallet in list_wallet:
-            if len(wallet) != 96:
+            if len(wallet) <= 3:
+                # It's <= 64*3 because there should be 2
+                # output keys and at least one input key
+                # For the transaction
                 raise Exception('Error: Invalid Wallet_Pub Size')
 
         self.list_wallet = list_wallet
@@ -90,10 +93,6 @@ class Transaction():
         We verify the format of the hash
         and we store them in used_output
         """
-        # Checking format of hash
-        if len(first_hash) != 32 or len(second_hash) !=32 :
-            raise Exception('Error: Invalid Hash Size')
-
         self.used_output = [first_hash, second_hash]
 
     def compute_hash(self):
@@ -140,7 +139,8 @@ class Transaction():
 
     def verify_miner(self):
         """
-        We verify that a transaction is a particular kind of transaction which is
+        We verify that a transaction is a particular
+        kind of transaction which is
         mining, ie: bank gives 1 to the miner and cash in hand the rest
         """
         if len(self.list_input) != 1:
@@ -167,6 +167,9 @@ class Transaction():
         iff all signatures are valid (we don't have now the history
         of transactions)
         """
+        sign_bank = "0000000000000000000000000000000000000000000000"
+        sign_bank += "00000000000000000000000000000000000000000000000000"
+
         total_amount = sum(self.list_amount[:-1])
         if self.list_amount[len(self.list_amount)-1] > total_amount:
             return False
@@ -175,7 +178,59 @@ class Transaction():
             return False
 
         for i in range(0, len(self.list_sign)):
-            if not(Crypto.verify(self.list_wallet[i], self.list_sign[i],
-                                 self.hash)):
+
+            if (self.list_wallet[i] != sign_bank and
+                not(Crypto.verify(self.list_wallet[i],
+                                  self.list_sign[i], self.hash))):
                 return False
         return True
+
+    def create_miner(cheese_stack_ress):
+        cheese_stack = cheese_stack_ress.ressource
+        crypto = Crypto()
+        public_key_miner = crypto.get_public()
+        transaction = Transaction()
+        wallet_bank = "0000000000000000000000000000000000000000000000"
+        wallet_bank += "00000000000000000000000000000000000000000000000000"
+        sign_bank = wallet_bank
+        output_bank = cheese_stack_ress.read(cheese_stack.find_output_bank)
+        if(output_bank is None):
+            return None
+        (amount_bank, transaction_input) = output_bank
+        list_wallet = [wallet_bank, public_key_miner,
+                       wallet_bank]
+        list_amount = [amount_bank, 1]
+        transaction = Transaction()
+        transaction.set_list_amount(list_amount)
+        transaction.set_list_input(transaction_input)
+        transaction.set_list_wallet(list_wallet)
+        transaction.compute_hash()
+        transaction.set_list_sign([sign_bank], verify=False)
+        return transaction
+
+    def create_user(money_list, amount, public_key_receiver):
+        crypto = Crypto()
+        public_key_sender = crypto.get_public()
+        (amount_output, list_input) = money_list.compute_money(amount=amount)
+
+        for money in list_input:
+            money_list.remove_money(money)
+
+        list_input = [(transaction_hash, output)
+                      for (cheese_hash, transaction_hash, output)
+                      in list_input]
+
+        if(amount_output < amount):
+            return None
+        list_wallet = [public_key_sender, public_key_receiver,
+                       public_key_sender]
+        list_amount = [amount_output, amount]
+        transaction = Transaction()
+        transaction.set_list_amount(list_amount)
+        print("Debug transaction: "+str(list_input))
+        transaction.set_list_input(list_input)
+        transaction.set_list_wallet(list_wallet)
+        transaction.compute_hash()
+        sign = crypto.sign(transaction.hash)
+        transaction.set_list_sign([sign])
+        return transaction

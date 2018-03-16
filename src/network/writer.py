@@ -17,7 +17,6 @@ class MessageWriter():
         The function will write a network message
         according to the Message object
         """
-
         # We will write the message according to the packet and the packet_type
         if(self.message.packet == Message.LIST
            and self.message.packet_type == Message.REQUEST):
@@ -39,6 +38,9 @@ class MessageWriter():
         elif (self.message.packet == Message.TRANSACTION
               and self.message.packet_type == Message.RESPONSE):
             return self.write_transaction_response()
+        elif (self.message.packet == Message.TRANSACTION
+              and self.message.packet_type == Message.BROADCAST):
+            return self.write_transaction_broadcast()
         elif (self.message.packet == Message.TRANSACTION
               and self.message.packet_type == Message.ERROR):
             return self.write_transaction_error()
@@ -113,6 +115,15 @@ class MessageWriter():
         string = self.write_transaction(string)+"\r\n"
         return string
 
+    def write_transaction_broadcast(self):
+        """
+        The function write the message of a TRANSACTION RESPONSE
+        """
+
+        string = "TRANSACTION BROADCAST"
+        string = self.write_transaction(string)+"\r\n"
+        return string
+
     def write_transaction_error(self):
         """
         The function write the message of a TRANSACTION ERROR
@@ -148,16 +159,14 @@ class MessageWriter():
         string = "CHEESE BROADCAST"
         data = self.message.get_data()
         string += " "+str(data["hash"])
-        string += self.write_transaction_list(string)
+        string = self.write_transaction_list(string)
         string += " "+str(data["nonce"])+"\r\n"
         return string
-
 
     def write_cheese_error(self):
         """
         The function write the message of a CHEESE ERROR
         """
-
         string = "CHEESE ERROR\r\n"
         return string
 

@@ -54,7 +54,7 @@ class CheeseSyntaxReader():
         Parse a list a cheese
         """
         self.cheese()
-        self.cheese_stack.add(self.cheese)
+        self.cheese_stack.add(self.parsed_cheese)
 
         self.list_cheese_next()
 
@@ -67,7 +67,7 @@ class CheeseSyntaxReader():
             self.shift()
 
             self.cheese()
-            self.cheese_stack.push(self.cheese)
+            self.cheese_stack.add(self.parsed_cheese)
 
             self.list_cheese_next()
 
@@ -75,13 +75,13 @@ class CheeseSyntaxReader():
         """
         Parse a cheese
         """
-        self.cheese = Cheese()
+        self.parsed_cheese = Cheese()
 
         self.look()
         self.check(self.lexical.HASH)
         # Get the smell which is the first hash
         smell = self.lexical.get_text()
-        self.cheese.set_smell(smell)
+        self.parsed_cheese.set_smell(smell)
         self.shift()
 
         self.look()
@@ -92,7 +92,7 @@ class CheeseSyntaxReader():
         self.check(self.lexical.HASH)
         # Get the parent_smell which is the second hash
         parent_smell = self.lexical.get_text()
-        self.cheese.set_parent_smell(parent_smell)
+        self.parsed_cheese.set_parent_smell(parent_smell)
         self.shift()
 
         self.look()
@@ -101,7 +101,7 @@ class CheeseSyntaxReader():
 
         self.list_transaction()
         # Get the data which is the transaction
-        self.cheese.set_data(self.list_transaction)
+        self.parsed_cheese.set_data(self.parsed_list_transaction)
 
         self.look()
         self.check(self.lexical.SEPARATOR_CHEESE_ELEM)
@@ -111,18 +111,18 @@ class CheeseSyntaxReader():
         self.check(self.lexical.DIGIT)
         # Get the nonce
         nonce = int(self.lexical.get_text())
-        self.cheese.set_nonce(nonce)
+        self.parsed_cheese.set_nonce(nonce)
         self.shift()
 
     def list_transaction(self):
         """
         Parse a list of transaction
         """
-        self.list_transaction = TransactionList()
+        self.parsed_list_transaction = TransactionList()
 
         self.transaction()
-        self.transaction.compute_hash()
-        self.list_transaction.transaction_list.append(self.transaction)
+        self.parsed_transaction.compute_hash()
+        self.parsed_list_transaction.add(self.parsed_transaction)
 
         self.list_transaction_next()
 
@@ -135,8 +135,8 @@ class CheeseSyntaxReader():
             self.shift()
 
             self.transaction()
-            self.transaction.compute_hash()
-            self.list_transaction.transaction_list.append(self.transaction)
+            self.parsed_transaction.compute_hash()
+            self.parsed_list_transaction.add(self.parsed_transaction)
 
             self.list_transaction_next()
 
@@ -144,27 +144,27 @@ class CheeseSyntaxReader():
         """
         Parse a transaction
         """
-        self.transaction = Transaction()
+        self.parsed_transaction = Transaction()
 
         self.list_input()
-        self.transaction.set_list_input(self.list_input)
+        self.parsed_transaction.set_list_input(self.parsed_list_input)
 
         self.look()
         self.check(self.lexical.SEPARATOR)
         self.shift()
 
         self.list_wallet()
-        self.transaction.set_list_wallet(self.list_wallet)
+        self.parsed_transaction.set_list_wallet(self.parsed_list_wallet)
 
         self.look()
         self.check(self.lexical.SEPARATOR)
         self.shift()
 
         self.list_amount()
-        self.transaction.set_list_amount(self.list_amount)
+        self.parsed_transaction.set_list_amount(self.parsed_list_amount)
 
-        # We have all we need to compyte the hash
-        self.transaction.compute_hash()
+        # We have all we need to compute the hash
+        self.parsed_transaction.compute_hash()
 
         self.look()
         self.check(self.lexical.SEPARATOR)
@@ -174,9 +174,10 @@ class CheeseSyntaxReader():
 
         # We don't need to test the blue transaction
         if len(self.cheese_stack) != 0:
-            self.transaction.set_list_sign(self.list_sign)
+            self.parsed_transaction.set_list_sign(self.parsed_list_sign)
         else:
-            self.transaction.set_list_sign(self.list_sign, verify=False)
+            self.parsed_transaction.set_list_sign(self.parsed_list_sign,
+                                                  verify=False)
 
         self.look()
         self.check(self.lexical.SEPARATOR)
@@ -188,7 +189,7 @@ class CheeseSyntaxReader():
         """
         Parse a list of input
         """
-        self.list_input = list()
+        self.parsed_list_input = list()
 
         self.look()
         self.check(self.lexical.HASH)
@@ -205,7 +206,7 @@ class CheeseSyntaxReader():
         self.shift()
 
         # Add an input in the list of input
-        self.list_input.append((hash, digit))
+        self.parsed_list_input.append((hash, digit))
 
         self.list_input_next()
 
@@ -232,7 +233,7 @@ class CheeseSyntaxReader():
             self.shift()
 
             # Add an input in the list of input
-            self.list_input.append((hash, digit))
+            self.parsed_list_input.append((hash, digit))
 
             self.list_input_next()
 
@@ -240,7 +241,7 @@ class CheeseSyntaxReader():
         """
         Parse a list of wallet
         """
-        self.list_wallet = list()
+        self.parsed_list_wallet = list()
 
         self.look()
         self.check(self.lexical.ENCRYPTION)
@@ -248,7 +249,7 @@ class CheeseSyntaxReader():
         self.shift()
 
         # Add a public_key to the list of wallet
-        self.list_wallet.append(public_key)
+        self.parsed_list_wallet.append(public_key)
 
         self.list_wallet_next()
 
@@ -266,7 +267,7 @@ class CheeseSyntaxReader():
             self.shift()
 
             # Add a public_key to the list of wallet
-            self.list_wallet.append(public_key)
+            self.parsed_list_wallet.append(public_key)
 
             self.list_wallet_next()
 
@@ -274,7 +275,7 @@ class CheeseSyntaxReader():
         """
         Parse a list of amount
         """
-        self.list_amount = list()
+        self.parsed_list_amount = list()
 
         self.look()
         self.check(self.lexical.DIGIT)
@@ -282,7 +283,7 @@ class CheeseSyntaxReader():
         self.shift()
 
         # Add an amount to the list of amount
-        self.list_amount.append(digit)
+        self.parsed_list_amount.append(digit)
 
         self.list_amount_next()
 
@@ -300,7 +301,7 @@ class CheeseSyntaxReader():
             self.shift()
 
             # Add an amount to the list of amount
-            self.list_amount.append(digit)
+            self.parsed_list_amount.append(digit)
 
             self.list_amount_next()
 
@@ -308,7 +309,7 @@ class CheeseSyntaxReader():
         """
         Parse a list of signature
         """
-        self.list_sign = list()
+        self.parsed_list_sign = list()
 
         self.look()
         self.check(self.lexical.ENCRYPTION)
@@ -316,7 +317,7 @@ class CheeseSyntaxReader():
         self.shift()
 
         # Add a signature to the list of signature
-        self.list_sign.append(signature)
+        self.parsed_list_sign.append(signature)
 
         self.list_sign_next()
 
@@ -334,26 +335,34 @@ class CheeseSyntaxReader():
             self.shift()
 
             # Add a signature to the list of signature
-            self.list_sign.append(signature)
+            self.parsed_list_sign.append(signature)
             self.list_sign_next()
 
     def used_output(self):
         """
         Parse the used outputs
         """
-        self.look()
-        self.check(self.lexical.HASH)
-        first_output = self.lexical.get_text()
-        self.shift()
+
+        first_output = self.output()
 
         self.look()
         self.check(self.lexical.SEPARATOR)
         self.shift()
 
-        self.look()
-        self.check(self.lexical.HASH)
-        second_output = self.lexical.get_text()
-        self.shift()
+        second_output = self.output()
 
         # Add the used outputs to the transaction
-        self.transaction.set_used_output(first_output, second_output)
+        self.parsed_transaction.set_used_output(first_output, second_output)
+
+    def output(self):
+        self.look()
+
+        if(self.get_lookahead() == self.lexical.HASH):
+            self.shift()
+            return self.lexical.get_text()
+        elif(self.get_lookahead() == self.lexical.DIGIT):
+            self.shift()
+            return int(self.lexical.get_text())
+        else:
+            self.check(self.lexical.HASH)
+        self.shift()

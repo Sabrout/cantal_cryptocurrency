@@ -1,3 +1,7 @@
+from src.structure.cheese import Cheese
+from src.structure.transaction import Transaction
+
+
 class Message():
     """
     The message represents all possible
@@ -79,14 +83,54 @@ class Message():
         """
         return self.packet_type
 
-    def set_data(self, data):
+    def set_data(self, data, keep=False):
         """
         Set the data
         """
-        self.data = data
+        if(not(keep)):
+            if(isinstance(data, Cheese)):
+                self.data = self.format_cheese(data)
+            elif(isinstance(data, Transaction)):
+                self.data = self.format_transaction(data)
+            else:
+                self.data = data
+        else:
+            self.data = data
 
     def get_data(self):
         """
         Get the data
         """
         return self.data
+
+    def format_transaction(self, transaction):
+        """
+        We convert an object Transaction to a Message
+        """
+        format_transaction = {}
+        format_transaction["input"] = transaction.list_input
+        format_transaction["wallet"] = transaction.list_wallet
+        format_transaction["amount"] = transaction.list_amount
+        format_transaction["signature"] = transaction.list_sign
+        return format_transaction
+
+    def format_list_transaction(self, list_transaction):
+        """
+        We convert an object Transaction List to a Message
+        """
+        format_transactions = []
+        for transaction in list_transaction:
+            format_transaction = self.format_transaction(transaction)
+            format_transactions.append(format_transaction)
+        return format_transactions
+
+    def format_cheese(self, cheese):
+        """
+        We convert an object Cheese List to a Message
+        """
+        format_cheese = {}
+        data = cheese.data
+        format_cheese["transactions"] = self.format_list_transaction(data)
+        format_cheese["nonce"] = cheese.nonce
+        format_cheese["hash"] = cheese.smell
+        return format_cheese

@@ -1,4 +1,5 @@
 from src.structure.transaction import Transaction
+from copy import deepcopy
 
 
 class TransactionList():
@@ -17,11 +18,29 @@ class TransactionList():
         This function add a transaction if the object is a transaction
         """
         if isinstance(transaction, Transaction):
+            # If the transaction already exists
+            if(transaction.hash in self.transaction_index):
+                print("Debug: The transaction already exists in the list")
+                return None
+
             self.transaction_list.append(transaction)
             size = len(self.transaction_list)-1
             self.transaction_index[transaction.hash] = size
         else:
             raise Exception("Error: not a transaction")
+
+    def remove(self, transaction_hash):
+        for transaction in self.transaction_list:
+            if transaction.hash == transaction_hash:
+                self.transaction_list.remove(transaction)
+                del self.transaction_index[transaction_hash]
+
+    def remove_all(self, transaction_list):
+        if(isinstance(transaction_list, TransactionList)):
+            for transaction in transaction_list:
+                self.remove(transaction.hash)
+        else:
+            raise Exception("Error: not a transaction list")
 
     def get(self, item):
         """
@@ -45,11 +64,12 @@ class TransactionList():
         index_input = {}
 
         for transaction in self.transaction_list:
-
             # We verify if an input of a transaction is already in the
             # transaction's list
-            for input in transaction.input_list:
+            for input in transaction.list_input:
                 if(input in index_input):
+                    print(transaction.list_input)
+                    print(input)
                     return False
                 else:
                     index_input[input] = None
@@ -59,14 +79,25 @@ class TransactionList():
                 # If it is in the transaction it can be just the miner's
                 # transaction (without duplicates)
                 if(exist_miner or not(transaction.verify_miner())):
+                    print("TADATA")
                     return False
                 else:
                     exist_miner = True
             else:
                 # Otherwise, we verify normaly the transaction
                 if(not(transaction.verify())):
+                    print("TADATA2")
                     return False
         return True
+
+    def verify_miner(self):
+        """
+        We verify if we have a miner's transaction in the list
+        """
+        for transaction in self.transaction_list:
+            if(transaction.verify_miner()):
+                return True
+        return False
 
     def get_last(self):
         length = len(self.transaction_list)
@@ -101,3 +132,6 @@ class TransactionList():
         """
         for transaction in self.transaction_list:
             yield transaction
+
+    def deepcopy(self):
+        return deepcopy(self)

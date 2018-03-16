@@ -1,5 +1,6 @@
 import hashlib
 import random
+import binascii
 
 
 class Cheese:
@@ -18,7 +19,7 @@ class Cheese:
         """
         cheese = Cheese(smell, parent_smell, nonce, data)
         return cheese
-    
+
     def set_smell(self, smell):
         """
         The smell of a cheese is the hash of the parent smell + data + nonce
@@ -49,14 +50,17 @@ class Cheese:
                 return False
         return True
 
-    def mine(self, ntimes):
+    def mine(self, n_times):
         """
         Mining a cheese by generating random nonces (ntimes trying)
         """
-        for i in range(ntimes):
-            self.nonce = int(str(random.random()).replace(",", ""))
+        for i in range(n_times):
+            self.nonce = random.random()
+            while(int(self.nonce) == 0):
+                self.nonce *= 10.0
+            self.nonce = int(str(self.nonce).replace(".", ""))
             self.compute_smell()
-            if self.verify_policy():
+            if self.verify_policy(num_zero=3):
                 return True
         return False
 
@@ -65,12 +69,12 @@ class Cheese:
         Compute the smell of a cheese
         """
         hash = hashlib.sha256()
-        string = str(self.parent_smell).encode()
-        + str(self.data).encode()
-        + str(self.nonce).encode()
+        string = str(self.parent_smell)+"|"
+        string += str(self.data)+"|"
+        string += str(self.nonce)
 
-        hash.update(string)
-        self.smell = hash.display()
+        hash.update(str.encode(string))
+        self.smell = binascii.hexlify(hash.digest()).decode("utf-8")
 
     def verify(self):
         """
@@ -78,16 +82,10 @@ class Cheese:
         that world appears only once in transactions
         """
         self.compute_smell()
-        if not(self.verify_policy()):
+        if not(self.verify_policy(num_zero=3)):
+            print("Debug: the policy is not verified")
             return False
         if not(self.data.verify()):
+            print("Debug: the data in the cheese is not verified")
             return False
         return True
-
-    def create_temp_cheese(member):
-        transactions = ####get qqchoz
-        cheese = Cheese()
-        cheese.set_parent_smell(member.cheese_stack.last.smell)
-        cheese.set_data(transactions)
-        return cheese
-

@@ -56,6 +56,7 @@ class CheeseStack():
         sentence = cheese_file.read()
         reader = CheeseSyntaxReader(sentence, cheese_stack)
         cheese_stack = reader.parse()
+        cheese_file.close()
         return cheese_stack
 
     def save(self, path=os.getcwd()):
@@ -68,6 +69,10 @@ class CheeseStack():
         """
         Set a cheese in the blockchain
         """
+        if(not(self.verify(cheese))):
+            print("Debug: we don't add the cheese")
+            return False
+
         self.blockchain.append(cheese)
         self.block_index[cheese.smell] = len(self.blockchain)-1
 
@@ -83,6 +88,7 @@ class CheeseStack():
                     input_data_transaction = self.blockchain[input_block].data
                     input_transaction = input_data_transaction.get(hash)
                     input_transaction.used_output[output] = transaction.hash
+        return True
 
     def last(self):
         """
@@ -97,8 +103,16 @@ class CheeseStack():
         right number of zeros in his smell, and finally a
         correct transactions set).
         """
+
+        blue_cheese_smell = "000000000000000000000000000000000"
+        blue_cheese_smell += "0000000000000000000000000000000"
+
         if not(isinstance(cheese, Cheese)):
             raise Exception("Error: not a cheese")
+
+        # A blue cheese is automatically verified
+        if(cheese.smell == blue_cheese_smell):
+            return True
 
         if self.last().smell != cheese.parent_smell:
             raise Exception("Error: bad parent smell")
@@ -109,15 +123,20 @@ class CheeseStack():
         for transaction in cheese.data:
             previous_amount = {}
 
-            # For each sender in transaction (let A the sender for example), we will check
-            # if he is able to send this money ie he have the money that he want to send
+            # For each sender in transaction
+            # (let A the sender for example), we will check
+            # if he is able to send this money
+            # ie he have the money that he want to send
             for (hash, output) in transaction.list_input:
                 input_block = self.transaction_index[hash]
                 input_transaction = self.blockchain[input_block].data.get(hash)
 
-                # We will check the previous outputs of transactions where A is involved as a receiver
-                # If his output is 0 we can directly get the money he received, else we take
-                # the total sums of amount minus the one which have an output=0 to get
+                # We will check the previous outputs of
+                # transactions where A is involved as a receiver
+                # If his output is 0 we can directly get the money
+                # he received, else we take
+                # the total sums of amount minus
+                # the one which have an output=0 to get
                 # how much A (of output = 1) received.
                 wallet = input_transaction.list_wallet[output-2]
                 if output == 0:
@@ -126,24 +145,24 @@ class CheeseStack():
                     money = sum(input_transaction.list_amount[:-1])
                     money -= input_transaction.list_amount[-1]
 
-                # We add for A the money that he received in the previous transactions
+                # We add for A the money that
+                # he received in the previous transactions
                 if wallet in previous_amount:
                     previous_amount[wallet] += money
                 else:
                     previous_amount[wallet] = money
-
-                if (input_transaction.used_output[output] is not None):
-                    return False
 
             # We just check if the number of senders is equal to the number of
             # keys in previous_amounts
             if len(transaction.list_wallet[:-2]) != len(previous_amount):
                 return False
 
-            # We then check that the persons we verified are the right persons (people who want to send
-            # money in the transaction). We also check if the amounts in the input transaction correspond to
+            # We then check that the persons we verified
+            # are the right persons (people who want to send
+            # money in the transaction). We also check if the amounts
+            # in the input transaction correspond to
             # the amount in the current transaction
-            for i in range(0, transaction.list_wallet[:-2]):
+            for i in range(0, len(transaction.list_wallet[:-2])):
                 wallet = transaction.list_wallet[i]
                 if wallet not in previous_amount:
                     return False
@@ -153,18 +172,23 @@ class CheeseStack():
 
         return True
 
-    def __getitem__(self, parent_smell):
+    def get_cheese(self, smell, parent=True):
         """
         If we have an int then we have the sequence number of the cheese
         """
-        if isinstance(parent_smell, int):
-            i = parent_smell
+        if isinstance(smell, int):
+            i = smell
+        elif(parent):
+            i = self.block_index[smell]+1
         else:
-            i = self.index[parent_smell]+1
+            i = self.block_index[smell]
         try:
             return self.blockchain[i]
         except(IndexError):
             return None
+
+    def __getitem__(self, smell):
+        return self.get_cheese(smell)
 
     def __len__(self):
         """
@@ -174,3 +198,23 @@ class CheeseStack():
 
     def __setitem__(self, parent_smell, cheese):
         self.push(cheese)
+
+    def find_output_bank(self):
+        wallet_bank = "0000000000000000000000000000000000000000000000"
+        wallet_bank += "00000000000000000000000000000000000000000000000000"
+
+        for i in reversed(range(len(self))):
+            cheese = self[i]
+            for transaction in cheese.data:
+                if(transaction.verify_miner):
+                    if(transaction.used_output[0] == 0
+                       and transaction.list_amount[1] != 0
+                       and transaction.list_wallet[1] == wallet_bank):
+                        return (transaction.list_amount[1],
+                                [(transaction.hash, 0)])
+                    elif(transaction.used_output[1] == 0
+                         and transaction.list_wallet[2] == wallet_bank):
+                        return (transaction.list_amount[0] -
+                                transaction.list_amount[1],
+                                [(transaction.hash, 1)])
+        return None
