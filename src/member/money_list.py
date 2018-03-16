@@ -55,6 +55,12 @@ class MoneyList():
         (cheese_hash, transaction_hash, output) = money
         # We verify the money
         self.verify(money)
+
+        # If the money already exists
+        # we skip the money
+        if(money in self.money_list):
+            return None
+
         # We add the money to the list
         self.money_list.append(money)
 
@@ -169,6 +175,7 @@ class MoneyList():
         """
         We compute the money up to a certain amount
         """
+        print("Ma money: "+str(self.money_list))
         amount_output = 0
         list_output = list()
         # For each money address

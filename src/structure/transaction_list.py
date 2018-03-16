@@ -68,6 +68,8 @@ class TransactionList():
             # transaction's list
             for input in transaction.list_input:
                 if(input in index_input):
+                    print(transaction.list_input)
+                    print(input)
                     return False
                 else:
                     index_input[input] = None
@@ -77,12 +79,14 @@ class TransactionList():
                 # If it is in the transaction it can be just the miner's
                 # transaction (without duplicates)
                 if(exist_miner or not(transaction.verify_miner())):
+                    print("TADATA")
                     return False
                 else:
                     exist_miner = True
             else:
                 # Otherwise, we verify normaly the transaction
                 if(not(transaction.verify())):
+                    print("TADATA2")
                     return False
         return True
 
