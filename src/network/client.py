@@ -9,15 +9,18 @@ class Client():
     """
     This class represents a network client
     """
-    def __init__(self, queue_receive, queue_response, list_server, list_thread, event_halt):
+    def __init__(self, queue_receive, queue_response,
+                 list_server, list_thread, event_halt):
         """
         The constructor will instanciate a client
         """
+        # We set the arguments relative to the peer
         self.event_halt = event_halt
         self.queue_response = queue_response
         self.queue_receive = queue_receive
         self.list_server = list_server
         self.list_thread = list_thread
+
         # We set the queue for the client (i.e the client will consume the
         # queue)
         self.list_thread.append(self.consume_response())
@@ -47,10 +50,12 @@ class Client():
         """
         We send a object Message through the network
         """
+        # We parse the message object
         writer = MessageWriter(message)
         string = writer.write()
         string = string.encode()
 
+        # and we try to send the request
         try:
             self.socket.sendall(string)
             print("Debug: "+str(self.socket.getpeername())+" <----- "
@@ -62,10 +67,12 @@ class Client():
         """
         We close the socket
         """
+        # If the socket exists
         if(self.socket is not None):
             try:
+                # We will tell to the server that we will stop to talk
                 self.socket.shutdown(socket.SHUT_WR)
-            except socket.error as e:
+            except socket.error:
                 pass
 
     def consume_response(self):
@@ -75,13 +82,16 @@ class Client():
         """
         def handle_thread():
             while(not(self.event_halt.is_set())):
+                # While there are no response
                 response = None
                 while(not(self.event_halt.is_set()) and (response is None)):
                     try:
+                        # We try to get a response from the queue
                         response = self.queue_response.get(block=False)
                     except queue.Empty:
                         response = None
 
+                # We halt the thread if we have to
                 if(self.event_halt.is_set()):
                     self.close()
                     return None
@@ -93,13 +103,15 @@ class Client():
                     if(not(result_set)):
                         handle_thread()
                 else:
+                    # If we already have a socket we take it
                     self.set_socket(server_socket)
 
                 # We create a server if he isn't already in the server list
                 if(self.socket is not None and
-                    self.socket not in self.list_server):
+                   self.socket not in self.list_server):
                     Server(self.queue_receive, self.list_server,
-                           self.list_thread, self.event_halt, socket_conn=self.socket)
+                           self.list_thread, self.event_halt,
+                           socket_conn=self.socket)
                     self.list_server.append(self.socket)
 
                 # We send the message
