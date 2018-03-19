@@ -1,0 +1,99 @@
+%%
+% Author: Paul Viallard
+% Email: paul.viallard@gmail.com
+% Beamer theme
+%%
+
+%-----------------------------------------------%
+% Packages                                      %
+%-----------------------------------------------%
+
+\usepackage{tikz}
+\usetikzlibrary{calc}
+
+%-----------------------------------------------%
+% Functions                                     %
+%-----------------------------------------------%
+
+\newcommand{\drawdash} {
+  \tikz{
+    \foreach \x in {0,0.2, ...,10} 
+    \draw[orange,fill=orange] (\x,0) circle (0.03);
+  }
+}
+
+\defbeamertemplate*{title page}{customized}[1][] {
+  \usebeamerfont{title}\inserttitle\par
+  \drawdash\par
+  \usebeamerfont{author}\insertauthor\par
+}
+
+%-----------------------------------------------%
+% Colors                                        %
+%-----------------------------------------------%
+
+\definecolor{gray}{RGB}{40,42,54}
+\definecolor{white}{RGB}{226,226,227}
+\definecolor{orange}{RGB}{232,83,17}
+
+%-----------------------------------------------%
+% Styles                                        %
+%-----------------------------------------------%
+
+% Background
+\usecolortheme[RGB={40,42,54}]{structure}
+
+% General
+\setlength{\parskip}{0.25cm}
+\setbeamercolor{frametitle}{fg=white}
+\setbeamercolor{block title}{fg=white,bg=gray} 
+\setbeamercolor{block body}{fg=white,bg=gray}
+
+% Lists
+\setbeamertemplate{itemize items}[circle]
+\setbeamercolor{itemize item}{fg=orange}
+\setbeamercolor{itemize subitem}{fg=orange}
+\setbeamercolor{itemize subsubitem}{fg=orange}
+
+\setbeamertemplate{enumerate item}{\insertenumlabel}
+\setbeamertemplate{enumerate subitem}{\insertsubenumlabel}
+\setbeamertemplate{enumerate subsubitem}{\insertsubsubenumlabel}
+\setbeamercolor*{enumerate item}{fg=orange}
+\setbeamercolor*{enumerate subitem}{fg=orange}
+\setbeamercolor*{enumerate subsubitem}{fg=orange}
+
+% Texts
+\setbeamercolor{background canvas}{fg=white,bg=gray}
+\setbeamercolor{normal text}{fg=white}
+\setbeamercolor{alerted text}{fg=orange}
+
+% Blocks
+\setbeamercolor{block title example}{fg=white,bg=gray} 
+\setbeamercolor{block body example}{fg=white,bg=gray} 
+\setbeamercolor{block title alerted}{fg=white,bg=gray}
+\setbeamercolor{block body alerted}{fg=white,bg=gray} 
+\setbeamertemplate{block title}{}
+
+\setbeamertemplate{block begin}{\insertblocktitle\midrule}
+\setbeamertemplate{block end}{\par}
+\setbeamertemplate{block example begin}{\insertblocktitle\midrule}
+\setbeamertemplate{block example end}{\par}
+\setbeamertemplate{block alerted begin}{\insertblocktitle\midrule}
+\setbeamertemplate{block alerted end}{\par}
+
+% Bibliography
+\setbeamercolor{bibliography entry title}{fg=orange}
+\setbeamercolor{bibliography entry author}{fg=white}
+\setbeamercolor{bibliography entry location}{fg=white}
+\setbeamercolor{bibliography entry note}{fg=white}
+\setbeamertemplate{bibliography item}{}
+
+% Table of Contents
+\setbeamertemplate{section in toc}{{\color{orange}\rule{3px}{3px}}~\inserttocsection}
+\setbeamercolor{section in toc}{bg=white, fg=white}
+\setbeamercolor{subsection in toc}{bg=white,fg=white}
+\setbeamertemplate{subsection in toc}{%
+\hspace{10px} {\color{orange}\rule{3px}{3px}}~\inserttocsubsection\par}
+
+%  Navigation
+\setbeamertemplate{navigation symbols}{}

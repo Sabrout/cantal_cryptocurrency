@@ -1,0 +1,69 @@
+% Copyright 2004 by Till Tantau <tantau@users.sourceforge.net>.
+%
+% In principle, this file can be redistributed and/or modified under
+% the terms of the GNU Public License, version 2.
+%
+% However, this file is supposed to be a template to be modified
+% for your own needs. For this reason, if you use this file as a
+% template and not specifically distribute it as part of a another
+% package/program, I grant the extra permission to freely copy and
+% modify this file as you see fit and even to delete this copyright
+% notice. 
+
+\documentclass{beamer}
+
+\usetheme{paulviallard}
+
+
+\title{The CantalCoin Project}
+
+\author{Paul Viallard \and Omar El Sabrout \and Mustafa Keskin \and Guillaume Vidot}
+
+
+% Let's get started
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{The protocol}
+    \begin{tikzpicture}[remember picture,overlay]
+    \onslide<1>{\node[] at (5.5,1) {\ttfamily\footnotesize\texttt{LIST REQUEST}};}
+    \onslide<2>{\node[] at (5.5,1) {\ttfamily\footnotesize\texttt{LIST RESPONSE}};}
+    \onslide<3>{\node[] at (5.5,-1.4) {\ttfamily\footnotesize\texttt{MEMBER REPORT}};}
+
+    \onslide<4>{\node[] at (7.6,-0.3) {\ttfamily\footnotesize\texttt{CHEESE REQUEST}};}
+    \onslide<5>{\node[] at (7.6,-0.3) {\ttfamily\footnotesize\texttt{CHEESE RESPONSE}};}
+    \onslide<6>{\node[] at (7.6,-0.3) {\ttfamily\footnotesize\texttt{CHEESE BROADCAST}};}
+    \onslide<7>{\node[] at (7.6,-0.3) {\ttfamily\footnotesize\texttt{TRANSACTION BROADCAST}};}
+    \node[inner sep=0] at (current page.center)
+    {\includegraphics[scale=0.4]{figure.png}};
+\end{tikzpicture}
+\end{frame}
+
+\begin{frame}{The transaction}
+    \begin{center}
+        \includegraphics[scale=0.4]{figure2.png}
+    \end{center}
+    \begin{equation*}
+        T_1, o_1, \dots, T_m, o_m, e_1, \dots e_n, r_1, r_2, a_1, \dots, a_n, a_o, s_1, \dots, s_n
+    \end{equation*}
+\end{frame}
+
+\begin{frame}{The smelly blockchain}
+    \begin{center}
+        \includegraphics[scale=0.6]{figure3.png}
+    \end{center}
+\end{frame}
+
+\begin{frame}{}
+    \begin{center}
+        \Huge Demonstration
+    \end{center}
+\end{frame}
+
+
+\end{document}
+
+
