@@ -2,7 +2,7 @@
 
 ### Results:
 In general, all the proposed functions work successfully. In addition, the project was developed with more attention
-to the details of blockchain than anticipated. On the other hand, the only issue that is not solved yet. This issue is
+to the details of blockchain than anticipated. On the other hand, there is only one issue that is not solved yet. This issue is
 a security problem when broadcasting the cheese stack and adding blocks to it in general.
 
 
